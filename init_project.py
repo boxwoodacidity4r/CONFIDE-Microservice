@@ -14,7 +14,7 @@ dirs = [
 # 创建目录
 for d in dirs:
     os.makedirs(d, exist_ok=True)
-print("✅ 项目目录创建完成")
+print(" 项目目录创建完成")
 
 # 写 .gitignore
 gitignore_content = """
@@ -48,7 +48,7 @@ logs/
 
 with open(".gitignore", "w", encoding="utf-8") as f:
     f.write(gitignore_content.strip())
-print("✅ .gitignore 文件创建完成")
+print(" .gitignore 文件创建完成")
 
 # 写 requirements.txt
 requirements = """
@@ -66,7 +66,7 @@ scikit-learn
 
 with open("requirements.txt", "w", encoding="utf-8") as f:
     f.write(requirements.strip())
-print("✅ requirements.txt 文件创建完成")
+print(" requirements.txt 文件创建完成")
 
 # 写 README.md
 readme_content = """# Multimodal Microservice Extraction"""

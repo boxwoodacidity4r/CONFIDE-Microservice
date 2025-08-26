@@ -15,9 +15,9 @@ def run_javaparser(jar_path, java_src_dir, output_json):
         java_src_dir,
         output_json
     ]
-    print(f"🚀 正在运行 JavaParser 提取 AST...")
+    print(f" 正在运行 JavaParser 提取 AST...")
     subprocess.run(cmd, check=True)
-    print(f"✅ AST 提取完成，结果保存到 {output_json}")
+    print(f" AST 提取完成，结果保存到 {output_json}")
 
 
 def ast_json_to_graph(ast_json_path, output_graphml_path):
@@ -43,7 +43,7 @@ def ast_json_to_graph(ast_json_path, output_graphml_path):
         G.add_edge(src, tgt, **edge)
 
     nx.write_graphml(G, output_graphml_path)
-    print(f"✅ GraphML 文件已保存到 {output_graphml_path}")
+    print(f" GraphML 文件已保存到 {output_graphml_path}")
 
 
 if __name__ == "__main__":
