@@ -1,4 +1,10 @@
-extractor\JavaParserExtractor$ASTEdge.class
-extractor\JavaParserExtractor$ASTNode.class
-extractor\JavaParserExtractor.class
-extractor\JavaParserExtractor$ASTGraph.class
+extractor\ast\JavaParserASTExtractor.class
+extractor\callgraph\CallGraphExtractor.class
+extractor\callgraph\JavaParserCallGraphExtractor.class
+extractor\dependency\DependencyGraphExtractor.class
+extractor\dependency\JavaParserDependencyGraphExtractor.class
+extractor\Main.class
+extractor\utils\JsonExporter.class
+extractor\semantic\JavaParserSemanticExtractor.class
+extractor\semantic\SemanticExtractor.class
+extractor\ast\ASTExtractor.class
