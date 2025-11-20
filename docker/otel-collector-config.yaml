@@ -1,0 +1,46 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 100
+
+exporters:
+  # 1. 继续导出到 Jaeger（你现在已经在用）
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+
+  # 2. 控制台日志（调试用）
+  logging:
+    loglevel: debug
+
+  # 3. ⭐ 新增：导出到一个大的 JSON 文件（你要的 A 方案）
+  file:
+    path: /traces/trace.json
+    rotation:
+      max_megabytes: 0        # 0 = 不限制大小
+      max_backups: 1          # 始终只有一个文件
+    format: json
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger, logging, file]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]

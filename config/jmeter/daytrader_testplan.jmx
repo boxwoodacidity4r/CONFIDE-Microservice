@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="DayTrader Full Coverage Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments">Covers full user journey: login, register, account, portfolio, quotes, market summary, buy/sell, logout</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"/>
+    </TestPlan>
+    <hashTree>
+      <!-- HTTP Request Defaults -->
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">localhost</stringProp>
+        <stringProp name="HTTPSampler.port">8082</stringProp>
+        <stringProp name="HTTPSampler.protocol">http</stringProp>
+        <stringProp name="HTTPSampler.path">/daytrader</stringProp>
+        <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+      </ConfigTestElement>
+      <hashTree/>
+      
+      <!-- Thread Group -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="DayTrader Users" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <longProp name="ThreadGroup.start_time">1698499200000</longProp>
+        <longProp name="ThreadGroup.end_time">1698499200000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"/>
+        <stringProp name="ThreadGroup.delay"/>
+      </ThreadGroup>
+      <hashTree>
+        <!-- Home Page -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Home Page" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        
+        <!-- Login -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Login" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">login</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="uid" elementType="HTTPArgument">
+                <stringProp name="Argument.name">uid</stringProp>
+                <stringProp name="Argument.value">uid:0</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="passwd" elementType="HTTPArgument">
+                <stringProp name="Argument.name">passwd</stringProp>
+                <stringProp name="Argument.value">xxx</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        
+        <!-- Register -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Register" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">register</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="user_id" elementType="HTTPArgument">
+                <stringProp name="Argument.name">user_id</stringProp>
+                <stringProp name="Argument.value">testuser</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="passwd" elementType="HTTPArgument">
+                <stringProp name="Argument.name">passwd</stringProp>
+                <stringProp name="Argument.value">testpass</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="full_name" elementType="HTTPArgument">
+                <stringProp name="Argument.name">full_name</stringProp>
+                <stringProp name="Argument.value">Test</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="email" elementType="HTTPArgument">
+                <stringProp name="Argument.name">email</stringProp>
+                <stringProp name="Argument.value">test@test.com</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="address" elementType="HTTPArgument">
+                <stringProp name="Argument.name">address</stringProp>
+                <stringProp name="Argument.value">Test</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="credit_card" elementType="HTTPArgument">
+                <stringProp name="Argument.name">credit_card</stringProp>
+                <stringProp name="Argument.value">12345</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        
+        <!-- Account -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Account Info" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">account</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- Portfolio -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Portfolio" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">portfolio</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- Quotes -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Quotes" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">quotes</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="symbols" elementType="HTTPArgument">
+                <stringProp name="Argument.name">symbols</stringProp>
+                <stringProp name="Argument.value">s:0,s:1,s:2</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- Market Summary -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Market Summary" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">mksummary</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- Buy Stock -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Buy Stock" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">buy</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="symbol" elementType="HTTPArgument">
+                <stringProp name="Argument.name">symbol</stringProp>
+                <stringProp name="Argument.value">s:0</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="quantity" elementType="HTTPArgument">
+                <stringProp name="Argument.name">quantity</stringProp>
+                <stringProp name="Argument.value">100</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- Sell Stock -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Sell Stock" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">sell</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+              <elementProp name="holdingID" elementType="HTTPArgument">
+                <stringProp name="Argument.name">holdingID</stringProp>
+                <stringProp name="Argument.value">1</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- Logout -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Logout" enabled="true">
+          <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="Argument.name">action</stringProp>
+                <stringProp name="Argument.value">logout</stringProp>
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- View Results Tree -->
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>true</responseData>
+              <samplerData>true</samplerData>
+              <xml>true</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>true</responseHeaders>
+              <requestHeaders>true</requestHeaders>
+              <responseDataOnError>true</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+        </ResultCollector>
+        <hashTree/>
+        
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

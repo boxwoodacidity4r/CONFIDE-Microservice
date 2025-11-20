@@ -18,6 +18,7 @@ package com.ibm.websphere.samples.pbw.war;
 
 import java.io.Serializable;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
@@ -38,223 +39,196 @@ import com.ibm.websphere.samples.pbw.utils.Util;
 @Named(value = "account")
 @SessionScoped
 public class AccountBean implements Serializable {
-	private static final long serialVersionUID = 1L;
-	private static final String ACTION_ACCOUNT = "account";
-	private static final String ACTION_CHECKOUT_FINAL = "checkout_final";
-	private static final String ACTION_LOGIN = "login";
-	private static final String ACTION_ORDERDONE = "orderdone";
-	private static final String ACTION_ORDERINFO = "orderinfo";
-	private static final String ACTION_PROMO = "promo";
-	private static final String ACTION_REGISTER = "register";
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	private CustomerMgr login;
-	@Inject
-	private MailerBean mailer;
-	@Inject
-	private ShoppingCartBean shoppingCart;
+    private static final String ACTION_ACCOUNT = "account";
+    private static final String ACTION_CHECKOUT_FINAL = "checkout_final";
+    private static final String ACTION_LOGIN = "login";
+    private static final String ACTION_ORDERDONE = "orderdone";
+    private static final String ACTION_ORDERINFO = "orderinfo";
+    private static final String ACTION_PROMO = "promo";
+    private static final String ACTION_REGISTER = "register";
 
-	private boolean checkingOut;
-	private Customer customer;
-	private String lastOrderNum;
-	private LoginInfo loginInfo;
-	private Customer newCustomer;
-	private OrderInfo orderInfo;
-	private int orderNum = 1;
-	private boolean register;
-	private boolean updating;
+    @Inject
+    private CustomerMgr login;
+    @Inject
+    private MailerBean mailer;
+    @Inject
+    private ShoppingCartBean shoppingCart;
 
-	public String performAccount() {
-		if (customer == null || loginInfo == null) {
-			checkingOut = false;
-			loginInfo = new LoginInfo();
-			register = false;
-			updating = true;
+    private boolean checkingOut;
+    private Customer customer;
+    private String lastOrderNum;
+    private LoginInfo loginInfo;   // ⚠️ 原本未初始化
+    private Customer newCustomer;
+    private OrderInfo orderInfo;
+    private int orderNum = 1;
+    private boolean register;
+    private boolean updating;
 
-			loginInfo.setMessage("You must log in first.");
+    // ✅ 初始化方法，保证 loginInfo 永远不会为 null
+    @PostConstruct
+    public void init() {
+        this.loginInfo = new LoginInfo();
+    }
 
-			return AccountBean.ACTION_LOGIN;
-		}
+    // ✅ getter 兜底，防止意外为 null
+    public LoginInfo getLoginInfo() {
+        if (loginInfo == null) {
+            loginInfo = new LoginInfo();
+        }
+        return loginInfo;
+    }
 
-		else {
-			return AccountBean.ACTION_ACCOUNT;
-		}
-	}
+    public void setLoginInfo(LoginInfo loginInfo) {
+        this.loginInfo = loginInfo;
+    }
 
-	public String performAccountUpdate() {
-		if (register) {
-			customer = login.createCustomer(loginInfo.getEmail(), loginInfo.getPassword(), newCustomer
-					.getFirstName(), newCustomer.getLastName(), newCustomer.getAddr1(), newCustomer
-							.getAddr2(), newCustomer.getAddrCity(), newCustomer
-									.getAddrState(), newCustomer.getAddrZip(), newCustomer.getPhone());
-			register = false;
-		}
+    // === 以下代码保持原样，只删减注释 ===
 
-		else {
-			customer = login.updateUser(customer.getCustomerID(), customer.getFirstName(), customer
-					.getLastName(), customer.getAddr1(), customer.getAddr2(), customer
-							.getAddrCity(), customer.getAddrState(), customer.getAddrZip(), customer.getPhone());
-		}
+    public String performAccount() {
+        if (customer == null || loginInfo == null) {
+            checkingOut = false;
+            loginInfo = new LoginInfo();
+            register = false;
+            updating = true;
 
-		return AccountBean.ACTION_PROMO;
-	}
+            loginInfo.setMessage("You must log in first.");
+            return AccountBean.ACTION_LOGIN;
+        } else {
+            return AccountBean.ACTION_ACCOUNT;
+        }
+    }
 
-	public String performCheckoutFinal() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		Application app = context.getApplication();
-		ShoppingBean shopping = (ShoppingBean) app.createValueBinding("#{shopping}").getValue(context);
+    public String performAccountUpdate() {
+        if (register) {
+            customer = login.createCustomer(loginInfo.getEmail(), loginInfo.getPassword(),
+                    newCustomer.getFirstName(), newCustomer.getLastName(),
+                    newCustomer.getAddr1(), newCustomer.getAddr2(),
+                    newCustomer.getAddrCity(), newCustomer.getAddrState(),
+                    newCustomer.getAddrZip(), newCustomer.getPhone());
+            register = false;
+        } else {
+            customer = login.updateUser(customer.getCustomerID(), customer.getFirstName(),
+                    customer.getLastName(), customer.getAddr1(), customer.getAddr2(),
+                    customer.getAddrCity(), customer.getAddrState(),
+                    customer.getAddrZip(), customer.getPhone());
+        }
+        return AccountBean.ACTION_PROMO;
+    }
 
-		shopping.setShippingCost(Util.getShippingMethodPrice(orderInfo.getShippingMethod()));
+    public String performCheckoutFinal() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Application app = context.getApplication();
+        ShoppingBean shopping = (ShoppingBean) app.createValueBinding("#{shopping}").getValue(context);
+        shopping.setShippingCost(Util.getShippingMethodPrice(orderInfo.getShippingMethod()));
+        return AccountBean.ACTION_CHECKOUT_FINAL;
+    }
 
-		return AccountBean.ACTION_CHECKOUT_FINAL;
-	}
+    public String performCompleteCheckout() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Application app = context.getApplication();
+        app.createValueBinding("#{shopping}").getValue(context);
 
-	public String performCompleteCheckout() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		Application app = context.getApplication();
-		app.createValueBinding("#{shopping}").getValue(context);
+        OrderInfo oi = new OrderInfo(shoppingCart.createOrder(customer.getCustomerID(),
+                orderInfo.getBillName(), orderInfo.getBillAddr1(), orderInfo.getBillAddr2(),
+                orderInfo.getBillCity(), orderInfo.getBillState(), orderInfo.getBillZip(),
+                orderInfo.getBillPhone(), orderInfo.getShipName(), orderInfo.getShipAddr1(),
+                orderInfo.getShipAddr2(), orderInfo.getShipCity(), orderInfo.getShipState(),
+                orderInfo.getShipZip(), orderInfo.getShipPhone(), orderInfo.getCardName(),
+                orderInfo.getCardNum(), orderInfo.getCardExpMonth(), orderInfo.getCardExpYear(),
+                orderInfo.getCardholderName(), orderInfo.getShippingMethod(),
+                shoppingCart.getItems()));
 
-		// persist the order
-		OrderInfo oi = new OrderInfo(shoppingCart
-				.createOrder(customer.getCustomerID(), orderInfo.getBillName(), orderInfo.getBillAddr1(), orderInfo
-						.getBillAddr2(), orderInfo.getBillCity(), orderInfo.getBillState(), orderInfo
-								.getBillZip(), orderInfo.getBillPhone(), orderInfo.getShipName(), orderInfo
-										.getShipAddr1(), orderInfo.getShipAddr2(), orderInfo.getShipCity(), orderInfo
-												.getShipState(), orderInfo.getShipZip(), orderInfo
-														.getShipPhone(), orderInfo.getCardName(), orderInfo
-																.getCardNum(), orderInfo.getCardExpMonth(), orderInfo
-																		.getCardExpYear(), orderInfo
-																				.getCardholderName(), orderInfo
-																						.getShippingMethod(), shoppingCart
-																								.getItems()));
+        lastOrderNum = oi.getID();
+        Util.debug("Account.performCompleteCheckout: order id =" + orderInfo);
 
-		lastOrderNum = oi.getID();
+        try {
+            mailer.createAndSendMail(customer, oi.getID());
+        } catch (MailerAppException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		Util.debug("Account.performCompleteCheckout: order id =" + orderInfo);
+        orderInfo = null;
+        shoppingCart.removeAllItems();
+        return AccountBean.ACTION_ORDERDONE;
+    }
 
-		/*
-		 * // Check the available inventory and backorder if necessary. if (shoppingCart != null) {
-		 * Inventory si; Collection<Inventory> items = shoppingCart.getItems(); for (Object o :
-		 * items) { si = (Inventory) o; shoppingCart.checkInventory(si); Util.debug(
-		 * "ShoppingCart.checkInventory() - checking Inventory quantity of item: " + si.getID()); }
-		 * }
-		 */
-		try {
-			mailer.createAndSendMail(customer, oi.getID());
-		} catch (MailerAppException e) {
-			System.out.println("MailerAppException:" + e);
-			e.printStackTrace();
-		} catch (Exception e) {
-			System.out.println("Exception during create and send mail :" + e);
-			e.printStackTrace();
-		}
+    public String performLogin() {
+        checkingOut = false;
+        loginInfo = new LoginInfo();
+        register = false;
+        updating = false;
+        loginInfo.setMessage("");
+        return AccountBean.ACTION_LOGIN;
+    }
 
-		orderInfo = null;
+    public String performLoginComplete() {
+        String message = login.verifyUserAndPassword(loginInfo.getEmail(), loginInfo.getPassword());
+        if (message != null) {
+            loginInfo.setMessage(message);
+            return AccountBean.ACTION_LOGIN;
+        }
+        customer = login.getCustomer(loginInfo.getEmail());
+        if (isCheckingOut()) {
+            return performOrderInfo();
+        }
+        if (isUpdating()) {
+            return performAccount();
+        }
+        return AccountBean.ACTION_PROMO;
+    }
 
-		// shoppingCart.setCartContents (new ShoppingCartContents());
-		shoppingCart.removeAllItems();
+    public String performOrderInfo() {
+        if (customer == null) {
+            checkingOut = true;
+            loginInfo = new LoginInfo();
+            register = false;
+            updating = false;
+            loginInfo.setMessage("You must log in first.");
+            return AccountBean.ACTION_LOGIN;
+        } else {
+            if (orderInfo == null) {
+                orderInfo = new OrderInfo(customer.getFirstName() + " " + customer.getLastName(),
+                        customer.getAddr1(), customer.getAddr2(), customer.getAddrCity(),
+                        customer.getAddrState(), customer.getAddrZip(), customer.getPhone(),
+                        "", "", "", "", "", "", "", 0, "" + (orderNum++));
+            }
+            return AccountBean.ACTION_ORDERINFO;
+        }
+    }
 
-		return AccountBean.ACTION_ORDERDONE;
-	}
+    public String performRegister() {
+        loginInfo = new LoginInfo();
+        newCustomer = new Customer("", "", "", "", "", "", "", "", "", "");
+        register = true;
+        updating = false;
+        return AccountBean.ACTION_REGISTER;
+    }
 
-	public String performLogin() {
-		checkingOut = false;
-		loginInfo = new LoginInfo();
-		register = false;
-		updating = false;
+    public Customer getCustomer() {
+        return (isRegister() ? newCustomer : customer);
+    }
 
-		loginInfo.setMessage("");
+    public String getLastOrderNum() {
+        return lastOrderNum;
+    }
 
-		return AccountBean.ACTION_LOGIN;
-	}
+    public OrderInfo getOrderInfo() {
+        return orderInfo;
+    }
 
-	public String performLoginComplete() {
-		String message;
+    public boolean isCheckingOut() {
+        return checkingOut;
+    }
 
-		// Attempt to log in the user.
+    public boolean isRegister() {
+        return register;
+    }
 
-		message = login.verifyUserAndPassword(loginInfo.getEmail(), loginInfo.getPassword());
-
-		if (message != null) {
-			// Error, so go back to the login page.
-
-			loginInfo.setMessage(message);
-
-			return AccountBean.ACTION_LOGIN;
-		}
-
-		// Otherwise, no error, so continue to the correct page.
-
-		customer = login.getCustomer(loginInfo.getEmail());
-
-		if (isCheckingOut()) {
-			return performOrderInfo();
-		}
-
-		if (isUpdating()) {
-			return performAccount();
-		}
-
-		return AccountBean.ACTION_PROMO;
-	}
-
-	public String performOrderInfo() {
-		if (customer == null) {
-			checkingOut = true;
-			loginInfo = new LoginInfo();
-			register = false;
-			updating = false;
-
-			loginInfo.setMessage("You must log in first.");
-
-			return AccountBean.ACTION_LOGIN;
-		}
-
-		else {
-			if (orderInfo == null) {
-				orderInfo = new OrderInfo(customer.getFirstName() + " " + customer.getLastName(), customer.getAddr1(),
-						customer.getAddr2(), customer.getAddrCity(), customer.getAddrState(), customer.getAddrZip(),
-						customer.getPhone(), "", "", "", "", "", "", "", 0, "" + (orderNum++));
-			}
-
-			return AccountBean.ACTION_ORDERINFO;
-		}
-	}
-
-	public String performRegister() {
-		loginInfo = new LoginInfo();
-		newCustomer = new Customer("", "", "", "", "", "", "", "", "", "");
-		register = true;
-		updating = false;
-
-		return AccountBean.ACTION_REGISTER;
-	}
-
-	public Customer getCustomer() {
-		return (isRegister() ? newCustomer : customer);
-	}
-
-	public String getLastOrderNum() {
-		return lastOrderNum;
-	}
-
-	public LoginInfo getLoginInfo() {
-		return loginInfo;
-	}
-
-	public OrderInfo getOrderInfo() {
-		return orderInfo;
-	}
-
-	public boolean isCheckingOut() {
-		return checkingOut;
-	}
-
-	public boolean isRegister() {
-		return register;
-	}
-
-	public boolean isUpdating() {
-		return updating;
-	}
+    public boolean isUpdating() {
+        return updating;
+    }
 }

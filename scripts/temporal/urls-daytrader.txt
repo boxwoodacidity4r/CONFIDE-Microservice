@@ -1,0 +1,6 @@
+http://localhost:8082/daytrader/
+http://localhost:8082/daytrader/config?action=reset
+http://localhost:8082/daytrader/app?action=login&uid=uid:0&passwd=xxx
+http://localhost:8082/daytrader/app?action=quotes&symbols=s:0,s:1,s:2
+http://localhost:8082/daytrader/app?action=buy&symbol=s:1&quantity=100
+http://localhost:8082/daytrader/app?action=portfolio

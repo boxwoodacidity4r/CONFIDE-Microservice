@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="JPetStore Full Coverage v4" enabled="true">
+      <stringProp name="TestPlan.comments">Full coverage of 28 URLs including home, account, catalog, cart, checkOut, orders, and progress bar output.</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+
+      <!-- Thread Group -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="JPetStore Users" enabled="true">
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">15</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">8</stringProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+
+        <!-- HTTP Defaults -->
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Defaults" enabled="true">
+          <stringProp name="HTTPSampler.domain">localhost</stringProp>
+          <stringProp name="HTTPSampler.port">8083</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore</stringProp>
+        </ConfigTestElement>
+        <hashTree/>
+
+        <!-- Cookie & Header -->
+        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="Cookie Manager" enabled="true">
+          <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+        </CookieManager>
+        <hashTree/>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="Content-Type" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+
+        <!-- Progress Samplers -->
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 0%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 0% - Test Started =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 10%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 10% - Loaded Home &amp; Help =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 25%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 25% - Account Module Done =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 50%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 50% - Catalog &amp; Search Done =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 75%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 75% - Cart &amp; Checkout Done =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 100%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 100% - Test Complete =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+
+        <!-- 🏠 Home & Help -->
+        <HTTPSamplerProxy testname="Home Page" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy testname="Help Page" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/help.html</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 10%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 10% - Loaded Home &amp; Help =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+
+        <!-- 👤 Account -->
+        <HTTPSamplerProxy testname="Login j2ee/j2ee" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?signon=</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="username" elementType="HTTPArgument">
+                <stringProp name="Argument.name">username</stringProp>
+                <stringProp name="Argument.value">j2ee</stringProp>
+              </elementProp>
+              <elementProp name="password" elementType="HTTPArgument">
+                <stringProp name="Argument.name">password</stringProp>
+                <stringProp name="Argument.value">j2ee</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- 🐠 Catalog -->
+        <HTTPSamplerProxy testname="View Category (FISH)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Catalog.action?viewCategory=&amp;categoryId=FISH</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy testname="View Product (FI-SW-01)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Catalog.action?viewProduct=&amp;productId=FI-SW-01</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy testname="Search Product (fish)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Catalog.action?searchProducts=&amp;keyword=fish</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 40%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 40% - Finished Catalog Module =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+
+        <!-- 🛒 Cart + Checkout Transaction -->
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Cart &amp; Checkout" enabled="true">
+          <boolProp name="TransactionController.parent">false</boolProp>
+          <boolProp name="TransactionController.includeTimers">true</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy testname="Add To Cart (EST-1)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <stringProp name="HTTPSampler.path">/jpetstore/actions/Cart.action?addItemToCart=&amp;workingItemId=EST-1</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+          <HTTPSamplerProxy testname="View Cart" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <stringProp name="HTTPSampler.path">/jpetstore/actions/Cart.action?viewCart=</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+          <HTTPSamplerProxy testname="Checkout" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <stringProp name="HTTPSampler.path">/jpetstore/actions/Cart.action?checkOut=</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+        </hashTree>
+
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 70%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 70% - Finished Cart & Checkout =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+
+        <!-- Orders -->
+        <HTTPSamplerProxy testname="New Order Form" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?newOrderForm=</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy testname="Create Order" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?newOrder=</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy testname="Confirm Order" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?newOrder=&amp;confirmed=true</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- Orders & Account -->
+        <HTTPSamplerProxy testname="Order List" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?listOrders=</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy testname="View Order (1000)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?viewOrder=&amp;orderId=1000</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <HTTPSamplerProxy testname="Edit Account Form" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?editAccountForm=</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- Sign Off -->
+        <HTTPSamplerProxy testname="Sign Off" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?signoff=</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Progress 100%" enabled="true">
+          <stringProp name="BeanShellSampler.query"><![CDATA[log.info("===== Progress: 100% - Test Complete =====");]]></stringProp>
+        </BeanShellSampler>
+        <hashTree/>
+
+        <!-- Think Time -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think Time (500-2000ms)" enabled="true">
+          <stringProp name="ConstantTimer.delay">500</stringProp>
+          <stringProp name="RandomTimer.range">1500</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
+
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

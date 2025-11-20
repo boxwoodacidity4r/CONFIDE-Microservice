@@ -1,0 +1,66 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1763563271854,215,Admin Home Page (GET),200,OK,Admin Actions Thread Group 2-1,text,true,,2456,384,1,2,http://localhost:8084/PlantsByWebSphere/admin.html,210,0,35
+1763563272378,59,Admin Actions Page (GET),200,OK,Admin Actions Thread Group 2-1,text,true,,3017,732,1,3,http://localhost:8084/PlantsByWebSphere/adminactions.html,59,0,2
+1763563272155,783,Home / Promo Page (GET),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,13804,383,2,4,http://localhost:8084/PlantsByWebSphere/promo.jsf,568,0,2
+1763563272986,9,Admin Banner Page (GET),200,OK,Admin Actions Thread Group 2-1,text,true,,2941,731,2,4,http://localhost:8084/PlantsByWebSphere/adminbanner.html,9,0,1
+1763563273007,117,Home / Promo Page (GET),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,13804,383,2,4,http://localhost:8084/PlantsByWebSphere/promo.jsf,38,0,2
+1763563273670,7,Admin Home Page (GET),200,OK,Admin Actions Thread Group 2-2,text,true,,2456,384,2,5,http://localhost:8084/PlantsByWebSphere/admin.html,7,0,1
+1763563273674,86,Shopping Page (GET),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,9694,843,3,5,http://localhost:8084/PlantsByWebSphere/shopping.jsf,42,0,1
+1763563273832,70,Shopping Page (GET),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,9694,843,3,5,http://localhost:8084/PlantsByWebSphere/shopping.jsf,32,0,2
+1763563274174,11,Admin Actions Page (GET),200,OK,Admin Actions Thread Group 2-2,text,true,,3017,732,2,5,http://localhost:8084/PlantsByWebSphere/adminactions.html,11,0,2
+1763563274147,83,Home / Promo Page (GET),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,13804,383,3,5,http://localhost:8084/PlantsByWebSphere/promo.jsf,32,0,3
+1763563273473,836,Backorder Admin Page (GET),200,OK,Admin Actions Thread Group 2-1,text,true,,11621,733,2,5,http://localhost:8084/PlantsByWebSphere/backorderadmin.jsp,835,0,1
+1763563274258,80,Product Page (POST - view product / add form),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,11476,903,3,5,http://localhost:8084/PlantsByWebSphere/product.jsf,38,0,2
+1763563274359,61,Product Page (POST - view product / add form),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,11476,903,4,6,http://localhost:8084/PlantsByWebSphere/product.jsf,25,0,2
+1763563274634,21,Admin Banner Page (GET),200,OK,Admin Actions Thread Group 2-2,text,true,,2941,731,2,6,http://localhost:8084/PlantsByWebSphere/adminbanner.html,20,0,1
+1763563274763,51,Shopping Page (GET),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,9694,843,4,6,http://localhost:8084/PlantsByWebSphere/shopping.jsf,24,0,2
+1763563274928,52,Add To Cart (POST),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,9694,904,4,6,http://localhost:8084/PlantsByWebSphere/shopping.jsf,24,0,3
+1763563274981,150,Supplier Config Page (GET),200,OK,Admin Actions Thread Group 2-1,text,true,,8122,810,2,6,http://localhost:8084/PlantsByWebSphere/supplierconfig.jsp,149,0,1
+1763563275032,99,Home / Promo Page (GET),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,13804,383,4,6,http://localhost:8084/PlantsByWebSphere/promo.jsf,34,0,1
+1763563275103,55,Add To Cart (POST),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,9694,904,4,5,http://localhost:8084/PlantsByWebSphere/shopping.jsf,25,0,1
+1763563275266,71,Product Page (POST - view product / add form),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,11476,903,4,5,http://localhost:8084/PlantsByWebSphere/product.jsf,27,0,1
+1763563275375,11,Backorder Admin Page (GET),200,OK,Admin Actions Thread Group 2-2,text,true,,11621,733,1,5,http://localhost:8084/PlantsByWebSphere/backorderadmin.jsp,11,0,3
+1763563275329,132,Cart Page (GET),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,11113,839,5,6,http://localhost:8084/PlantsByWebSphere/cart.jsf,68,0,1
+1763563275649,70,Cart Page (GET),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,11113,839,5,6,http://localhost:8084/PlantsByWebSphere/cart.jsf,31,0,1
+1763563275728,10,Supplier Config Page (GET),200,OK,Admin Actions Thread Group 2-2,text,true,,8122,810,1,6,http://localhost:8084/PlantsByWebSphere/supplierconfig.jsp,8,0,1
+1763563275731,60,Home / Promo Page (GET),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,13804,383,5,5,http://localhost:8084/PlantsByWebSphere/promo.jsf,22,0,1
+1763563275804,47,Shopping Page (GET),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,9694,843,5,5,http://localhost:8084/PlantsByWebSphere/shopping.jsf,22,0,1
+1763563276111,49,Add To Cart (POST),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,9694,904,5,5,http://localhost:8084/PlantsByWebSphere/shopping.jsf,22,0,1
+1763563276465,70,Cart Page (GET),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,11113,839,5,5,http://localhost:8084/PlantsByWebSphere/cart.jsf,33,0,1
+1763563276503,64,User Login (POST),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,11303,901,5,5,http://localhost:8084/PlantsByWebSphere/login.jsf,25,0,1
+1763563276388,192,User Login (POST),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,11303,901,5,5,http://localhost:8084/PlantsByWebSphere/login.jsf,35,0,2
+1763563276551,60,Shopping Page (GET),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,9694,843,5,5,http://localhost:8084/PlantsByWebSphere/shopping.jsf,22,0,1
+1763563276577,68,Product Page (POST - view product / add form),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,11476,903,5,5,http://localhost:8084/PlantsByWebSphere/product.jsf,26,0,2
+1763563276950,172,Order Info (POST),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,96278,905,5,5,http://localhost:8084/PlantsByWebSphere/orderinfo.jsf,60,0,1
+1763563277167,103,Order Info (POST),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,96303,905,5,5,http://localhost:8084/PlantsByWebSphere/orderinfo.jsf,26,0,1
+1763563277211,62,Product Page (POST - view product / add form),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,11476,903,5,5,http://localhost:8084/PlantsByWebSphere/product.jsf,22,0,1
+1763563277221,55,Add To Cart (POST),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,9694,904,5,5,http://localhost:8084/PlantsByWebSphere/shopping.jsf,20,0,1
+1763563277425,47,User Login (POST),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,11303,901,5,5,http://localhost:8084/PlantsByWebSphere/login.jsf,17,0,1
+1763563277456,73,Final Checkout (POST),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,16140,910,5,5,http://localhost:8084/PlantsByWebSphere/checkout_final.jsf,29,0,2
+1763563277641,50,Add To Cart (POST),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,9694,904,5,5,http://localhost:8084/PlantsByWebSphere/shopping.jsf,22,0,2
+1763563277881,60,Cart Page (GET),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,11113,839,5,5,http://localhost:8084/PlantsByWebSphere/cart.jsf,27,0,2
+1763563278101,69,Cart Page (GET),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,11113,839,5,5,http://localhost:8084/PlantsByWebSphere/cart.jsf,31,0,2
+1763563278071,117,Order Info (POST),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,96300,905,5,5,http://localhost:8084/PlantsByWebSphere/orderinfo.jsf,27,0,1
+1763563278157,97,Final Checkout (POST),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,16140,910,5,5,http://localhost:8084/PlantsByWebSphere/checkout_final.jsf,25,0,2
+1763563278228,53,Order Done Page (GET),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,9705,844,5,5,http://localhost:8084/PlantsByWebSphere/orderdone.jsf,24,0,2
+1763563278366,45,User Login (POST),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,11303,901,5,5,http://localhost:8084/PlantsByWebSphere/login.jsf,17,0,2
+1763563278633,50,Order Done Page (GET),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,9705,844,5,5,http://localhost:8084/PlantsByWebSphere/orderdone.jsf,23,0,0
+1763563278626,78,Account Page (GET),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,15166,842,5,5,http://localhost:8084/PlantsByWebSphere/account.jsf,33,0,1
+1763563278776,55,User Login (POST),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,11303,901,5,5,http://localhost:8084/PlantsByWebSphere/login.jsf,21,0,1
+1763563278789,99,Order Info (POST),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,96302,905,5,5,http://localhost:8084/PlantsByWebSphere/orderinfo.jsf,22,0,2
+1763563278884,81,Final Checkout (POST),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,16140,910,5,5,http://localhost:8084/PlantsByWebSphere/checkout_final.jsf,25,0,1
+1763563279027,55,Account Page (GET),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,15166,842,5,5,http://localhost:8084/PlantsByWebSphere/account.jsf,15,0,1
+1763563279288,52,Help Page (GET),200,OK,User Actions Thread Group - Full Flow 1-2,text,true,,10594,839,5,5,http://localhost:8084/PlantsByWebSphere/help.jsf,21,0,1
+1763563279294,63,Final Checkout (POST),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,16140,910,4,4,http://localhost:8084/PlantsByWebSphere/checkout_final.jsf,14,0,1
+1763563279606,42,Help Page (GET),200,OK,User Actions Thread Group - Full Flow 1-1,text,true,,10594,839,4,4,http://localhost:8084/PlantsByWebSphere/help.jsf,18,0,1
+1763563279703,79,Order Info (POST),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,96305,905,3,3,http://localhost:8084/PlantsByWebSphere/orderinfo.jsf,20,0,2
+1763563279825,41,Order Done Page (GET),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,9705,844,3,3,http://localhost:8084/PlantsByWebSphere/orderdone.jsf,17,0,1
+1763563279907,39,Order Done Page (GET),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,9705,844,3,3,http://localhost:8084/PlantsByWebSphere/orderdone.jsf,17,0,1
+1763563280520,67,Account Page (GET),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,15166,842,3,3,http://localhost:8084/PlantsByWebSphere/account.jsf,27,0,1
+1763563280622,63,Account Page (GET),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,15166,842,3,3,http://localhost:8084/PlantsByWebSphere/account.jsf,20,0,1
+1763563280755,78,Final Checkout (POST),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,16140,910,3,3,http://localhost:8084/PlantsByWebSphere/checkout_final.jsf,32,0,2
+1763563281091,48,Help Page (GET),200,OK,User Actions Thread Group - Full Flow 1-3,text,true,,10594,839,3,3,http://localhost:8084/PlantsByWebSphere/help.jsf,17,0,2
+1763563281139,50,Help Page (GET),200,OK,User Actions Thread Group - Full Flow 1-4,text,true,,10594,839,2,2,http://localhost:8084/PlantsByWebSphere/help.jsf,14,0,1
+1763563281611,39,Order Done Page (GET),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,9705,844,1,1,http://localhost:8084/PlantsByWebSphere/orderdone.jsf,17,0,1
+1763563282441,60,Account Page (GET),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,15166,842,1,1,http://localhost:8084/PlantsByWebSphere/account.jsf,19,0,1
+1763563283055,60,Help Page (GET),200,OK,User Actions Thread Group - Full Flow 1-5,text,true,,10594,839,1,1,http://localhost:8084/PlantsByWebSphere/help.jsf,19,0,2

@@ -1,11 +1,15 @@
-
 task wrapper(type: Wrapper) {
-   gradleVersion = '2.6'
+    gradleVersion = '2.6'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
+
     repositories {
         mavenCentral()
         mavenLocal()
@@ -23,20 +27,10 @@ project(':acmeair-services') {
     dependencies {
         compile project(':acmeair-common')
         compile 'com.googlecode.json-simple:json-simple:1.1.1'
-
     }
 }
 
-project(':acmeair-services-wxs') {
-    dependencies {
-        compile project(':acmeair-common')
-        compile project(':acmeair-services')
-        compile 'com.ibm.websphere.objectgrid:objectgrid:8.6.0.2'
-    }
-}
-
-
-
+// ⚠️ 删除 acmeair-services-wxs，避免依赖不存在的项目
 project(':acmeair-services-morphia') {
     dependencies {
         compile project(':acmeair-common')
@@ -46,51 +40,46 @@ project(':acmeair-services-morphia') {
     }
 }
 
-
 project(':acmeair-loader') {
+    apply plugin: 'application'
+
+    // 设置主类
+    mainClassName = 'com.acmeair.loader.Loader'
+
+    // JVM 参数（直接指定 service=mongo，避免走 ServiceLocator）
+    applicationDefaultJvmArgs = [
+        "-Dservice=mongo",
+        "-Dloader.numCustomers=1000"
+    ]
+
     dependencies {
         compile project(':acmeair-common')
         compile project(':acmeair-services')
     }
-}
 
+    task fatJar(type: Jar) {
+        baseName = 'acmeair-loader-fat'
+        manifest {
+            attributes 'Main-Class': mainClassName
+        }
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+        with jar
+    }
+
+}
 
 project(':acmeair-webapp') {
     apply plugin: 'war'
+    apply plugin: 'eclipse-wtp'
 
     dependencies {
         compile project(':acmeair-common')
         compile project(':acmeair-services')
-        compile project(':acmeair-loader')
+        compile project(':acmeair-services-morphia')
+        compile project(':acmeair-loader')   // ✅ 加上这一行
 
-        def includeService = "ALL"
-        if (project.hasProperty('service') ) {
-           println "property service exists and has a value of $service "
-           includeService = service
-        } else {
-           println "property service was not set. Using the default value of $includeService"
-           println "   To pick a specific service set the service property using the -P parameter, for example gradlew -Pservice=wxs build " 
-        }
-
-        if ("$includeService".equalsIgnoreCase("morphia") || "$includeService".equalsIgnoreCase("ALL")) {
-           println "Including mongoDB morphia service "
-           compile (project(':acmeair-services-morphia')) {
-              transitive = false
-           }
- 
-           compile ('org.mongodb.morphia:morphia:0.110')  {
-              transitive = false
-           }
-        }
-
-        if ("$includeService".equalsIgnoreCase("wxs") || "$includeService".equalsIgnoreCase("ALL")) {
-           println "Including WXS service "
-
-           compile project(':acmeair-services-wxs')
-           providedRuntime 'com.ibm.websphere.objectgrid:objectgrid:8.6.0.2'
-        }
-
-        providedRuntime 'javax:javaee-web-api:7.0'
+        // Servlet / JSP API，由应用服务器提供
+        providedCompile 'javax:javaee-web-api:7.0'
     }
 }
 
