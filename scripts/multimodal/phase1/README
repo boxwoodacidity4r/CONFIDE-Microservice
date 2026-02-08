@@ -1,0 +1,67 @@
+0. 先生成 class index 文件
+python scripts/multimodal/phase1/build_class_index.py --system acmeair
+python scripts/multimodal/phase1/build_class_index.py --system daytrader
+python scripts/multimodal/phase1/build_class_index.py --system jpetstore
+python scripts/multimodal/phase1/build_class_index.py --system plants
+
+1. 再生成 class_order 文件
+python scripts/multimodal/phase1/build_class_order.py --system acmeair
+python scripts/multimodal/phase1/build_class_order.py --system daytrader
+python scripts/multimodal/phase1/build_class_order.py --system jpetstore
+python scripts/multimodal/phase1/build_class_order.py --system plants
+
+2. 生成时序模态（S_temp，推荐 jtl_session 模式）
+# 注意：build_multimodal_matrices 会读取 S_temp（若已存在），因此建议先生成时序矩阵
+# 时序模态的输入定义：仅使用 JMeter JTL + OTEL traces（不使用 OTEL logs）。
+# - --mode jtl_session: 以 JTL 构造“会话/事务序列”相似度（默认）
+# - --mode basic: 仅用 traces 做共现相似度（trace-only）
+# - 可选：在 jtl_session 中用 --w-trace / --w-jtl 融合 trace-only 与 JTL-only
+#
+# JMeter 测试计划（.jmx）现在归档在：scripts/jmeter/
+# - scripts/jmeter/acmeair.jmx
+# - scripts/jmeter/daytrader.jmx
+# - scripts/jmeter/jpetstore.jmx
+# - scripts/jmeter/plants.jmx
+# 运行 JMeter 产生的 .jtl / .log 通常在 results/jmeter/ 下（或你指定的输出目录）。
+python scripts/temporal/build_S_temp.py --system acmeair
+python scripts/temporal/build_S_temp.py --system daytrader
+python scripts/temporal/build_S_temp.py --system jpetstore
+python scripts/temporal/build_S_temp.py --system plants
+
+# （可选）融合 trace-only（不使用 logs）
+# python scripts/temporal/build_S_temp.py --system acmeair --mode jtl_session --w-trace 0.3 --w-jtl 0.7
+
+3. 生成结构模态、语义模态（含 DADE）、融合矩阵、N×D 的 embedding 矩阵
+python scripts/multimodal/phase1/build_multimodal_matrices.py --system acmeair
+python scripts/multimodal/phase1/build_multimodal_matrices.py --system daytrader
+python scripts/multimodal/phase1/build_multimodal_matrices.py --system jpetstore
+python scripts/multimodal/phase1/build_multimodal_matrices.py --system plants
+
+
+
+# 重要说明（DADE）：
+# - build_multimodal_matrices 会优先使用 fusion/{system}_S_sem_dade.npy 作为“DADE增强语义矩阵”。
+# - 为避免“悄悄使用旧缓存”，脚本会做过期检测：
+#     如果 embedding/{system}_class_embeddings.json 比 fusion/{system}_S_sem_dade.npy 更新，
+#     则认为 DADE 过期，并会自动重新生成 fusion/{system}_S_sem_dade.npy。
+# - 你可以用环境变量控制 DADE 的目标均值（用于对比度/饱和度控制）：
+#     MM_DADE_TARGET_MEAN=0.5  (默认 0.5)
+
+4. （可选）语义模态 DADE 归一化（如需单独调整）
+# 注意：如果你手动运行该脚本，build_multimodal_matrices 也能自动识别“DADE 是否过期”并在需要时刷新。
+python scripts/multimodal/phase1/rescale_semantic_dade.py --system acmeair
+python scripts/multimodal/phase1/rescale_semantic_dade.py --system daytrader
+python scripts/multimodal/phase1/rescale_semantic_dade.py --system jpetstore
+python scripts/multimodal/phase1/rescale_semantic_dade.py --system plants
+#ρ
+python scripts\experiments\sweep_dade_rho.py --matrix final --collect-density
+python scripts\experiments\sweep_dade_rho.py --matrix final --rhos 0.05,0.08,0.10,0.12,0.15,0.18,0.20 --collect-density
+#基础数据检测
+ python D:\multimodal_microservice_extraction\scripts\multimodal\phase4\diagnose_intra_inter_similarity.py --batch --verify
+
+5. （可选）检查所有模态输出和对齐
+python scripts/multimodal/phase1/phase1_summary_check.py --system acmeair
+python scripts/multimodal/phase1/phase1_summary_check.py --system daytrader
+python scripts/multimodal/phase1/phase1_summary_check.py --system jpetstore
+python scripts/multimodal/phase1/phase1_summary_check.py --system plants
+

@@ -1,6 +1,0 @@
-http://localhost:8084/PlantsByWebSphere/promo.jsf
-http://localhost:8084/PlantsByWebSphere/catalog.jsf
-http://localhost:8084/PlantsByWebSphere/shoppingcart.jsf
-http://localhost:8084/PlantsByWebSphere/order.jsf
-http://localhost:8084/PlantsByWebSphere/account.jsf
-http://localhost:8084/PlantsByWebSphere/admin.jsf

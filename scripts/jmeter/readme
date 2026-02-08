@@ -1,0 +1,84 @@
+# JMeter 压测脚本运行说明（四个单体应用）
+
+## 0. 每次运行前务必重启对应 Docker 镜像
+
+1. 停止并重启对应的单体应用容器（AcmeAir / JPetStore / DayTrader / Plants），确保应用处于干净状态。
+2. 等待应用完全启动（首页可以正常访问），再执行 JMeter 脚本。
+
+# 进入 docker-compose.yml 所在目录
+cd D:\multimodal_microservice_extraction\docker
+
+# 停止并移除所有容器
+docker compose down
+
+# 启动所有服务（后台运行）
+docker compose up -d
+
+# 查看启动状态
+docker compose ps
+
+# 查看单个容器日志（例如 JPetStore）
+docker logs jpetstore
+
+## 1. 前置条件
+
+1. 已安装 JMeter 5.6.3，例如：`D:\apache-jmeter-5.6.3`。
+2. 当前工作目录为项目根目录：`D:\multimodal_microservice_extraction`。
+3. 本仓库的 JMeter 测试计划（.jmx）已归档在：`scripts\jmeter\`。
+4. 各 `.jmx` 中的目标 URL 与本地运行端口一致（如 JPetStore 使用 `http://localhost:8083/jpetstore`）。
+
+## 2. 在 PowerShell 中运行四个 JMeter 脚本
+
+在 **PowerShell** 中依次执行下面命令（注意使用反引号 ` 作为换行续行符）。
+
+> 提示：你也可以先 `cd D:\apache-jmeter-5.6.3\bin`，然后用相对路径引用 `.jmx`。
+
+### 2.1 JPetStore
+
+cd D:\apache-jmeter-5.6.3\bin
+
+```powershell
+D:\apache-jmeter-5.6.3\bin\jmeter.bat -n `
+  -t "D:\multimodal_microservice_extraction\scripts\jmeter\jpetstore.jmx" `
+  -l "D:\multimodal_microservice_extraction\results\jmeter\jpetstore_results.jtl" `
+  -j "D:\multimodal_microservice_extraction\results\jmeter\jpetstore_jmeter.log" `
+
+```
+
+### 2.2 Plants
+
+```powershell
+D:\apache-jmeter-5.6.3\bin\jmeter.bat -n `
+  -t "D:\multimodal_microservice_extraction\scripts\jmeter\plants.jmx" `
+  -l "D:\multimodal_microservice_extraction\results\jmeter\plants_results.jtl" `
+  -j "D:\multimodal_microservice_extraction\results\jmeter\plants_jmeter.log" `
+
+```
+
+### 2.3 DayTrader
+
+```powershell
+D:\apache-jmeter-5.6.3\bin\jmeter.bat -n `
+  -t "D:\multimodal_microservice_extraction\scripts\jmeter\daytrader.jmx" `
+  -l "D:\multimodal_microservice_extraction\results\jmeter\daytrader_results.jtl" `
+  -j "D:\multimodal_microservice_extraction\results\jmeter\daytrader_jmeter.log" `
+
+```
+
+### 2.4 AcmeAir
+
+```powershell
+D:\apache-jmeter-5.6.3\bin\jmeter.bat -n `
+  -t "D:\multimodal_microservice_extraction\scripts\jmeter\acmeair1.jmx" `
+  -l "D:\multimodal_microservice_extraction\results\jmeter\acmeair1_results.jtl" `
+  -j "D:\multimodal_microservice_extraction\results\jmeter\acmeair1_jmeter.log" `
+
+```
+
+## 3. 结果文件约定
+
+- JTL：`results/jmeter/<system>_results.jtl`
+- JMeter 日志：`results/jmeter/<system>_jmeter.log`
+- HTML 报告：`results/jmeter/<system>_html_report/`
+
+其中 `<system> ∈ {acmeair, jpetstore, daytrader, plants}`。

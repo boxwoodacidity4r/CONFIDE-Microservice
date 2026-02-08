@@ -1,0 +1,48 @@
+1770085344230,8533,FlowA_Catalog,200,"Number of samples in transaction : 5, number of failing samples : 0",JPetStore Users 1-1,,true,,18161,1499,2,2,null,0,0,86
+1770085346842,85,home,200,,JPetStore Users 1-1,text,true,,1374,225,1,1,http://localhost:8083/jpetstore/,84,0,66
+1770085348858,21,search,200,,JPetStore Users 1-1,text,true,,5500,289,1,1,http://localhost:8083/jpetstore/actions/Catalog.action?search=,21,0,13
+1770085349433,9,viewCategory,200,,JPetStore Users 1-1,text,true,,3755,330,1,1,http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=&categoryId=FISH,9,0,3
+1770085351272,10,viewProduct,200,,JPetStore Users 1-1,text,true,,3931,332,1,1,http://localhost:8083/jpetstore/actions/Catalog.action?viewProduct=&productId=FI-SW-01,9,0,2
+1770085352755,9,viewItem,200,,JPetStore Users 1-1,text,true,,3601,323,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewItem=&itemId=EST-1,9,0,2
+1770085351382,5526,FlowA_Catalog,200,"Number of samples in transaction : 5, number of failing samples : 0",JPetStore Users 1-2,,true,,18161,1499,2,2,null,0,0,11
+1770085352092,7,home,200,,JPetStore Users 1-2,text,true,,1374,225,2,2,http://localhost:8083/jpetstore/,6,0,2
+1770085353046,9,search,200,,JPetStore Users 1-2,text,true,,5500,289,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?search=,8,0,3
+1770085353763,7,viewCategory,200,,JPetStore Users 1-2,text,true,,3755,330,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=&categoryId=FISH,7,0,2
+1770085355532,9,viewProduct,200,,JPetStore Users 1-2,text,true,,3931,332,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewProduct=&productId=FI-SW-01,9,0,2
+1770085356899,9,viewItem,200,,JPetStore Users 1-2,text,true,,3601,323,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewItem=&itemId=EST-1,9,0,2
+1770085352795,5918,FlowA_Catalog,200,"Number of samples in transaction : 5, number of failing samples : 0",JPetStore Users 1-1,,true,,17778,1604,2,2,null,0,0,8
+1770085354419,6,home,200,,JPetStore Users 1-1,text,true,,1374,278,2,2,http://localhost:8083/jpetstore/,5,0,1
+1770085355636,9,search,200,,JPetStore Users 1-1,text,true,,4800,341,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?search=,8,0,2
+1770085357035,9,viewCategory,200,,JPetStore Users 1-1,text,true,,4059,330,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=&categoryId=DOGS,9,0,2
+1770085357954,9,viewProduct,200,,JPetStore Users 1-1,text,true,,3944,332,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewProduct=&productId=FI-FW-02,9,0,2
+1770085358706,7,viewItem,200,,JPetStore Users 1-1,text,true,,3601,323,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewItem=&itemId=EST-2,7,0,1
+1770085356911,4724,FlowA_Catalog,200,"Number of samples in transaction : 5, number of failing samples : 0",JPetStore Users 1-2,,true,,17778,1604,2,2,null,0,0,5
+1770085357628,5,home,200,,JPetStore Users 1-2,text,true,,1374,278,2,2,http://localhost:8083/jpetstore/,5,0,1
+1770085358280,8,search,200,,JPetStore Users 1-2,text,true,,4800,341,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?search=,7,0,2
+1770085359936,7,viewCategory,200,,JPetStore Users 1-2,text,true,,4059,330,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=&categoryId=DOGS,7,0,1
+1770085361053,8,viewProduct,200,,JPetStore Users 1-2,text,true,,3944,332,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewProduct=&productId=FI-FW-02,8,0,1
+1770085361627,7,viewItem,200,,JPetStore Users 1-2,text,true,,3601,323,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewItem=&itemId=EST-2,7,0,0
+1770085358715,7656,FlowA_Catalog,200,"Number of samples in transaction : 5, number of failing samples : 0",JPetStore Users 1-1,,true,,17168,1604,2,2,null,0,0,4
+1770085360457,5,home,200,,JPetStore Users 1-1,text,true,,1374,278,2,2,http://localhost:8083/jpetstore/,5,0,1
+1770085362040,8,search,200,,JPetStore Users 1-1,text,true,,4800,341,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?search=,8,0,1
+1770085363186,7,viewCategory,200,,JPetStore Users 1-1,text,true,,3469,330,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=&categoryId=CATS,7,0,1
+1770085364367,8,viewProduct,200,,JPetStore Users 1-1,text,true,,3937,332,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewProduct=&productId=K9-BD-01,7,0,1
+1770085366363,7,viewItem,200,,JPetStore Users 1-1,text,true,,3588,323,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewItem=&itemId=EST-4,7,0,0
+1770085361635,6665,FlowA_Catalog,200,"Number of samples in transaction : 5, number of failing samples : 0",JPetStore Users 1-2,,true,,17168,1604,2,2,null,0,0,4
+1770085363239,3,home,200,,JPetStore Users 1-2,text,true,,1374,278,2,2,http://localhost:8083/jpetstore/,3,0,0
+1770085363825,6,search,200,,JPetStore Users 1-2,text,true,,4800,341,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?search=,6,0,1
+1770085365118,7,viewCategory,200,,JPetStore Users 1-2,text,true,,3469,330,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=&categoryId=CATS,7,0,1
+1770085367031,7,viewProduct,200,,JPetStore Users 1-2,text,true,,3937,332,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewProduct=&productId=K9-BD-01,7,0,1
+1770085368293,7,viewItem,200,,JPetStore Users 1-2,text,true,,3588,323,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewItem=&itemId=EST-4,6,0,1
+1770085366371,6112,FlowA_Catalog,200,"Number of samples in transaction : 5, number of failing samples : 0",JPetStore Users 1-1,,true,,16879,1606,2,2,null,0,0,5
+1770085367237,4,home,200,,JPetStore Users 1-1,text,true,,1374,278,2,2,http://localhost:8083/jpetstore/,4,0,1
+1770085368572,7,search,200,,JPetStore Users 1-1,text,true,,4800,342,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?search=,7,0,1
+1770085370146,6,viewCategory,200,,JPetStore Users 1-1,text,true,,3473,331,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=&categoryId=BIRDS,6,0,0
+1770085370694,7,viewProduct,200,,JPetStore Users 1-1,text,true,,3643,332,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewProduct=&productId=AV-CB-01,7,0,1
+1770085372475,8,viewItem,200,,JPetStore Users 1-1,text,true,,3589,323,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?viewItem=&itemId=EST-5,8,0,2
+1770085368301,5826,FlowA_Catalog,200,"Number of samples in transaction : 5, number of failing samples : 0",JPetStore Users 1-2,,true,,16879,1606,1,1,null,0,0,5
+1770085370081,4,home,200,,JPetStore Users 1-2,text,true,,1374,278,2,2,http://localhost:8083/jpetstore/,4,0,1
+1770085371384,7,search,200,,JPetStore Users 1-2,text,true,,4800,342,2,2,http://localhost:8083/jpetstore/actions/Catalog.action?search=,6,0,1
+1770085373021,7,viewCategory,200,,JPetStore Users 1-2,text,true,,3473,331,1,1,http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=&categoryId=BIRDS,7,0,1
+1770085373555,7,viewProduct,200,,JPetStore Users 1-2,text,true,,3643,332,1,1,http://localhost:8083/jpetstore/actions/Catalog.action?viewProduct=&productId=AV-CB-01,7,0,1
+1770085374121,6,viewItem,200,,JPetStore Users 1-2,text,true,,3589,323,1,1,http://localhost:8083/jpetstore/actions/Catalog.action?viewItem=&itemId=EST-5,6,0,1

@@ -18,6 +18,11 @@ subprojects {
     dependencies {
         compile 'javax:javaee-web-api:7.0'
     }
+
+    task copyDependencies(type: Copy) {
+        from configurations.runtime
+        into "$buildDir/dependency-jars"
+    }
 }
 
 project(':acmeair-common') {

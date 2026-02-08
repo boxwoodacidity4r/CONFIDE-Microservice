@@ -8,39 +8,75 @@ receivers:
 
 processors:
   batch:
-    timeout: 5s
-    send_batch_size: 100
+    # Lower flush latency for short benchmark runs so traces/logs are written promptly.
+    timeout: 1s
+    send_batch_size: 10
+
+  # Keep only SERVER spans to reduce client/lib noise (DB drivers, HTTP clients, etc.)
+  # NOTE: For temporal trace-to-class evidence we MUST keep INTERNAL spans.
+  # This processor is therefore DISABLED in the traces pipeline (kept here for reference).
+  filter/traces_server_only:
+    error_mode: ignore
+    traces:
+      span:
+        # drop spans that are not SERVER
+        - 'kind != SPAN_KIND_SERVER'
+
+  # Drop static asset/server noise (images/css/js/fonts) to keep only business-intent HTTP requests.
+  filter/traces_drop_static_assets:
+    error_mode: ignore
+    traces:
+      span:
+        # Drop if url.path looks like a static asset request
+        - 'attributes["url.path"] != nil and IsMatch(attributes["url.path"], "(?i)\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$") == true'
+        - 'attributes["url.path"] != nil and IsMatch(attributes["url.path"], "(?i)^/(favicon\\.ico|robots\\.txt)$") == true'
+        - 'attributes["url.path"] != nil and IsMatch(attributes["url.path"], "(?i)^/(static|assets|images|img|css|js)/") == true'
+        # JSF static resources (MyFaces/Mojarra), e.g. /javax.faces.resource/*.jsf
+        - 'attributes["url.path"] != nil and IsMatch(attributes["url.path"], "(?i)/javax\\.faces\\.resource/") == true'
+        # ImageServlet is typically UI asset delivery, not a business action
+        - 'attributes["url.path"] != nil and IsMatch(attributes["url.path"], "(?i)/servlet/ImageServlet$") == true'
+        # Cargo control panel / probe noise (not a business action)
+        - 'attributes["url.path"] != nil and IsMatch(attributes["url.path"], "(?i)^/cargocpc/") == true'
+
+  # Drop failed HTTP requests (4xx/5xx) so S_temp is built from successful business interactions only.
+  # Note: only applies when http.response.status_code is present.
+  filter/traces_drop_http_errors:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["http.response.status_code"] != nil and attributes["http.response.status_code"] >= 400'
+
+  # Remove noisy environment/process identifiers to keep traces lean for S_temp/sessionization.
+  resource/resource_cleanup:
+    attributes:
+      - key: process.command_line
+        action: delete
+      - key: process.command_args
+        action: delete
+      - key: process.executable.path
+        action: delete
+      - key: os.description
+        action: delete
+      - key: host.name
+        action: delete
+      - key: container.id
+        action: delete
 
 exporters:
-  # 1. 继续导出到 Jaeger（你现在已经在用）
-  jaeger:
-    endpoint: jaeger:14250
-    tls:
-      insecure: true
-
-  # 2. 控制台日志（调试用）
-  logging:
-    loglevel: debug
-
-  # 3. ⭐ 新增：导出到一个大的 JSON 文件（你要的 A 方案）
   file:
-    path: /traces/trace.json
-    rotation:
-      max_megabytes: 0        # 0 = 不限制大小
-      max_backups: 1          # 始终只有一个文件
-    format: json
+    path: /traces/all_traces.json
 
 service:
   pipelines:
+    # traces pipeline：仅处理 trace 信号，导出到 all_traces.json + Jaeger
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [jaeger, logging, file]
-    metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [logging]
-    logs:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [logging]
+      processors:
+        # IMPORTANT: keep INTERNAL spans so trace exports contain class/method/JDBC evidence.
+        # - filter/traces_server_only
+        - filter/traces_drop_static_assets
+        - filter/traces_drop_http_errors
+        - resource/resource_cleanup
+        - batch
+      exporters:
+        - file

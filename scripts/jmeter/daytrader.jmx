@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="DayTrader Enhanced Full Coverage" enabled="true">
+      <stringProp name="TestPlan.comments">Enhanced DayTrader full journey: register, login, portfolio, quotes, buy, sell, logout. Randomized users/symbols/quantities for rich data.</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+        <collectionProp name="Arguments.arguments">
+          <!-- 可在这里调整根路径与端口 -->
+          <elementProp name="BASE_PATH" elementType="Argument">
+            <stringProp name="Argument.name">BASE_PATH</stringProp>
+            <stringProp name="Argument.value">/daytrader</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"/>
+    </TestPlan>
+    <hashTree>
+      <!-- HTTP Request Defaults -->
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">localhost</stringProp>
+        <stringProp name="HTTPSampler.port">8082</stringProp>
+        <stringProp name="HTTPSampler.protocol">http</stringProp>
+        <stringProp name="HTTPSampler.path">${BASE_PATH}</stringProp>
+        <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+      </ConfigTestElement>
+      <hashTree/>
+
+      <!-- Cookie and Header Managers -->
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="Cookie Manager" enabled="true">
+        <!-- IMPORTANT: keep cookies across loop iterations so one thread models a continuous user session -->
+        <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+      </CookieManager>
+      <hashTree/>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Header Manager" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="Content-Type" elementType="Header">
+            <stringProp name="Header.name">Content-Type</stringProp>
+            <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+          </elementProp>
+          <elementProp name="Accept" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</stringProp>
+          </elementProp>
+          <!-- Add a per-request correlation id to help OTEL/log alignment (optional but useful) -->
+          <elementProp name="X-Request-Id" elementType="Header">
+            <stringProp name="Header.name">X-Request-Id</stringProp>
+            <stringProp name="Header.value">${__UUID}</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+
+      <!-- Thread Group: 调整 threads/loops 以控制生成样本量 -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="DayTrader Users" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <!-- increase sessions: each loop runs exactly one business variant -->
+          <stringProp name="LoopController.loops">18</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">20</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">30</stringProp>
+        <longProp name="ThreadGroup.start_time">0</longProp>
+        <longProp name="ThreadGroup.end_time">0</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+      </ThreadGroup>
+      <hashTree>
+
+        <!-- shared per-iteration variables -->
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="[internal] Pick Variant (A/B/C/D)" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script"><![CDATA[
+// Variant ratios (deterministic cycle to stabilize sample distribution across runs)
+// A=40%, B=30%, C=20%, D=10%
+int c = (vars.get('DT_COUNTER') ?: '0') as int
+int r = c % 10
+String v = (r < 4) ? 'A' : (r < 7) ? 'B' : (r < 9) ? 'C' : 'D'
+vars.put('DT_VARIANT', v)
+vars.put('DT_COUNTER', String.valueOf(c + 1))
+
+// always refresh symbol/quantity to increase evidence variety
+int sym = (int)(Math.random()*100)
+vars.put('SYMBOL', 's:' + sym)
+int qty = (int)(Math.random()*500) + 1
+vars.put('QUANTITY', String.valueOf(qty))
+
+// Mark this sampler as "ignore" for JTL post-filtering
+vars.put('JTL_IGNORE','1')
+]]></stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+
+        <!-- Variant A (40%): Market-Driven: Login -> MarketSummary -> Quotes -> AccountProfile -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF Variant=A (MarketDriven)" enabled="true">
+          <stringProp name="IfController.condition">${__groovy(vars.get('DT_VARIANT')=='A')}</stringProp>
+        </IfController>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="VA_MarketDriven" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">true</boolProp>
+          </TransactionController>
+          <hashTree>
+            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Generate User (UUID + RandomPass)" enabled="true">
+              <stringProp name="BeanShellSampler.query"><![CDATA[
+vars.put("USER_ID", "u_" + java.util.UUID.randomUUID().toString().replace("-", ""));
+vars.put("UP", String.valueOf((int)(Math.random()*900000) + 100000));
+]]></stringProp>
+            </BeanShellSampler>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Register" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">action</stringProp>
+                    <stringProp name="Argument.value">register</stringProp>
+                  </elementProp>
+                  <elementProp name="user_id" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">user_id</stringProp>
+                    <stringProp name="Argument.value">${USER_ID}</stringProp>
+                  </elementProp>
+                  <elementProp name="passwd" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">passwd</stringProp>
+                    <stringProp name="Argument.value">${UP}</stringProp>
+                  </elementProp>
+                  <elementProp name="full_name" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">full_name</stringProp>
+                    <stringProp name="Argument.value">TestUser</stringProp>
+                  </elementProp>
+                  <elementProp name="email" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">email</stringProp>
+                    <stringProp name="Argument.value">${USER_ID}@example.com</stringProp>
+                  </elementProp>
+                  <elementProp name="address" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">address</stringProp>
+                    <stringProp name="Argument.value">Test</stringProp>
+                  </elementProp>
+                  <elementProp name="credit_card" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">credit_card</stringProp>
+                    <stringProp name="Argument.value">${__Random(10000000,99999999,CC)}</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Login" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">action</stringProp>
+                    <stringProp name="Argument.value">login</stringProp>
+                  </elementProp>
+                  <elementProp name="uid" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">uid</stringProp>
+                    <stringProp name="Argument.value">${USER_ID}</stringProp>
+                  </elementProp>
+                  <elementProp name="passwd" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">passwd</stringProp>
+                    <stringProp name="Argument.value">${UP}</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Market Summary" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">action</stringProp>
+                    <stringProp name="Argument.value">marketSummary</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Quotes" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">action</stringProp>
+                    <stringProp name="Argument.value">quotes</stringProp>
+                  </elementProp>
+                  <elementProp name="symbols" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">symbols</stringProp>
+                    <stringProp name="Argument.value">${SYMBOL}</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Account Info" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">action</stringProp>
+                    <stringProp name="Argument.value">account</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+
+        <!-- Variant B (30%): Trade-Driven: Login -> Quotes -> BuyStock -> Portfolio -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF Variant=B (TradeDriven)" enabled="true">
+          <stringProp name="IfController.condition">${__groovy(vars.get('DT_VARIANT')=='B')}</stringProp>
+        </IfController>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="VB_TradeDriven" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">true</boolProp>
+          </TransactionController>
+          <hashTree>
+            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Generate User (UUID + RandomPass)" enabled="true">
+              <stringProp name="BeanShellSampler.query"><![CDATA[
+vars.put("USER_ID", "u_" + java.util.UUID.randomUUID().toString().replace("-", ""));
+vars.put("UP", String.valueOf((int)(Math.random()*900000) + 100000));
+]]></stringProp>
+            </BeanShellSampler>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Register" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">register</stringProp></elementProp>
+                  <elementProp name="user_id" elementType="HTTPArgument"><stringProp name="Argument.name">user_id</stringProp><stringProp name="Argument.value">${USER_ID}</stringProp></elementProp>
+                  <elementProp name="passwd" elementType="HTTPArgument"><stringProp name="Argument.name">passwd</stringProp><stringProp name="Argument.value">${UP}</stringProp></elementProp>
+                  <elementProp name="full_name" elementType="HTTPArgument"><stringProp name="Argument.name">full_name</stringProp><stringProp name="Argument.value">TestUser</stringProp></elementProp>
+                  <elementProp name="email" elementType="HTTPArgument"><stringProp name="Argument.name">email</stringProp><stringProp name="Argument.value">${USER_ID}@example.com</stringProp></elementProp>
+                  <elementProp name="address" elementType="HTTPArgument"><stringProp name="Argument.name">address</stringProp><stringProp name="Argument.value">Test</stringProp></elementProp>
+                  <elementProp name="credit_card" elementType="HTTPArgument"><stringProp name="Argument.name">credit_card</stringProp><stringProp name="Argument.value">${__Random(10000000,99999999,CC)}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Login" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">login</stringProp></elementProp>
+                  <elementProp name="uid" elementType="HTTPArgument"><stringProp name="Argument.name">uid</stringProp><stringProp name="Argument.value">${USER_ID}</stringProp></elementProp>
+                  <elementProp name="passwd" elementType="HTTPArgument"><stringProp name="Argument.name">passwd</stringProp><stringProp name="Argument.value">${UP}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Quotes" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">quotes</stringProp></elementProp>
+                  <elementProp name="symbols" elementType="HTTPArgument"><stringProp name="Argument.name">symbols</stringProp><stringProp name="Argument.value">${SYMBOL}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Buy Stock" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">buy</stringProp></elementProp>
+                  <elementProp name="symbol" elementType="HTTPArgument"><stringProp name="Argument.name">symbol</stringProp><stringProp name="Argument.value">${SYMBOL}</stringProp></elementProp>
+                  <elementProp name="quantity" elementType="HTTPArgument"><stringProp name="Argument.name">quantity</stringProp><stringProp name="Argument.value">${QUANTITY}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Portfolio" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">portfolio</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Extract HOLDINGID" enabled="true">
+                <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+                <stringProp name="RegexExtractor.refname">HOLDINGID</stringProp>
+                <stringProp name="RegexExtractor.regex">(?i)(?:holdingid|holdingId|holdingID)=([0-9]+)</stringProp>
+                <stringProp name="RegexExtractor.template">$1$</stringProp>
+                <stringProp name="RegexExtractor.default">NO_HOLDING</stringProp>
+                <stringProp name="RegexExtractor.match_number">1</stringProp>
+              </RegexExtractor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+
+        <!-- Variant C (20%): Wealth-Management: Login -> Portfolio -> SellStock -> AccountInfo -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF Variant=C (WealthManagement)" enabled="true">
+          <stringProp name="IfController.condition">${__groovy(vars.get('DT_VARIANT')=='C')}</stringProp>
+        </IfController>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="VC_WealthManagement" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">true</boolProp>
+          </TransactionController>
+          <hashTree>
+            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Generate User (UUID + RandomPass)" enabled="true">
+              <stringProp name="BeanShellSampler.query"><![CDATA[
+vars.put("USER_ID", "u_" + java.util.UUID.randomUUID().toString().replace("-", ""));
+vars.put("UP", String.valueOf((int)(Math.random()*900000) + 100000));
+]]></stringProp>
+            </BeanShellSampler>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Register" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">register</stringProp></elementProp>
+                  <elementProp name="user_id" elementType="HTTPArgument"><stringProp name="Argument.name">user_id</stringProp><stringProp name="Argument.value">${USER_ID}</stringProp></elementProp>
+                  <elementProp name="passwd" elementType="HTTPArgument"><stringProp name="Argument.name">passwd</stringProp><stringProp name="Argument.value">${UP}</stringProp></elementProp>
+                  <elementProp name="full_name" elementType="HTTPArgument"><stringProp name="Argument.name">full_name</stringProp><stringProp name="Argument.value">TestUser</stringProp></elementProp>
+                  <elementProp name="email" elementType="HTTPArgument"><stringProp name="Argument.name">email</stringProp><stringProp name="Argument.value">${USER_ID}@example.com</stringProp></elementProp>
+                  <elementProp name="address" elementType="HTTPArgument"><stringProp name="Argument.name">address</stringProp><stringProp name="Argument.value">Test</stringProp></elementProp>
+                  <elementProp name="credit_card" elementType="HTTPArgument"><stringProp name="Argument.name">credit_card</stringProp><stringProp name="Argument.value">${__Random(10000000,99999999,CC)}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Login" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">login</stringProp></elementProp>
+                  <elementProp name="uid" elementType="HTTPArgument"><stringProp name="Argument.name">uid</stringProp><stringProp name="Argument.value">${USER_ID}</stringProp></elementProp>
+                  <elementProp name="passwd" elementType="HTTPArgument"><stringProp name="Argument.name">passwd</stringProp><stringProp name="Argument.value">${UP}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Portfolio" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">portfolio</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Extract HOLDINGID" enabled="true">
+                <stringProp name="RegexExtractor.useHeaders">false</stringProp>
+                <stringProp name="RegexExtractor.refname">HOLDINGID</stringProp>
+                <stringProp name="RegexExtractor.regex">(?i)(?:holdingid|holdingId|holdingID)=([0-9]+)</stringProp>
+                <stringProp name="RegexExtractor.template">$1$</stringProp>
+                <stringProp name="RegexExtractor.default">NO_HOLDING</stringProp>
+                <stringProp name="RegexExtractor.match_number">1</stringProp>
+              </RegexExtractor>
+              <hashTree/>
+            </hashTree>
+
+            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Ensure HOLDINGID fallback" enabled="true">
+              <stringProp name="BeanShellSampler.query"><![CDATA[
+String h = vars.get("HOLDINGID");
+if (h == null || h.equals("NO_HOLDING") || h.equals("")) {
+  String f = String.valueOf((int)(Math.random()*10)+1);
+  vars.put("HOLDINGID", f);
+}
+]]></stringProp>
+            </BeanShellSampler>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Sell Stock (by HOLDINGID)" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">sell</stringProp></elementProp>
+                  <elementProp name="holdingid" elementType="HTTPArgument"><stringProp name="Argument.name">holdingid</stringProp><stringProp name="Argument.value">${HOLDINGID}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Account Info" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">account</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+
+        <!-- Variant D (10%): Inquiry: Login -> TradeHome -> Logout -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF Variant=D (Inquiry)" enabled="true">
+          <stringProp name="IfController.condition">${__groovy(vars.get('DT_VARIANT')=='D')}</stringProp>
+        </IfController>
+        <hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="VD_Inquiry" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">true</boolProp>
+          </TransactionController>
+          <hashTree>
+            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Generate User (UUID + RandomPass)" enabled="true">
+              <stringProp name="BeanShellSampler.query"><![CDATA[
+vars.put("USER_ID", "u_" + java.util.UUID.randomUUID().toString().replace("-", ""));
+vars.put("UP", String.valueOf((int)(Math.random()*900000) + 100000));
+]]></stringProp>
+            </BeanShellSampler>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Register" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">register</stringProp></elementProp>
+                  <elementProp name="user_id" elementType="HTTPArgument"><stringProp name="Argument.name">user_id</stringProp><stringProp name="Argument.value">${USER_ID}</stringProp></elementProp>
+                  <elementProp name="passwd" elementType="HTTPArgument"><stringProp name="Argument.name">passwd</stringProp><stringProp name="Argument.value">${UP}</stringProp></elementProp>
+                  <elementProp name="full_name" elementType="HTTPArgument"><stringProp name="Argument.name">full_name</stringProp><stringProp name="Argument.value">TestUser</stringProp></elementProp>
+                  <elementProp name="email" elementType="HTTPArgument"><stringProp name="Argument.name">email</stringProp><stringProp name="Argument.value">${USER_ID}@example.com</stringProp></elementProp>
+                  <elementProp name="address" elementType="HTTPArgument"><stringProp name="Argument.name">address</stringProp><stringProp name="Argument.value">Test</stringProp></elementProp>
+                  <elementProp name="credit_card" elementType="HTTPArgument"><stringProp name="Argument.name">credit_card</stringProp><stringProp name="Argument.value">${__Random(10000000,99999999,CC)}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Login" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">login</stringProp></elementProp>
+                  <elementProp name="uid" elementType="HTTPArgument"><stringProp name="Argument.name">uid</stringProp><stringProp name="Argument.value">${USER_ID}</stringProp></elementProp>
+                  <elementProp name="passwd" elementType="HTTPArgument"><stringProp name="Argument.name">passwd</stringProp><stringProp name="Argument.value">${UP}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Trade Home" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">home</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="User Logout" enabled="true">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/daytrader/app</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="action" elementType="HTTPArgument"><stringProp name="Argument.name">action</stringProp><stringProp name="Argument.value">logout</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+
+        <!-- Think Time: 模拟真实用户间隔 -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think Time (300-1200ms)" enabled="true">
+          <stringProp name="ConstantTimer.delay">300</stringProp>
+          <stringProp name="RandomTimer.range">900</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
+
+        <!-- Diagnostic sampler: produces a JTL sample so we can verify ResultCollector is recording samples -->
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="DIAG_FORCE_SAMPLE" enabled="false">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">SampleResult.setSuccessful(true); SampleResult.setResponseMessage('DIAG'); SampleResult.setResponseCode('200');</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

@@ -13,7 +13,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javaparser.version>3.25.4</javaparser.version>
+        <javaparser.version>3.25.10</javaparser.version>
         <jgrapht.version>1.5.1</jgrapht.version>
         <json.version>20230618</json.version>
     </properties>
@@ -36,7 +36,7 @@
            <version>2.15.2</version>
         </dependency>
 
-        <!-- JavaParser -->
+        <!-- JavaParser with SymbolSolver (核心依赖，支持符号解析) -->
         <dependency>
             <groupId>com.github.javaparser</groupId>
             <artifactId>javaparser-symbol-solver-core</artifactId>
@@ -55,6 +55,13 @@
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
+        </dependency>
+
+        <!-- Gson for JSON output -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.9</version>
         </dependency>
     </dependencies>
 

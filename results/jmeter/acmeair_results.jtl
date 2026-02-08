@@ -1,0 +1,661 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1770088471241,594,Open Home Page,200,OK,User Thread Group 1-1,text,true,,5437,166,2,2,http://localhost:8081/,590,0,22
+1770088471394,441,Open Home Page,200,OK,User Thread Group 1-2,text,true,,5437,166,2,2,http://localhost:8081/,437,0,1
+1770088472395,8,Open Home Page,200,OK,User Thread Group 1-3,text,true,,5437,166,3,3,http://localhost:8081/,8,0,0
+1770088471837,859,REST - Login (F2),200,OK,User Thread Group 1-2,text,true,,335,305,3,3,http://localhost:8081/rest/api/login,859,0,3
+1770088471838,858,REST - Login (F2),200,OK,User Thread Group 1-1,text,true,,335,305,3,3,http://localhost:8081/rest/api/login,858,0,2
+1770088472404,292,REST - Login (F2),200,OK,User Thread Group 1-3,text,true,,335,305,3,3,http://localhost:8081/rest/api/login,292,0,1
+1770088472698,45,REST - Search Flights (F2),200,OK,User Thread Group 1-3,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,45,0,1
+1770088472698,45,REST - Search Flights (F2),200,OK,User Thread Group 1-1,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,45,0,1
+1770088472698,45,REST - Search Flights (F2),200,OK,User Thread Group 1-2,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,45,0,1
+1770088472770,22,REST - Book Flight (F2),200,OK,User Thread Group 1-3,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,22,0,1
+1770088472770,22,REST - Book Flight (F2),200,OK,User Thread Group 1-2,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,22,0,1
+1770088472770,22,REST - Book Flight (F2),200,OK,User Thread Group 1-1,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,22,0,1
+1770088472793,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-3,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,5,0,1
+1770088472793,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-2,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,5,0,1
+1770088472793,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-1,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,5,0,1
+1770088472800,5,Open Home Page,200,OK,User Thread Group 1-2,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088472800,5,Open Home Page,200,OK,User Thread Group 1-3,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088472800,5,Open Home Page,200,OK,User Thread Group 1-1,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088472806,11,REST - Login (F2),200,OK,User Thread Group 1-1,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,11,0,1
+1770088472806,11,REST - Login (F2),200,OK,User Thread Group 1-3,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,11,0,1
+1770088472806,11,REST - Login (F2),200,OK,User Thread Group 1-2,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,11,0,1
+1770088472817,7,REST - Search Flights (F2),200,OK,User Thread Group 1-1,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,7,0,1
+1770088472818,6,REST - Search Flights (F2),200,OK,User Thread Group 1-2,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,6,0,1
+1770088472817,7,REST - Search Flights (F2),200,OK,User Thread Group 1-3,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,7,0,1
+1770088472825,10,REST - Book Flight (F2),200,OK,User Thread Group 1-3,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,10,0,0
+1770088472825,10,REST - Book Flight (F2),200,OK,User Thread Group 1-1,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,10,0,0
+1770088472825,10,REST - Book Flight (F2),200,OK,User Thread Group 1-2,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,10,0,0
+1770088472835,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-1,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,4,0,1
+1770088472835,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-3,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,5,0,1
+1770088472835,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-2,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,5,0,1
+1770088472842,5,Open Home Page,200,OK,User Thread Group 1-2,text,true,,5437,230,3,3,http://localhost:8081/,5,0,0
+1770088472841,6,Open Home Page,200,OK,User Thread Group 1-1,text,true,,5437,230,3,3,http://localhost:8081/,6,0,1
+1770088472841,6,Open Home Page,200,OK,User Thread Group 1-3,text,true,,5437,230,3,3,http://localhost:8081/,6,0,1
+1770088472848,14,REST - Login (F2),200,OK,User Thread Group 1-3,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,14,0,0
+1770088472848,14,REST - Login (F2),200,OK,User Thread Group 1-2,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,14,0,1
+1770088472848,14,REST - Login (F2),200,OK,User Thread Group 1-1,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,14,0,0
+1770088472863,11,REST - Search Flights (F2),200,OK,User Thread Group 1-3,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,11,0,1
+1770088472863,11,REST - Search Flights (F2),200,OK,User Thread Group 1-1,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,11,0,1
+1770088472863,12,REST - Search Flights (F2),200,OK,User Thread Group 1-2,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,11,0,1
+1770088472875,11,REST - Book Flight (F2),200,OK,User Thread Group 1-1,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,11,0,1
+1770088472876,11,REST - Book Flight (F2),200,OK,User Thread Group 1-2,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,10,0,0
+1770088472875,12,REST - Book Flight (F2),200,OK,User Thread Group 1-3,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,12,0,1
+1770088472887,6,Open Customer Profile Page (F2),200,OK,User Thread Group 1-3,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,6,0,1
+1770088472887,6,Open Customer Profile Page (F2),200,OK,User Thread Group 1-1,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,6,0,0
+1770088472887,6,Open Customer Profile Page (F2),200,OK,User Thread Group 1-2,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,6,0,0
+1770088472895,5,Open Home Page,200,OK,User Thread Group 1-3,text,true,,5437,230,3,3,http://localhost:8081/,5,0,0
+1770088472895,5,Open Home Page,200,OK,User Thread Group 1-2,text,true,,5437,230,3,3,http://localhost:8081/,5,0,0
+1770088472895,5,Open Home Page,200,OK,User Thread Group 1-1,text,true,,5437,230,3,3,http://localhost:8081/,5,0,0
+1770088472901,10,REST - Login (F2),200,OK,User Thread Group 1-1,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,10,0,0
+1770088472901,10,REST - Login (F2),200,OK,User Thread Group 1-3,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,10,0,0
+1770088472901,10,REST - Login (F2),200,OK,User Thread Group 1-2,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,10,0,0
+1770088472912,7,REST - Search Flights (F2),200,OK,User Thread Group 1-3,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,7,0,1
+1770088472912,7,REST - Search Flights (F2),200,OK,User Thread Group 1-1,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,7,0,1
+1770088472912,7,REST - Search Flights (F2),200,OK,User Thread Group 1-2,text,true,,371,428,3,3,http://localhost:8081/rest/api/flights/queryflights,7,0,1
+1770088472920,12,REST - Book Flight (F2),200,OK,User Thread Group 1-2,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,12,0,1
+1770088472921,11,REST - Book Flight (F2),200,OK,User Thread Group 1-1,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,11,0,0
+1770088472920,13,REST - Book Flight (F2),200,OK,User Thread Group 1-3,text,true,,291,368,3,3,http://localhost:8081/rest/api/bookings/bookflights,12,0,1
+1770088472933,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-2,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,4,0,0
+1770088472933,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-1,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,4,0,0
+1770088472933,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-3,text,true,,11572,250,3,3,http://localhost:8081/customerprofile.html,4,0,1
+1770088472939,5,Open Home Page,200,OK,User Thread Group 1-2,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088472939,5,Open Home Page,200,OK,User Thread Group 1-3,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088472941,3,Open Home Page,200,OK,User Thread Group 1-1,text,true,,5437,230,3,3,http://localhost:8081/,3,0,0
+1770088472944,10,REST - Login (F3),200,OK,User Thread Group 1-1,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,10,0,1
+1770088472944,10,REST - Login (F3),200,OK,User Thread Group 1-3,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,10,0,1
+1770088472944,10,REST - Login (F3),200,OK,User Thread Group 1-2,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,10,0,1
+1770088472955,11,REST - Get Bookings (F3),200,OK,User Thread Group 1-3,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,11,0,1
+1770088472955,11,REST - Get Bookings (F3),200,OK,User Thread Group 1-2,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,11,0,1
+1770088472955,11,REST - Get Bookings (F3),200,OK,User Thread Group 1-1,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,11,0,1
+1770088472987,5,Open Home Page,200,OK,User Thread Group 1-1,text,true,,5437,230,3,3,http://localhost:8081/,5,0,0
+1770088472987,5,Open Home Page,200,OK,User Thread Group 1-2,text,true,,5437,230,3,3,http://localhost:8081/,5,0,0
+1770088472987,5,Open Home Page,200,OK,User Thread Group 1-3,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088472993,11,REST - Login (F3),200,OK,User Thread Group 1-1,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,11,0,1
+1770088472993,11,REST - Login (F3),200,OK,User Thread Group 1-3,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,11,0,1
+1770088472993,11,REST - Login (F3),200,OK,User Thread Group 1-2,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,11,0,1
+1770088473005,9,REST - Get Bookings (F3),200,OK,User Thread Group 1-3,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,9,0,1
+1770088473005,9,REST - Get Bookings (F3),200,OK,User Thread Group 1-2,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,9,0,0
+1770088473005,9,REST - Get Bookings (F3),200,OK,User Thread Group 1-1,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,9,0,1
+1770088473018,5,Open Home Page,200,OK,User Thread Group 1-3,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088473018,5,Open Home Page,200,OK,User Thread Group 1-1,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088473018,5,Open Home Page,200,OK,User Thread Group 1-2,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088473024,9,REST - Login (F3),200,OK,User Thread Group 1-1,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,9,0,1
+1770088473024,9,REST - Login (F3),200,OK,User Thread Group 1-2,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,9,0,1
+1770088473024,9,REST - Login (F3),200,OK,User Thread Group 1-3,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,9,0,1
+1770088473034,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-1,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,7,0,1
+1770088473034,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-3,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,7,0,0
+1770088473034,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-2,text,true,,161,269,3,3,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,7,0,0
+1770088473045,4,Open Home Page,200,OK,User Thread Group 1-3,text,true,,5437,230,3,3,http://localhost:8081/,4,0,0
+1770088473044,5,Open Home Page,200,OK,User Thread Group 1-2,text,true,,5437,230,3,3,http://localhost:8081/,5,0,1
+1770088473046,4,Open Home Page,200,OK,User Thread Group 1-1,text,true,,5437,230,3,3,http://localhost:8081/,4,0,1
+1770088473050,8,REST - Login (F4),200,OK,User Thread Group 1-1,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,8,0,1
+1770088473050,8,REST - Login (F4),200,OK,User Thread Group 1-2,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,8,0,1
+1770088473050,8,REST - Login (F4),200,OK,User Thread Group 1-3,text,true,,335,369,3,3,http://localhost:8081/rest/api/login,8,0,0
+1770088473059,53,REST - Get Customer (F4),200,OK,User Thread Group 1-3,text,true,,499,267,3,3,http://localhost:8081/rest/api/customer/byid/uid7@email.com,52,0,0
+1770088473059,53,REST - Get Customer (F4),200,OK,User Thread Group 1-1,text,true,,499,267,3,3,http://localhost:8081/rest/api/customer/byid/uid7@email.com,52,0,0
+1770088473059,53,REST - Get Customer (F4),200,OK,User Thread Group 1-2,text,true,,499,267,3,3,http://localhost:8081/rest/api/customer/byid/uid7@email.com,52,0,0
+1770088473112,16,REST - Update Customer (F4),404,Not Found,User Thread Group 1-1,,false,,126,361,3,3,http://localhost:8081/rest/api/customer/update,16,0,1
+1770088473112,16,REST - Update Customer (F4),404,Not Found,User Thread Group 1-2,,false,,126,361,3,3,http://localhost:8081/rest/api/customer/update,16,0,1
+1770088473112,16,REST - Update Customer (F4),404,Not Found,User Thread Group 1-3,,false,,126,361,3,3,http://localhost:8081/rest/api/customer/update,16,0,1
+1770088473394,6,Open Home Page,200,OK,User Thread Group 1-4,text,true,,5437,166,1,1,http://localhost:8081/,5,0,1
+1770088473400,8,REST - Login (F2),200,OK,User Thread Group 1-4,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088473408,5,REST - Search Flights (F2),200,OK,User Thread Group 1-4,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,1
+1770088473414,9,REST - Book Flight (F2),200,OK,User Thread Group 1-4,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,9,0,1
+1770088473423,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-4,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088473428,4,Open Home Page,200,OK,User Thread Group 1-4,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088473433,12,REST - Login (F2),200,OK,User Thread Group 1-4,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,11,0,0
+1770088473445,6,REST - Search Flights (F2),200,OK,User Thread Group 1-4,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,6,0,1
+1770088473452,9,REST - Book Flight (F2),200,OK,User Thread Group 1-4,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,9,0,1
+1770088473461,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-4,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,5,0,1
+1770088473467,3,Open Home Page,200,OK,User Thread Group 1-4,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088473471,8,REST - Login (F2),200,OK,User Thread Group 1-4,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088473480,6,REST - Search Flights (F2),200,OK,User Thread Group 1-4,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,6,0,1
+1770088473487,8,REST - Book Flight (F2),200,OK,User Thread Group 1-4,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,0
+1770088473496,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-4,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,0
+1770088473501,3,Open Home Page,200,OK,User Thread Group 1-4,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088473504,8,REST - Login (F2),200,OK,User Thread Group 1-4,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088473513,4,REST - Search Flights (F2),200,OK,User Thread Group 1-4,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088473518,7,REST - Book Flight (F2),200,OK,User Thread Group 1-4,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088473525,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-4,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088473530,3,Open Home Page,200,OK,User Thread Group 1-4,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088473534,6,REST - Login (F3),200,OK,User Thread Group 1-4,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088473541,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-4,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,6,0,0
+1770088473553,4,Open Home Page,200,OK,User Thread Group 1-4,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088473558,7,REST - Login (F3),200,OK,User Thread Group 1-4,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088473565,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-4,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,6,0,1
+1770088473574,4,Open Home Page,200,OK,User Thread Group 1-4,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088473579,7,REST - Login (F3),200,OK,User Thread Group 1-4,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088473586,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-4,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,7,0,1
+1770088473595,4,Open Home Page,200,OK,User Thread Group 1-4,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088473599,8,REST - Login (F4),200,OK,User Thread Group 1-4,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088473608,10,REST - Get Customer (F4),200,OK,User Thread Group 1-4,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,9,0,3
+1770088473618,5,REST - Update Customer (F4),404,Not Found,User Thread Group 1-4,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,5,0,1
+1770088474395,6,Open Home Page,200,OK,User Thread Group 1-5,text,true,,5437,166,1,1,http://localhost:8081/,6,0,1
+1770088474401,9,REST - Login (F2),200,OK,User Thread Group 1-5,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088474410,6,REST - Search Flights (F2),200,OK,User Thread Group 1-5,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,6,0,1
+1770088474417,8,REST - Book Flight (F2),200,OK,User Thread Group 1-5,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,1
+1770088474425,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-5,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088474430,4,Open Home Page,200,OK,User Thread Group 1-5,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088474434,8,REST - Login (F2),200,OK,User Thread Group 1-5,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088474442,6,REST - Search Flights (F2),200,OK,User Thread Group 1-5,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,1
+1770088474449,9,REST - Book Flight (F2),200,OK,User Thread Group 1-5,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,0
+1770088474458,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-5,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088474463,5,Open Home Page,200,OK,User Thread Group 1-5,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088474468,8,REST - Login (F2),200,OK,User Thread Group 1-5,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088474477,5,REST - Search Flights (F2),200,OK,User Thread Group 1-5,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,0
+1770088474483,8,REST - Book Flight (F2),200,OK,User Thread Group 1-5,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,0
+1770088474492,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-5,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088474496,4,Open Home Page,200,OK,User Thread Group 1-5,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088474501,8,REST - Login (F2),200,OK,User Thread Group 1-5,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,0
+1770088474509,4,REST - Search Flights (F2),200,OK,User Thread Group 1-5,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088474514,8,REST - Book Flight (F2),200,OK,User Thread Group 1-5,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,1
+1770088474523,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-5,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088474528,4,Open Home Page,200,OK,User Thread Group 1-5,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088474532,8,REST - Login (F3),200,OK,User Thread Group 1-5,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088474541,8,REST - Get Bookings (F3),200,OK,User Thread Group 1-5,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,8,0,0
+1770088474555,4,Open Home Page,200,OK,User Thread Group 1-5,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088474560,8,REST - Login (F3),200,OK,User Thread Group 1-5,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088474569,8,REST - Get Bookings (F3),200,OK,User Thread Group 1-5,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,8,0,0
+1770088474580,5,Open Home Page,200,OK,User Thread Group 1-5,text,true,,5437,230,1,1,http://localhost:8081/,5,0,1
+1770088474586,9,REST - Login (F3),200,OK,User Thread Group 1-5,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,0
+1770088474595,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-5,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,7,0,1
+1770088474605,5,Open Home Page,200,OK,User Thread Group 1-5,text,true,,5437,230,1,1,http://localhost:8081/,5,0,1
+1770088474610,8,REST - Login (F4),200,OK,User Thread Group 1-5,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088474618,7,REST - Get Customer (F4),200,OK,User Thread Group 1-5,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,7,0,1
+1770088474626,5,REST - Update Customer (F4),404,Not Found,User Thread Group 1-5,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,5,0,0
+1770088475393,5,Open Home Page,200,OK,User Thread Group 1-6,text,true,,5437,166,1,1,http://localhost:8081/,5,0,0
+1770088475398,7,REST - Login (F2),200,OK,User Thread Group 1-6,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088475406,4,REST - Search Flights (F2),200,OK,User Thread Group 1-6,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088475411,6,REST - Book Flight (F2),200,OK,User Thread Group 1-6,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088475417,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-6,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088475422,2,Open Home Page,200,OK,User Thread Group 1-6,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088475425,5,REST - Login (F2),200,OK,User Thread Group 1-6,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088475431,3,REST - Search Flights (F2),200,OK,User Thread Group 1-6,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088475435,6,REST - Book Flight (F2),200,OK,User Thread Group 1-6,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088475442,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-6,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088475447,3,Open Home Page,200,OK,User Thread Group 1-6,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088475450,7,REST - Login (F2),200,OK,User Thread Group 1-6,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088475457,5,REST - Search Flights (F2),200,OK,User Thread Group 1-6,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,1
+1770088475462,7,REST - Book Flight (F2),200,OK,User Thread Group 1-6,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088475470,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-6,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088475474,3,Open Home Page,200,OK,User Thread Group 1-6,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088475477,6,REST - Login (F2),200,OK,User Thread Group 1-6,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088475483,4,REST - Search Flights (F2),200,OK,User Thread Group 1-6,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088475487,6,REST - Book Flight (F2),200,OK,User Thread Group 1-6,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,1
+1770088475493,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-6,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088475497,3,Open Home Page,200,OK,User Thread Group 1-6,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088475500,7,REST - Login (F3),200,OK,User Thread Group 1-6,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088475507,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-6,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,5,0,0
+1770088475518,4,Open Home Page,200,OK,User Thread Group 1-6,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088475522,7,REST - Login (F3),200,OK,User Thread Group 1-6,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088475529,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-6,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,6,0,0
+1770088475538,3,Open Home Page,200,OK,User Thread Group 1-6,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088475541,6,REST - Login (F3),200,OK,User Thread Group 1-6,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088475548,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-6,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,5,0,0
+1770088475556,3,Open Home Page,200,OK,User Thread Group 1-6,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088475559,6,REST - Login (F4),200,OK,User Thread Group 1-6,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088475566,5,REST - Get Customer (F4),200,OK,User Thread Group 1-6,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,5,0,0
+1770088475572,4,REST - Update Customer (F4),404,Not Found,User Thread Group 1-6,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,4,0,0
+1770088476392,5,Open Home Page,200,OK,User Thread Group 1-7,text,true,,5437,166,1,1,http://localhost:8081/,5,0,1
+1770088476397,7,REST - Login (F2),200,OK,User Thread Group 1-7,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088476405,4,REST - Search Flights (F2),200,OK,User Thread Group 1-7,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088476410,7,REST - Book Flight (F2),200,OK,User Thread Group 1-7,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088476417,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-7,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088476421,3,Open Home Page,200,OK,User Thread Group 1-7,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088476425,6,REST - Login (F2),200,OK,User Thread Group 1-7,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088476431,4,REST - Search Flights (F2),200,OK,User Thread Group 1-7,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088476436,6,REST - Book Flight (F2),200,OK,User Thread Group 1-7,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088476443,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-7,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,2,0,0
+1770088476447,4,Open Home Page,200,OK,User Thread Group 1-7,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088476451,7,REST - Login (F2),200,OK,User Thread Group 1-7,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088476459,4,REST - Search Flights (F2),200,OK,User Thread Group 1-7,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088476464,7,REST - Book Flight (F2),200,OK,User Thread Group 1-7,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088476471,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-7,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088476476,2,Open Home Page,200,OK,User Thread Group 1-7,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088476479,6,REST - Login (F2),200,OK,User Thread Group 1-7,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088476485,4,REST - Search Flights (F2),200,OK,User Thread Group 1-7,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088476490,6,REST - Book Flight (F2),200,OK,User Thread Group 1-7,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088476497,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-7,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088476501,3,Open Home Page,200,OK,User Thread Group 1-7,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088476504,6,REST - Login (F3),200,OK,User Thread Group 1-7,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088476511,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-7,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,5,0,0
+1770088476522,3,Open Home Page,200,OK,User Thread Group 1-7,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088476525,7,REST - Login (F3),200,OK,User Thread Group 1-7,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088476533,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-7,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,5,0,0
+1770088476541,4,Open Home Page,200,OK,User Thread Group 1-7,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088476546,6,REST - Login (F3),200,OK,User Thread Group 1-7,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088476552,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-7,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,6,0,1
+1770088476560,4,Open Home Page,200,OK,User Thread Group 1-7,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088476564,6,REST - Login (F4),200,OK,User Thread Group 1-7,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088476571,6,REST - Get Customer (F4),200,OK,User Thread Group 1-7,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,6,0,0
+1770088476577,5,REST - Update Customer (F4),404,Not Found,User Thread Group 1-7,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,5,0,1
+1770088477394,4,Open Home Page,200,OK,User Thread Group 1-8,text,true,,5437,166,1,1,http://localhost:8081/,4,0,0
+1770088477398,8,REST - Login (F2),200,OK,User Thread Group 1-8,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088477406,6,REST - Search Flights (F2),200,OK,User Thread Group 1-8,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,6,0,1
+1770088477413,7,REST - Book Flight (F2),200,OK,User Thread Group 1-8,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088477420,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-8,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088477425,3,Open Home Page,200,OK,User Thread Group 1-8,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088477428,7,REST - Login (F2),200,OK,User Thread Group 1-8,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088477436,4,REST - Search Flights (F2),200,OK,User Thread Group 1-8,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088477441,9,REST - Book Flight (F2),200,OK,User Thread Group 1-8,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,1
+1770088477450,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-8,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,0
+1770088477455,3,Open Home Page,200,OK,User Thread Group 1-8,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088477458,7,REST - Login (F2),200,OK,User Thread Group 1-8,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088477466,4,REST - Search Flights (F2),200,OK,User Thread Group 1-8,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088477470,7,REST - Book Flight (F2),200,OK,User Thread Group 1-8,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088477477,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-8,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088477481,3,Open Home Page,200,OK,User Thread Group 1-8,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088477485,6,REST - Login (F2),200,OK,User Thread Group 1-8,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088477491,4,REST - Search Flights (F2),200,OK,User Thread Group 1-8,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088477496,6,REST - Book Flight (F2),200,OK,User Thread Group 1-8,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088477503,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-8,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088477507,4,Open Home Page,200,OK,User Thread Group 1-8,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088477511,11,REST - Login (F3),200,OK,User Thread Group 1-8,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,11,0,1
+1770088477523,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-8,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,6,0,0
+1770088477534,4,Open Home Page,200,OK,User Thread Group 1-8,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088477539,7,REST - Login (F3),200,OK,User Thread Group 1-8,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088477547,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-8,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,6,0,1
+1770088477556,4,Open Home Page,200,OK,User Thread Group 1-8,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088477560,8,REST - Login (F3),200,OK,User Thread Group 1-8,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088477569,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-8,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,7,0,1
+1770088477579,4,Open Home Page,200,OK,User Thread Group 1-8,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088477583,8,REST - Login (F4),200,OK,User Thread Group 1-8,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088477591,9,REST - Get Customer (F4),200,OK,User Thread Group 1-8,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,9,0,3
+1770088477601,6,REST - Update Customer (F4),404,Not Found,User Thread Group 1-8,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,6,0,1
+1770088478396,4,Open Home Page,200,OK,User Thread Group 1-9,text,true,,5437,166,1,1,http://localhost:8081/,4,0,0
+1770088478401,8,REST - Login (F2),200,OK,User Thread Group 1-9,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,8,0,0
+1770088478410,6,REST - Search Flights (F2),200,OK,User Thread Group 1-9,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,1
+1770088478416,8,REST - Book Flight (F2),200,OK,User Thread Group 1-9,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,1
+1770088478424,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-9,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088478428,4,Open Home Page,200,OK,User Thread Group 1-9,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088478432,8,REST - Login (F2),200,OK,User Thread Group 1-9,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088478440,6,REST - Search Flights (F2),200,OK,User Thread Group 1-9,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088478447,7,REST - Book Flight (F2),200,OK,User Thread Group 1-9,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088478454,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-9,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088478459,3,Open Home Page,200,OK,User Thread Group 1-9,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088478462,6,REST - Login (F2),200,OK,User Thread Group 1-9,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088478468,4,REST - Search Flights (F2),200,OK,User Thread Group 1-9,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088478472,7,REST - Book Flight (F2),200,OK,User Thread Group 1-9,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088478479,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-9,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,0
+1770088478483,3,Open Home Page,200,OK,User Thread Group 1-9,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088478487,5,REST - Login (F2),200,OK,User Thread Group 1-9,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088478492,4,REST - Search Flights (F2),200,OK,User Thread Group 1-9,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088478496,7,REST - Book Flight (F2),200,OK,User Thread Group 1-9,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088478503,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-9,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088478507,3,Open Home Page,200,OK,User Thread Group 1-9,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088478510,7,REST - Login (F3),200,OK,User Thread Group 1-9,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088478517,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-9,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,5,0,0
+1770088478529,4,Open Home Page,200,OK,User Thread Group 1-9,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088478533,7,REST - Login (F3),200,OK,User Thread Group 1-9,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088478540,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-9,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,6,0,1
+1770088478548,4,Open Home Page,200,OK,User Thread Group 1-9,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088478552,7,REST - Login (F3),200,OK,User Thread Group 1-9,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088478559,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-9,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,6,0,1
+1770088478568,4,Open Home Page,200,OK,User Thread Group 1-9,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088478572,7,REST - Login (F4),200,OK,User Thread Group 1-9,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088478579,6,REST - Get Customer (F4),200,OK,User Thread Group 1-9,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,6,0,1
+1770088478585,5,REST - Update Customer (F4),404,Not Found,User Thread Group 1-9,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,5,0,1
+1770088479400,4,Open Home Page,200,OK,User Thread Group 1-10,text,true,,5437,166,1,1,http://localhost:8081/,4,0,1
+1770088479405,7,REST - Login (F2),200,OK,User Thread Group 1-10,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088479412,4,REST - Search Flights (F2),200,OK,User Thread Group 1-10,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088479417,7,REST - Book Flight (F2),200,OK,User Thread Group 1-10,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088479424,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-10,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088479428,3,Open Home Page,200,OK,User Thread Group 1-10,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088479431,7,REST - Login (F2),200,OK,User Thread Group 1-10,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088479438,4,REST - Search Flights (F2),200,OK,User Thread Group 1-10,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088479443,6,REST - Book Flight (F2),200,OK,User Thread Group 1-10,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088479450,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-10,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088479454,3,Open Home Page,200,OK,User Thread Group 1-10,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088479457,7,REST - Login (F2),200,OK,User Thread Group 1-10,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088479464,4,REST - Search Flights (F2),200,OK,User Thread Group 1-10,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088479469,6,REST - Book Flight (F2),200,OK,User Thread Group 1-10,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088479475,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-10,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088479479,4,Open Home Page,200,OK,User Thread Group 1-10,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088479483,6,REST - Login (F2),200,OK,User Thread Group 1-10,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088479490,4,REST - Search Flights (F2),200,OK,User Thread Group 1-10,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088479495,9,REST - Book Flight (F2),200,OK,User Thread Group 1-10,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,9,0,1
+1770088479504,5,Open Customer Profile Page (F2),200,OK,User Thread Group 1-10,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088479510,3,Open Home Page,200,OK,User Thread Group 1-10,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088479513,7,REST - Login (F3),200,OK,User Thread Group 1-10,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088479520,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-10,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,6,0,1
+1770088479532,5,Open Home Page,200,OK,User Thread Group 1-10,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088479537,7,REST - Login (F3),200,OK,User Thread Group 1-10,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088479545,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-10,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,7,0,0
+1770088479555,4,Open Home Page,200,OK,User Thread Group 1-10,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088479560,7,REST - Login (F3),200,OK,User Thread Group 1-10,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088479567,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-10,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,7,0,1
+1770088479577,4,Open Home Page,200,OK,User Thread Group 1-10,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088479581,7,REST - Login (F4),200,OK,User Thread Group 1-10,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088479588,6,REST - Get Customer (F4),200,OK,User Thread Group 1-10,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,6,0,1
+1770088479594,5,REST - Update Customer (F4),404,Not Found,User Thread Group 1-10,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,5,0,1
+1770088480393,4,Open Home Page,200,OK,User Thread Group 1-11,text,true,,5437,166,1,1,http://localhost:8081/,4,0,1
+1770088480398,6,REST - Login (F2),200,OK,User Thread Group 1-11,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088480404,4,REST - Search Flights (F2),200,OK,User Thread Group 1-11,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088480409,8,REST - Book Flight (F2),200,OK,User Thread Group 1-11,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,1
+1770088480417,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-11,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088480422,3,Open Home Page,200,OK,User Thread Group 1-11,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088480425,7,REST - Login (F2),200,OK,User Thread Group 1-11,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088480432,4,REST - Search Flights (F2),200,OK,User Thread Group 1-11,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088480437,6,REST - Book Flight (F2),200,OK,User Thread Group 1-11,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088480443,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-11,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088480447,4,Open Home Page,200,OK,User Thread Group 1-11,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088480452,6,REST - Login (F2),200,OK,User Thread Group 1-11,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088480459,3,REST - Search Flights (F2),200,OK,User Thread Group 1-11,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088480463,6,REST - Book Flight (F2),200,OK,User Thread Group 1-11,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088480469,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-11,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088480473,3,Open Home Page,200,OK,User Thread Group 1-11,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088480476,6,REST - Login (F2),200,OK,User Thread Group 1-11,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088480482,4,REST - Search Flights (F2),200,OK,User Thread Group 1-11,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088480486,7,REST - Book Flight (F2),200,OK,User Thread Group 1-11,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,1
+1770088480493,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-11,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088480497,2,Open Home Page,200,OK,User Thread Group 1-11,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088480499,6,REST - Login (F3),200,OK,User Thread Group 1-11,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088480505,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-11,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,5,0,0
+1770088480514,3,Open Home Page,200,OK,User Thread Group 1-11,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088480518,5,REST - Login (F3),200,OK,User Thread Group 1-11,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088480524,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-11,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,5,0,0
+1770088480531,4,Open Home Page,200,OK,User Thread Group 1-11,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088480535,7,REST - Login (F3),200,OK,User Thread Group 1-11,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088480543,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-11,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,5,0,0
+1770088480550,3,Open Home Page,200,OK,User Thread Group 1-11,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088480553,6,REST - Login (F4),200,OK,User Thread Group 1-11,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088480559,5,REST - Get Customer (F4),200,OK,User Thread Group 1-11,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,5,0,1
+1770088480565,4,REST - Update Customer (F4),404,Not Found,User Thread Group 1-11,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,4,0,0
+1770088481393,5,Open Home Page,200,OK,User Thread Group 1-12,text,true,,5437,166,1,1,http://localhost:8081/,5,0,1
+1770088481398,6,REST - Login (F2),200,OK,User Thread Group 1-12,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088481405,4,REST - Search Flights (F2),200,OK,User Thread Group 1-12,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088481410,6,REST - Book Flight (F2),200,OK,User Thread Group 1-12,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088481417,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-12,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088481421,3,Open Home Page,200,OK,User Thread Group 1-12,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088481424,6,REST - Login (F2),200,OK,User Thread Group 1-12,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088481430,4,REST - Search Flights (F2),200,OK,User Thread Group 1-12,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088481435,7,REST - Book Flight (F2),200,OK,User Thread Group 1-12,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088481442,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-12,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088481446,3,Open Home Page,200,OK,User Thread Group 1-12,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088481449,6,REST - Login (F2),200,OK,User Thread Group 1-12,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088481455,5,REST - Search Flights (F2),200,OK,User Thread Group 1-12,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,1
+1770088481461,6,REST - Book Flight (F2),200,OK,User Thread Group 1-12,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088481468,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-12,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088481472,3,Open Home Page,200,OK,User Thread Group 1-12,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088481475,7,REST - Login (F2),200,OK,User Thread Group 1-12,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088481482,4,REST - Search Flights (F2),200,OK,User Thread Group 1-12,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088481487,7,REST - Book Flight (F2),200,OK,User Thread Group 1-12,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088481494,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-12,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088481499,4,Open Home Page,200,OK,User Thread Group 1-12,text,true,,5437,230,1,1,http://localhost:8081/,4,0,2
+1770088481504,8,REST - Login (F3),200,OK,User Thread Group 1-12,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088481513,8,REST - Get Bookings (F3),200,OK,User Thread Group 1-12,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,8,0,1
+1770088481527,5,Open Home Page,200,OK,User Thread Group 1-12,text,true,,5437,230,1,1,http://localhost:8081/,5,0,1
+1770088481532,8,REST - Login (F3),200,OK,User Thread Group 1-12,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088481541,13,REST - Get Bookings (F3),200,OK,User Thread Group 1-12,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,13,0,1
+1770088481556,5,Open Home Page,200,OK,User Thread Group 1-12,text,true,,5437,230,1,1,http://localhost:8081/,5,0,1
+1770088481561,7,REST - Login (F3),200,OK,User Thread Group 1-12,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088481569,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-12,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,6,0,0
+1770088481578,4,Open Home Page,200,OK,User Thread Group 1-12,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088481582,7,REST - Login (F4),200,OK,User Thread Group 1-12,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088481590,7,REST - Get Customer (F4),200,OK,User Thread Group 1-12,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,7,0,0
+1770088481597,6,REST - Update Customer (F4),404,Not Found,User Thread Group 1-12,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,6,0,1
+1770088482394,5,Open Home Page,200,OK,User Thread Group 1-13,text,true,,5437,166,1,1,http://localhost:8081/,5,0,1
+1770088482399,6,REST - Login (F2),200,OK,User Thread Group 1-13,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088482406,4,REST - Search Flights (F2),200,OK,User Thread Group 1-13,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088482411,7,REST - Book Flight (F2),200,OK,User Thread Group 1-13,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088482418,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-13,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088482421,3,Open Home Page,200,OK,User Thread Group 1-13,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088482425,5,REST - Login (F2),200,OK,User Thread Group 1-13,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088482430,4,REST - Search Flights (F2),200,OK,User Thread Group 1-13,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088482434,7,REST - Book Flight (F2),200,OK,User Thread Group 1-13,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088482442,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-13,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088482445,4,Open Home Page,200,OK,User Thread Group 1-13,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088482449,8,REST - Login (F2),200,OK,User Thread Group 1-13,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088482457,4,REST - Search Flights (F2),200,OK,User Thread Group 1-13,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088482462,7,REST - Book Flight (F2),200,OK,User Thread Group 1-13,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088482469,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-13,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088482474,3,Open Home Page,200,OK,User Thread Group 1-13,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088482477,7,REST - Login (F2),200,OK,User Thread Group 1-13,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088482484,5,REST - Search Flights (F2),200,OK,User Thread Group 1-13,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,1
+1770088482490,7,REST - Book Flight (F2),200,OK,User Thread Group 1-13,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088482498,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-13,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088482502,3,Open Home Page,200,OK,User Thread Group 1-13,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088482506,6,REST - Login (F3),200,OK,User Thread Group 1-13,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088482513,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-13,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,6,0,0
+1770088482524,5,Open Home Page,200,OK,User Thread Group 1-13,text,true,,5437,230,1,1,http://localhost:8081/,5,0,1
+1770088482529,8,REST - Login (F3),200,OK,User Thread Group 1-13,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,8,0,1
+1770088482538,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-13,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,6,0,0
+1770088482546,3,Open Home Page,200,OK,User Thread Group 1-13,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088482550,6,REST - Login (F3),200,OK,User Thread Group 1-13,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088482556,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-13,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,6,0,0
+1770088482564,6,Open Home Page,200,OK,User Thread Group 1-13,text,true,,5437,230,1,1,http://localhost:8081/,6,0,0
+1770088482570,7,REST - Login (F4),200,OK,User Thread Group 1-13,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088482577,7,REST - Get Customer (F4),200,OK,User Thread Group 1-13,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,6,0,0
+1770088482584,6,REST - Update Customer (F4),404,Not Found,User Thread Group 1-13,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,6,0,0
+1770088483395,5,Open Home Page,200,OK,User Thread Group 1-14,text,true,,5437,166,1,1,http://localhost:8081/,4,0,0
+1770088483400,6,REST - Login (F2),200,OK,User Thread Group 1-14,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088483407,3,REST - Search Flights (F2),200,OK,User Thread Group 1-14,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088483411,6,REST - Book Flight (F2),200,OK,User Thread Group 1-14,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088483418,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-14,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088483422,2,Open Home Page,200,OK,User Thread Group 1-14,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088483425,5,REST - Login (F2),200,OK,User Thread Group 1-14,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088483430,4,REST - Search Flights (F2),200,OK,User Thread Group 1-14,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088483434,6,REST - Book Flight (F2),200,OK,User Thread Group 1-14,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088483440,7,Open Customer Profile Page (F2),200,OK,User Thread Group 1-14,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,7,0,1
+1770088483448,3,Open Home Page,200,OK,User Thread Group 1-14,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088483452,6,REST - Login (F2),200,OK,User Thread Group 1-14,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088483458,4,REST - Search Flights (F2),200,OK,User Thread Group 1-14,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088483462,6,REST - Book Flight (F2),200,OK,User Thread Group 1-14,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088483468,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-14,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088483472,2,Open Home Page,200,OK,User Thread Group 1-14,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088483475,4,REST - Login (F2),200,OK,User Thread Group 1-14,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,4,0,0
+1770088483480,3,REST - Search Flights (F2),200,OK,User Thread Group 1-14,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088483484,5,REST - Book Flight (F2),200,OK,User Thread Group 1-14,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,5,0,0
+1770088483489,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-14,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088483493,3,Open Home Page,200,OK,User Thread Group 1-14,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088483496,6,REST - Login (F3),200,OK,User Thread Group 1-14,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088483502,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-14,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,5,0,0
+1770088483511,4,Open Home Page,200,OK,User Thread Group 1-14,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088483515,7,REST - Login (F3),200,OK,User Thread Group 1-14,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088483522,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-14,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,5,0,0
+1770088483529,3,Open Home Page,200,OK,User Thread Group 1-14,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088483533,5,REST - Login (F3),200,OK,User Thread Group 1-14,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088483538,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-14,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,5,0,1
+1770088483544,3,Open Home Page,200,OK,User Thread Group 1-14,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088483547,6,REST - Login (F4),200,OK,User Thread Group 1-14,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088483553,6,REST - Get Customer (F4),200,OK,User Thread Group 1-14,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,6,0,1
+1770088483559,5,REST - Update Customer (F4),404,Not Found,User Thread Group 1-14,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,5,0,1
+1770088484394,5,Open Home Page,200,OK,User Thread Group 1-15,text,true,,5437,166,1,1,http://localhost:8081/,4,0,0
+1770088484399,7,REST - Login (F2),200,OK,User Thread Group 1-15,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088484406,5,REST - Search Flights (F2),200,OK,User Thread Group 1-15,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,1
+1770088484412,7,REST - Book Flight (F2),200,OK,User Thread Group 1-15,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088484419,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-15,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088484422,3,Open Home Page,200,OK,User Thread Group 1-15,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088484425,7,REST - Login (F2),200,OK,User Thread Group 1-15,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088484432,4,REST - Search Flights (F2),200,OK,User Thread Group 1-15,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088484437,7,REST - Book Flight (F2),200,OK,User Thread Group 1-15,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088484444,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-15,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088484449,2,Open Home Page,200,OK,User Thread Group 1-15,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088484452,6,REST - Login (F2),200,OK,User Thread Group 1-15,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088484459,3,REST - Search Flights (F2),200,OK,User Thread Group 1-15,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088484463,7,REST - Book Flight (F2),200,OK,User Thread Group 1-15,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088484470,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-15,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088484474,3,Open Home Page,200,OK,User Thread Group 1-15,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088484477,6,REST - Login (F2),200,OK,User Thread Group 1-15,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088484484,4,REST - Search Flights (F2),200,OK,User Thread Group 1-15,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088484488,7,REST - Book Flight (F2),200,OK,User Thread Group 1-15,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088484495,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-15,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088484499,3,Open Home Page,200,OK,User Thread Group 1-15,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088484502,6,REST - Login (F3),200,OK,User Thread Group 1-15,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088484508,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-15,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,7,0,1
+1770088484520,3,Open Home Page,200,OK,User Thread Group 1-15,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088484524,6,REST - Login (F3),200,OK,User Thread Group 1-15,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088484530,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-15,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,5,0,0
+1770088484537,4,Open Home Page,200,OK,User Thread Group 1-15,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088484541,6,REST - Login (F3),200,OK,User Thread Group 1-15,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088484547,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-15,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,5,0,1
+1770088484556,4,Open Home Page,200,OK,User Thread Group 1-15,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088484560,6,REST - Login (F4),200,OK,User Thread Group 1-15,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088484566,7,REST - Get Customer (F4),200,OK,User Thread Group 1-15,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,6,0,1
+1770088484573,5,REST - Update Customer (F4),404,Not Found,User Thread Group 1-15,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,5,0,0
+1770088485393,5,Open Home Page,200,OK,User Thread Group 1-16,text,true,,5437,166,1,1,http://localhost:8081/,5,0,0
+1770088485398,8,REST - Login (F2),200,OK,User Thread Group 1-16,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088485406,5,REST - Search Flights (F2),200,OK,User Thread Group 1-16,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,5,0,1
+1770088485411,9,REST - Book Flight (F2),200,OK,User Thread Group 1-16,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,9,0,1
+1770088485420,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-16,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,4,0,1
+1770088485425,5,Open Home Page,200,OK,User Thread Group 1-16,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088485430,6,REST - Login (F2),200,OK,User Thread Group 1-16,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088485437,4,REST - Search Flights (F2),200,OK,User Thread Group 1-16,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088485441,8,REST - Book Flight (F2),200,OK,User Thread Group 1-16,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,1
+1770088485450,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-16,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088485455,3,Open Home Page,200,OK,User Thread Group 1-16,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088485458,7,REST - Login (F2),200,OK,User Thread Group 1-16,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088485465,5,REST - Search Flights (F2),200,OK,User Thread Group 1-16,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088485470,7,REST - Book Flight (F2),200,OK,User Thread Group 1-16,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088485478,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-16,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088485482,3,Open Home Page,200,OK,User Thread Group 1-16,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088485486,7,REST - Login (F2),200,OK,User Thread Group 1-16,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,0
+1770088485494,4,REST - Search Flights (F2),200,OK,User Thread Group 1-16,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088485498,8,REST - Book Flight (F2),200,OK,User Thread Group 1-16,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088485506,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-16,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088485510,2,Open Home Page,200,OK,User Thread Group 1-16,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088485512,7,REST - Login (F3),200,OK,User Thread Group 1-16,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088485519,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-16,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,7,0,1
+1770088485530,4,Open Home Page,200,OK,User Thread Group 1-16,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088485535,6,REST - Login (F3),200,OK,User Thread Group 1-16,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088485541,7,REST - Get Bookings (F3),200,OK,User Thread Group 1-16,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,7,0,1
+1770088485550,3,Open Home Page,200,OK,User Thread Group 1-16,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088485553,6,REST - Login (F3),200,OK,User Thread Group 1-16,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088485560,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-16,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,6,0,0
+1770088485568,4,Open Home Page,200,OK,User Thread Group 1-16,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088485572,7,REST - Login (F4),200,OK,User Thread Group 1-16,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088485579,7,REST - Get Customer (F4),200,OK,User Thread Group 1-16,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,7,0,1
+1770088485586,5,REST - Update Customer (F4),404,Not Found,User Thread Group 1-16,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,5,0,1
+1770088486394,4,Open Home Page,200,OK,User Thread Group 1-17,text,true,,5437,166,1,1,http://localhost:8081/,4,0,1
+1770088486399,6,REST - Login (F2),200,OK,User Thread Group 1-17,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088486405,4,REST - Search Flights (F2),200,OK,User Thread Group 1-17,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088486410,7,REST - Book Flight (F2),200,OK,User Thread Group 1-17,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,0
+1770088486418,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-17,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088486422,3,Open Home Page,200,OK,User Thread Group 1-17,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088486425,6,REST - Login (F2),200,OK,User Thread Group 1-17,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088486432,5,REST - Search Flights (F2),200,OK,User Thread Group 1-17,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,0
+1770088486437,8,REST - Book Flight (F2),200,OK,User Thread Group 1-17,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,8,0,1
+1770088486446,2,Open Customer Profile Page (F2),200,OK,User Thread Group 1-17,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,2,0,0
+1770088486449,3,Open Home Page,200,OK,User Thread Group 1-17,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088486452,5,REST - Login (F2),200,OK,User Thread Group 1-17,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088486458,3,REST - Search Flights (F2),200,OK,User Thread Group 1-17,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088486462,6,REST - Book Flight (F2),200,OK,User Thread Group 1-17,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088486468,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-17,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088486472,2,Open Home Page,200,OK,User Thread Group 1-17,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088486475,5,REST - Login (F2),200,OK,User Thread Group 1-17,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088486480,3,REST - Search Flights (F2),200,OK,User Thread Group 1-17,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088486484,5,REST - Book Flight (F2),200,OK,User Thread Group 1-17,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,5,0,0
+1770088486489,2,Open Customer Profile Page (F2),200,OK,User Thread Group 1-17,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,2,0,0
+1770088486492,2,Open Home Page,200,OK,User Thread Group 1-17,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088486494,10,REST - Login (F3),200,OK,User Thread Group 1-17,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,9,0,1
+1770088486504,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-17,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,5,0,0
+1770088486513,4,Open Home Page,200,OK,User Thread Group 1-17,text,true,,5437,230,1,1,http://localhost:8081/,4,0,0
+1770088486517,6,REST - Login (F3),200,OK,User Thread Group 1-17,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088486524,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-17,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,5,0,0
+1770088486531,3,Open Home Page,200,OK,User Thread Group 1-17,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088486534,5,REST - Login (F3),200,OK,User Thread Group 1-17,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088486539,4,REST - Get Bookings (F3),200,OK,User Thread Group 1-17,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,4,0,0
+1770088486545,4,Open Home Page,200,OK,User Thread Group 1-17,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088486549,5,REST - Login (F4),200,OK,User Thread Group 1-17,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088486554,5,REST - Get Customer (F4),200,OK,User Thread Group 1-17,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,5,0,0
+1770088486559,3,REST - Update Customer (F4),404,Not Found,User Thread Group 1-17,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,3,0,0
+1770088487393,4,Open Home Page,200,OK,User Thread Group 1-18,text,true,,5437,166,1,1,http://localhost:8081/,4,0,0
+1770088487397,6,REST - Login (F2),200,OK,User Thread Group 1-18,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088487403,4,REST - Search Flights (F2),200,OK,User Thread Group 1-18,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088487407,7,REST - Book Flight (F2),200,OK,User Thread Group 1-18,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088487414,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-18,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088487418,3,Open Home Page,200,OK,User Thread Group 1-18,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088487422,6,REST - Login (F2),200,OK,User Thread Group 1-18,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088487428,3,REST - Search Flights (F2),200,OK,User Thread Group 1-18,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088487432,5,REST - Book Flight (F2),200,OK,User Thread Group 1-18,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,5,0,0
+1770088487437,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-18,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088487441,2,Open Home Page,200,OK,User Thread Group 1-18,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088487443,6,REST - Login (F2),200,OK,User Thread Group 1-18,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088487449,3,REST - Search Flights (F2),200,OK,User Thread Group 1-18,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088487453,5,REST - Book Flight (F2),200,OK,User Thread Group 1-18,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,5,0,0
+1770088487458,2,Open Customer Profile Page (F2),200,OK,User Thread Group 1-18,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,2,0,0
+1770088487461,2,Open Home Page,200,OK,User Thread Group 1-18,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088487463,5,REST - Login (F2),200,OK,User Thread Group 1-18,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,1
+1770088487468,3,REST - Search Flights (F2),200,OK,User Thread Group 1-18,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,1
+1770088487472,6,REST - Book Flight (F2),200,OK,User Thread Group 1-18,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088487478,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-18,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088487481,3,Open Home Page,200,OK,User Thread Group 1-18,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088487484,7,REST - Login (F3),200,OK,User Thread Group 1-18,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088487491,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-18,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,5,0,0
+1770088487501,3,Open Home Page,200,OK,User Thread Group 1-18,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088487505,6,REST - Login (F3),200,OK,User Thread Group 1-18,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088487511,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-18,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,6,0,1
+1770088487519,4,Open Home Page,200,OK,User Thread Group 1-18,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088487523,6,REST - Login (F3),200,OK,User Thread Group 1-18,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088487530,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-18,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,5,0,0
+1770088487537,3,Open Home Page,200,OK,User Thread Group 1-18,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088487541,6,REST - Login (F4),200,OK,User Thread Group 1-18,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088487547,7,REST - Get Customer (F4),200,OK,User Thread Group 1-18,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,7,0,1
+1770088487554,4,REST - Update Customer (F4),404,Not Found,User Thread Group 1-18,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,4,0,1
+1770088488392,4,Open Home Page,200,OK,User Thread Group 1-19,text,true,,5437,166,1,1,http://localhost:8081/,4,0,0
+1770088488396,6,REST - Login (F2),200,OK,User Thread Group 1-19,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088488402,4,REST - Search Flights (F2),200,OK,User Thread Group 1-19,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088488406,7,REST - Book Flight (F2),200,OK,User Thread Group 1-19,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,7,0,1
+1770088488413,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-19,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088488417,2,Open Home Page,200,OK,User Thread Group 1-19,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088488420,5,REST - Login (F2),200,OK,User Thread Group 1-19,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088488425,4,REST - Search Flights (F2),200,OK,User Thread Group 1-19,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,4,0,1
+1770088488430,6,REST - Book Flight (F2),200,OK,User Thread Group 1-19,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088488436,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-19,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088488440,2,Open Home Page,200,OK,User Thread Group 1-19,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088488442,5,REST - Login (F2),200,OK,User Thread Group 1-19,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088488447,3,REST - Search Flights (F2),200,OK,User Thread Group 1-19,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088488451,6,REST - Book Flight (F2),200,OK,User Thread Group 1-19,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088488457,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-19,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088488461,2,Open Home Page,200,OK,User Thread Group 1-19,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088488464,5,REST - Login (F2),200,OK,User Thread Group 1-19,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088488469,3,REST - Search Flights (F2),200,OK,User Thread Group 1-19,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,1
+1770088488473,6,REST - Book Flight (F2),200,OK,User Thread Group 1-19,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088488479,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-19,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,2,0,0
+1770088488482,2,Open Home Page,200,OK,User Thread Group 1-19,text,true,,5437,230,1,1,http://localhost:8081/,2,0,0
+1770088488485,4,REST - Login (F3),200,OK,User Thread Group 1-19,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,4,0,0
+1770088488490,4,REST - Get Bookings (F3),200,OK,User Thread Group 1-19,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,4,0,0
+1770088488500,3,Open Home Page,200,OK,User Thread Group 1-19,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088488503,6,REST - Login (F3),200,OK,User Thread Group 1-19,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088488509,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-19,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,5,0,0
+1770088488516,4,Open Home Page,200,OK,User Thread Group 1-19,text,true,,5437,230,1,1,http://localhost:8081/,4,0,1
+1770088488520,6,REST - Login (F3),200,OK,User Thread Group 1-19,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088488526,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-19,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,5,0,0
+1770088488533,3,Open Home Page,200,OK,User Thread Group 1-19,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088488536,7,REST - Login (F4),200,OK,User Thread Group 1-19,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,7,0,1
+1770088488544,5,REST - Get Customer (F4),200,OK,User Thread Group 1-19,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,5,0,0
+1770088488549,4,REST - Update Customer (F4),404,Not Found,User Thread Group 1-19,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,4,0,1
+1770088489392,5,Open Home Page,200,OK,User Thread Group 1-20,text,true,,5437,166,1,1,http://localhost:8081/,5,0,0
+1770088489397,6,REST - Login (F2),200,OK,User Thread Group 1-20,text,true,,335,305,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088489404,3,REST - Search Flights (F2),200,OK,User Thread Group 1-20,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088489408,6,REST - Book Flight (F2),200,OK,User Thread Group 1-20,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088489414,4,Open Customer Profile Page (F2),200,OK,User Thread Group 1-20,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088489419,3,Open Home Page,200,OK,User Thread Group 1-20,text,true,,5437,230,1,1,http://localhost:8081/,3,0,0
+1770088489422,7,REST - Login (F2),200,OK,User Thread Group 1-20,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088489429,4,REST - Search Flights (F2),200,OK,User Thread Group 1-20,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088489433,6,REST - Book Flight (F2),200,OK,User Thread Group 1-20,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088489439,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-20,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088489443,3,Open Home Page,200,OK,User Thread Group 1-20,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088489446,6,REST - Login (F2),200,OK,User Thread Group 1-20,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,0
+1770088489453,3,REST - Search Flights (F2),200,OK,User Thread Group 1-20,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088489457,6,REST - Book Flight (F2),200,OK,User Thread Group 1-20,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,0
+1770088489464,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-20,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,0
+1770088489467,3,Open Home Page,200,OK,User Thread Group 1-20,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088489470,5,REST - Login (F2),200,OK,User Thread Group 1-20,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088489476,3,REST - Search Flights (F2),200,OK,User Thread Group 1-20,text,true,,371,428,1,1,http://localhost:8081/rest/api/flights/queryflights,3,0,0
+1770088489479,6,REST - Book Flight (F2),200,OK,User Thread Group 1-20,text,true,,291,368,1,1,http://localhost:8081/rest/api/bookings/bookflights,6,0,1
+1770088489485,3,Open Customer Profile Page (F2),200,OK,User Thread Group 1-20,text,true,,11572,250,1,1,http://localhost:8081/customerprofile.html,3,0,1
+1770088489489,3,Open Home Page,200,OK,User Thread Group 1-20,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088489492,6,REST - Login (F3),200,OK,User Thread Group 1-20,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,6,0,1
+1770088489498,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-20,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid4@email.com,5,0,1
+1770088489507,3,Open Home Page,200,OK,User Thread Group 1-20,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088489511,5,REST - Login (F3),200,OK,User Thread Group 1-20,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088489516,5,REST - Get Bookings (F3),200,OK,User Thread Group 1-20,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid5@email.com,5,0,0
+1770088489522,3,Open Home Page,200,OK,User Thread Group 1-20,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088489526,5,REST - Login (F3),200,OK,User Thread Group 1-20,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,0
+1770088489531,6,REST - Get Bookings (F3),200,OK,User Thread Group 1-20,text,true,,161,269,1,1,http://localhost:8081/rest/api/bookings/byuser/uid6@email.com,5,0,1
+1770088489538,3,Open Home Page,200,OK,User Thread Group 1-20,text,true,,5437,230,1,1,http://localhost:8081/,3,0,1
+1770088489541,6,REST - Login (F4),200,OK,User Thread Group 1-20,text,true,,335,369,1,1,http://localhost:8081/rest/api/login,5,0,1
+1770088489547,4,REST - Get Customer (F4),200,OK,User Thread Group 1-20,text,true,,499,267,1,1,http://localhost:8081/rest/api/customer/byid/uid7@email.com,4,0,0
+1770088489552,3,REST - Update Customer (F4),404,Not Found,User Thread Group 1-20,,false,,126,361,1,1,http://localhost:8081/rest/api/customer/update,3,0,0

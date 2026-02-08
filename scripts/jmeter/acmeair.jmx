@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="AcmeAir Full Coverage Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments">Covers all major AcmeAir user and resource paths for comprehensive tracing/logging.</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="BASE_URL" elementType="Argument">
+            <stringProp name="Argument.name">BASE_URL</stringProp>
+            <stringProp name="Argument.value">http://localhost:8081</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+
+    <hashTree>
+      <!-- NEW: Run loader once, outside user iterations, to avoid global co-occurrence in temporal signals -->
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="[setUp] Loader (run once)" enabled="true">
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+      </SetupThreadGroup>
+      <hashTree>
+        <!-- HTTP Defaults -->
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Defaults" enabled="true">
+          <stringProp name="HTTPSampler.domain">localhost</stringProp>
+          <stringProp name="HTTPSampler.port">8081</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+        </ConfigTestElement>
+        <hashTree/>
+
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Header Manager (trace)" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="X-Request-Id" elementType="Header">
+              <stringProp name="Header.name">X-Request-Id</stringProp>
+              <stringProp name="Header.value">${__UUID}</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+
+        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+          <!-- setUp group only runs once, but keep deterministic behavior -->
+          <boolProp name="CookieManager.clearEachIteration">true</boolProp>
+        </CookieManager>
+        <hashTree/>
+
+        <!-- Gate loader execution: only run when -JACME_RUN_LOADER=true -->
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF Run Loader" enabled="true">
+          <stringProp name="IfController.condition">${__groovy((props.get('ACME_RUN_LOADER')?:'false').toString()=='true')}</stringProp>
+        </IfController>
+        <hashTree>
+          <!-- IMPORTANT: no TransactionController here, to keep JTL free of T_* summary rows -->
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="[setUp] Loader" enabled="true"/>
+          <hashTree>
+            <!-- Step 1: Open loader.html -->
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="SETUP: Open Loader Page" enabled="true">
+              <stringProp name="HTTPSampler.domain">localhost</stringProp>
+              <stringProp name="HTTPSampler.port">8081</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">/loader.html</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Loader 200" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="200">200</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <intProp name="Assertion.test_type">8</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+
+            <!-- Step 2: Trigger database loading -->
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="SETUP: Trigger Database Load" enabled="true">
+              <stringProp name="HTTPSampler.domain">localhost</stringProp>
+              <stringProp name="HTTPSampler.port">8081</stringProp>
+              <stringProp name="HTTPSampler.protocol">http</stringProp>
+              <stringProp name="HTTPSampler.path">/rest/info/loader/load?numCustomers=200</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <!-- Step 3: Wait 10 seconds for DB loading -->
+            <TestAction guiclass="TestActionGui" testclass="TestAction" testname="SETUP: Wait for Database to Load (10s)" enabled="true">
+              <intProp name="ActionProcessor.action">1</intProp>
+              <stringProp name="ActionProcessor.duration">10000</stringProp>
+            </TestAction>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+
+      <!-- USER thread group remains, but will be changed to pick ONE action per iteration -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="User Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.num_threads">20</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">20</stringProp>
+        <longProp name="ThreadGroup.start_time">1730030000000</longProp>
+        <longProp name="ThreadGroup.end_time">1730030000000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <!-- more sessions per thread to increase temporal variation -->
+          <stringProp name="LoopController.loops">8</stringProp>
+        </elementProp>
+      </ThreadGroup>
+
+      <hashTree>
+        <!-- HTTP Defaults -->
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Defaults" enabled="true">
+          <stringProp name="HTTPSampler.domain">localhost</stringProp>
+          <stringProp name="HTTPSampler.port">8081</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+        </ConfigTestElement>
+        <hashTree/>
+
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Header Manager (trace)" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="X-Request-Id" elementType="Header">
+              <stringProp name="Header.name">X-Request-Id</stringProp>
+              <stringProp name="Header.value">${__UUID}</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+
+        <!-- IMPORTANT: clear cookies each iteration so 'one iteration = one session/action' -->
+        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+          <!-- IMPORTANT: keep cookies across loop iterations so one thread models a continuous user session -->
+          <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+        </CookieManager>
+        <hashTree/>
+
+        <!-- Per-iteration init (NO JTL sample): attach to first real request -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Open Home Page" enabled="true">
+          <stringProp name="HTTPSampler.path">/</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <!-- Generate per-iteration variables on the FIRST real request, to keep JTL pure -->
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="[internal] Pick Flow (4:3:2:1) + Session Vars" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import java.time.*
+import java.time.format.*
+
+// Weighted 4 flows: 4:3:2:1 => total 10
+// 0..3 -> Flow1
+// 4..6 -> Flow2
+// 7..8 -> Flow3
+// 9    -> Flow4
+int c = (vars.get('ACME_COUNTER') ?: '0') as int
+int pick = c % 10
+int flowIndex
+if (pick &lt; 4) flowIndex = 1
+else if (pick &lt; 7) flowIndex = 2
+else if (pick &lt; 9) flowIndex = 3
+else flowIndex = 4
+vars.put('ACME_FLOW_INDEX', String.valueOf(flowIndex))
+vars.put('ACME_COUNTER', String.valueOf(c + 1))
+
+// per-iteration/session identity
+vars.put('ACME_SESSION_ID', UUID.randomUUID().toString())
+
+// diversify user-level evidence
+int uid = (c % 50)
+vars.put('ACME_USER', 'uid' + uid + '@email.com')
+
+// diversify routes
+def routes = [
+  ['JFK','LAX'], ['LAX','JFK'], ['ORD','SFO'], ['SFO','ORD'], ['DFW','SEA'], ['SEA','DFW'],
+  ['BOS','MIA'], ['MIA','BOS']
+]
+def r = routes[c % routes.size()]
+vars.put('ACME_FROM', r[0])
+vars.put('ACME_TO', r[1])
+
+// diversify dates but keep DateParam-compatible 10-char prefix (EEE MMM dd)
+DateTimeFormatter f = DateTimeFormatter.ofPattern('EEE MMM dd', Locale.US)
+LocalDate base = LocalDate.of(2026, 2, 1)
+int offset = (c % 10)
+LocalDate from = base.plusDays(offset)
+LocalDate ret  = from.plusDays(7)
+vars.put('ACME_FROM_DATE_PARAM', from.format(f))
+vars.put('ACME_RETURN_DATE_PARAM', ret.format(f))
+
+// booking id cache
+if (vars.get('ACME_BOOKING_ID') == null) {
+  vars.put('ACME_BOOKING_ID', 'NO_BOOKING')
+}</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Route to exactly one flow per iteration -->
+        <SwitchController guiclass="SwitchControllerGui" testclass="SwitchController" testname="Switch: 4 Flows (4:3:2:1)" enabled="true">
+          <stringProp name="SwitchController.value">${ACME_FLOW_INDEX}</stringProp>
+        </SwitchController>
+        <hashTree>
+          <!-- Flow 1: Login + SearchFlights -->
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Flow1_Login_Search" enabled="true"/>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Login (F1)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/login</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="login" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">login</stringProp>
+                    <stringProp name="Argument.value">${ACME_USER}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="password" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">password</stringProp>
+                    <stringProp name="Argument.value">password</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Open Flights Page (F1)" enabled="true">
+              <stringProp name="HTTPSampler.path">/flights.html</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Search Flights (F1)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/flights/queryflights</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="fromAirport" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">fromAirport</stringProp>
+                    <stringProp name="Argument.value">${ACME_FROM}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="toAirport" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">toAirport</stringProp>
+                    <stringProp name="Argument.value">${ACME_TO}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="fromDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">fromDate</stringProp>
+                    <stringProp name="Argument.value">${ACME_FROM_DATE_PARAM}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="returnDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">returnDate</stringProp>
+                    <stringProp name="Argument.value">${ACME_RETURN_DATE_PARAM}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="oneWay" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">oneWay</stringProp>
+                    <stringProp name="Argument.value">false</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract ToFlightId (F1)" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">ACME_TO_FLIGHT_ID</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].flightId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract RetFlightId (F1)" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">ACME_RET_FLIGHT_ID</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$[1].flightId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+
+          <!-- Flow 2: BookFlight (login + search + book + customer page) -->
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Flow2_Book" enabled="true"/>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Login (F2)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/login</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="login" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">login</stringProp>
+                    <stringProp name="Argument.value">${ACME_USER}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="password" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">password</stringProp>
+                    <stringProp name="Argument.value">password</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Search Flights (F2)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/flights/queryflights</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="fromAirport" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">fromAirport</stringProp>
+                    <stringProp name="Argument.value">${ACME_FROM}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="toAirport" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">toAirport</stringProp>
+                    <stringProp name="Argument.value">${ACME_TO}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="fromDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">fromDate</stringProp>
+                    <stringProp name="Argument.value">${ACME_FROM_DATE_PARAM}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="returnDate" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">returnDate</stringProp>
+                    <stringProp name="Argument.value">${ACME_RETURN_DATE_PARAM}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="oneWay" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">oneWay</stringProp>
+                    <stringProp name="Argument.value">false</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract ToFlightId (F2)" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">ACME_TO_FLIGHT_ID</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].flightId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract RetFlightId (F2)" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">ACME_RET_FLIGHT_ID</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$[1].flightId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Book Flight (F2)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/bookings/bookflights</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="toFlightId" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">toFlightId</stringProp>
+                    <stringProp name="Argument.value">${ACME_TO_FLIGHT_ID}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="retFlightId" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">retFlightId</stringProp>
+                    <stringProp name="Argument.value">${ACME_RET_FLIGHT_ID}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Open Customer Profile Page (F2)" enabled="true">
+              <stringProp name="HTTPSampler.path">/customerprofile.html</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+
+          <!-- Flow 3: ViewBookings + CancelBooking (may update booking id) -->
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Flow3_View_Cancel" enabled="true"/>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Login (F3)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/login</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="login" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">login</stringProp>
+                    <stringProp name="Argument.value">${ACME_USER}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="password" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">password</stringProp>
+                    <stringProp name="Argument.value">password</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Get Bookings (F3)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/bookings/byuser/${ACME_USER}</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract BookingId (F3)" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">ACME_BOOKING_ID</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].bookingId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">NO_BOOKING</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
+
+            <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF Has BookingId (F3)" enabled="true">
+              <stringProp name="IfController.condition">${__groovy(vars.get('ACME_BOOKING_ID')!=null &amp;&amp; vars.get('ACME_BOOKING_ID')!='NO_BOOKING')}</stringProp>
+            </IfController>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Cancel Booking (F3)" enabled="true">
+                <stringProp name="HTTPSampler.path">/rest/api/bookings/cancelbooking/${ACME_BOOKING_ID}</stringProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+              </HTTPSamplerProxy>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+
+          <!-- Flow 4: Customer read + update -->
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Flow4_Customer_Update" enabled="true"/>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Login (F4)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/login</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="login" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">login</stringProp>
+                    <stringProp name="Argument.value">${ACME_USER}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="password" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">password</stringProp>
+                    <stringProp name="Argument.value">password</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Get Customer (F4)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/customer/byid/${ACME_USER}</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REST - Update Customer (F4)" enabled="true">
+              <stringProp name="HTTPSampler.path">/rest/api/customer/update</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="login" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">login</stringProp>
+                    <stringProp name="Argument.value">${ACME_USER}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+
+        <!-- Remove legacy action-based IfControllers/TransactionControllers below by disabling them -->
+        <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="[internal] LEGACY (disabled)" enabled="false"/>
+        <hashTree>
+          <!-- ...existing legacy IfControllers/TransactionControllers remain but disabled by parent controller ... -->
+        </hashTree>
+
+        <!-- Result Collector: write JTL where scripts/temporal/build_S_temp.py expects it -->
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Save Results to JTL" enabled="false">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <stringProp name="filename">./results/jmeter/acmeair_results.jtl</stringProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

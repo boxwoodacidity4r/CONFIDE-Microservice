@@ -1,6 +1,0 @@
-http://localhost:8083/jpetstore/
-http://localhost:8083/jpetstore/actions/Catalog.action
-http://localhost:8083/jpetstore/actions/Cart.action?addItemToCart=EST-1
-http://localhost:8083/jpetstore/actions/Account.action?signonForm=
-http://localhost:8083/jpetstore/actions/Order.action?newOrderForm=
-http://localhost:8083/jpetstore/actions/Catalog.action?viewCategory=FISH

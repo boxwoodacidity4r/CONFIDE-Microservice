@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="PlantsByWebSphere Full Coverage Test Plan v5" enabled="true">
+      <stringProp name="TestPlan.comments">Full coverage: user + admin flows + error/help/expired pages + final checkout.</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+
+      <!-- Variables -->
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="username" elementType="Argument">
+            <stringProp name="Argument.name">username</stringProp>
+            <stringProp name="Argument.value">plant</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="password" elementType="Argument">
+            <stringProp name="Argument.name">password</stringProp>
+            <stringProp name="Argument.value">plant</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="admin_user" elementType="Argument">
+            <stringProp name="Argument.name">admin_user</stringProp>
+            <stringProp name="Argument.value">dev</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="admin_pass" elementType="Argument">
+            <stringProp name="Argument.name">admin_pass</stringProp>
+            <stringProp name="Argument.value">dev</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"/>
+    </TestPlan>
+
+    <hashTree>
+
+      <!-- HTTP Request Defaults: centralize host/port/protocol for all samplers -->
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">localhost</stringProp>
+        <stringProp name="HTTPSampler.port">8084</stringProp>
+        <stringProp name="HTTPSampler.protocol">http</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding"/>
+        <stringProp name="HTTPSampler.path"/>
+        <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+
+      <!-- Basic HTTP Header Manager: keep-alive and simple UA -->
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="User-Agent" elementType="Header">
+            <stringProp name="Header.name">User-Agent</stringProp>
+            <stringProp name="Header.value">JMeter-PlantsByWebSphere-LoadTest</stringProp>
+          </elementProp>
+          <elementProp name="Connection" elementType="Header">
+            <stringProp name="Header.name">Connection</stringProp>
+            <stringProp name="Header.value">keep-alive</stringProp>
+          </elementProp>
+          <!-- Add a per-request correlation id to help OTEL/log alignment (optional but useful) -->
+          <elementProp name="X-Request-Id" elementType="Header">
+            <stringProp name="Header.name">X-Request-Id</stringProp>
+            <stringProp name="Header.value">${__UUID}</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+
+      <!-- Cookie Manager -->
+      <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
+        <!-- IMPORTANT: keep cookies across loop iterations so one thread models a continuous user session -->
+        <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+        <collectionProp name="CookieManager.cookies"/>
+      </CookieManager>
+      <hashTree/>
+
+      <!-- Authorization Manager -->
+      <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
+        <collectionProp name="AuthManager.auth_list">
+          <elementProp name="auth_1" elementType="Authorization">
+            <stringProp name="Authorization.url">http://localhost:8084/PlantsByWebSphere/</stringProp>
+            <stringProp name="Authorization.username">${admin_user}</stringProp>
+            <stringProp name="Authorization.password">${admin_pass}</stringProp>
+            <stringProp name="Authorization.domain"></stringProp>
+            <stringProp name="Authorization.realm"></stringProp>
+          </elementProp>
+        </collectionProp>
+      </AuthManager>
+      <hashTree/>
+
+      <!-- USER THREAD GROUP -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="User Actions Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <!-- Increase loops to boost sample volume for S_temp -->
+          <stringProp name="LoopController.loops">20</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+      </ThreadGroup>
+
+      <hashTree>
+        <!--
+          COMPLIANT BUSINESS-FLOW MODE (User flows)
+          - Remove PBW_INTERNAL action picker + all IfController branches.
+          - Each loop iteration executes 2 "golden" user journeys (browse + purchase).
+        -->
+
+        <!-- Journey 1 (Browse): Promo -> Shopping -> Product -->
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="J1_User_Browse" enabled="true">
+          <boolProp name="TransactionController.parent">true</boolProp>
+          <boolProp name="TransactionController.includeTimers">true</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy testname="Home / Promo Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/promo.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="Shopping Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/shopping.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="Product Details Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/product.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Journey 2 (Purchase): Login -> AddToCart -> Cart -> OrderInfo/SubmitOrder -->
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="J2_User_Purchase" enabled="true">
+          <boolProp name="TransactionController.parent">true</boolProp>
+          <boolProp name="TransactionController.includeTimers">true</boolProp>
+        </TransactionController>
+        <hashTree>
+          <HTTPSamplerProxy testname="Open Login Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/login.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="User Login" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/login.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="username" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">username</stringProp>
+                  <stringProp name="HTTPArgument.value">${username}</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="password" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">password</stringProp>
+                  <stringProp name="HTTPArgument.value">${password}</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="Add To Cart Action" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/shopping.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="Cart Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/cart.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="Order Info" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/orderinfo.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="Submit Order" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/orderinfo.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+        </hashTree>
+
+        <!-- Think Time -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think Time (300-1200ms)" enabled="true">
+          <stringProp name="ConstantTimer.delay">300</stringProp>
+          <stringProp name="RandomTimer.range">900</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
+
+        <!-- Disable the old full-flow transaction to avoid global co-occurrence within a session. -->
+        <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="T_User_Full_Checkout" enabled="false">
+          <boolProp name="TransactionController.includeTimers">false</boolProp>
+          <boolProp name="TransactionController.parent">true</boolProp>
+        </TransactionController>
+        <hashTree>
+          <!-- Pages sequence -->
+          <HTTPSamplerProxy testname="Home / Promo Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/promo.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Basic assertion: promo page should load OK -->
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Home / Promo 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Home / Promo should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <HTTPSamplerProxy testname="User Login" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/login.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="username" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">username</stringProp>
+                  <stringProp name="HTTPArgument.value">${username}</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="password" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">password</stringProp>
+                  <stringProp name="HTTPArgument.value">${password}</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Assert login HTTP 200 -->
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert User Login 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">User Login should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- Think time after promo page -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="URT_After_Promo" enabled="true">
+            <stringProp name="ConstantTimer.delay">100</stringProp>
+            <stringProp name="RandomTimer.range">200</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+
+          <!-- Shopping sequence -->
+          <HTTPSamplerProxy testname="Register Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/register.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Register 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Register Page should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <HTTPSamplerProxy testname="Shopping Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/shopping.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Shopping 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Shopping Page should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- Think time after shopping page -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="URT_After_Shopping" enabled="true">
+            <stringProp name="ConstantTimer.delay">100</stringProp>
+            <stringProp name="RandomTimer.range">200</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="Product Details Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/product.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Product Details 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Product Details Page should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- 新增：真正的加入购物车 POST 请求，使用表单参数模拟加购动作 -->
+          <HTTPSamplerProxy testname="Add To Cart Action" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/cart.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <!-- 使用固定的示例商品 ID 和数量；后续如有需要可扩展为随机/参数化 -->
+                <elementProp name="itemId" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">itemId</stringProp>
+                  <stringProp name="HTTPArgument.value">EST-1</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="quantity" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">quantity</stringProp>
+                  <stringProp name="HTTPArgument.value">1</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+                <!-- 常见表单按钮参数，真实应用会在 JSP/JSF 表单内带上；如名称不符，可根据页面源码微调 -->
+                <elementProp name="addToCart" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">addToCart</stringProp>
+                  <stringProp name="HTTPArgument.value">Add to Cart</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Add To Cart 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Add To Cart action should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- Think time after Add To Cart POST -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="URT_After_AddToCart" enabled="true">
+            <stringProp name="ConstantTimer.delay">100</stringProp>
+            <stringProp name="RandomTimer.range">200</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+
+          <!-- 现有 Cart Page GET 保持不变，用于查看购物车详情 -->
+          <HTTPSamplerProxy testname="Cart Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/cart.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Cart 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Cart Page should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- Think time after cart page -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="URT_After_Cart" enabled="true">
+            <stringProp name="ConstantTimer.delay">100</stringProp>
+            <stringProp name="RandomTimer.range">200</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+
+          <HTTPSamplerProxy testname="Order Info Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/orderinfo.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Assert order info HTTP 200 -->
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Order Info 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Order Info should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- 新增：模拟在订单信息页提交订单的真实业务 POST -->
+          <HTTPSamplerProxy testname="Submit Order Action" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/orderinfo.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <!-- 简化的表单参数：使用固定示例值，后续可根据页面表单源码再细化/参数化 -->
+                <elementProp name="creditCard" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">creditCard</stringProp>
+                  <stringProp name="HTTPArgument.value">4111111111111111</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="expiryDate" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">expiryDate</stringProp>
+                  <stringProp name="HTTPArgument.value">12/25</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="submitOrder" elementType="HTTPArgument">
+                  <stringProp name="HTTPArgument.name">submitOrder</stringProp>
+                  <stringProp name="HTTPArgument.value">Submit Order</stringProp>
+                  <stringProp name="HTTPArgument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Submit Order 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Submit Order action should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- 提交订单后增加少量思考时间，再进入订单完成页 -->
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="URT_After_SubmitOrder" enabled="true">
+            <stringProp name="ConstantTimer.delay">300</stringProp>
+            <stringProp name="RandomTimer.range">500</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+
+          <!-- 现有 Order Done Page 保持不变，用于查看订单完成结果 -->
+          <HTTPSamplerProxy testname="Order Done Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/orderdone.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Assert order done HTTP 200 -->
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Order Done 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Order Done should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <HTTPSamplerProxy testname="Final Checkout" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/checkout_final.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <!-- Assert final checkout HTTP 200 -->
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Final Checkout 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Final Checkout should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <HTTPSamplerProxy testname="Account Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/account.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Account 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Account Page should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- Generate random flag to decide how to browse tail pages (Help / viewExpired / error) -->
+          <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Generate TailFlowFlag (0-2) [PreProcessor]" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">int flag = (int)(Math.random() * 3)  // 0,1,2
+vars.put('TAIL_FLOW_FLAG', String.valueOf(flag))
+</stringProp>
+          </JSR223PreProcessor>
+          <hashTree/>
+
+          <!-- Common Help Page (always visited) -->
+          <HTTPSamplerProxy testname="Help Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+            <stringProp name="HTTPSampler.path">/PlantsByWebSphere/help.jsf</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Help 200" enabled="true">
+              <collectionProp name="Asserion.test_strings"/>
+              <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+              <stringProp name="Assertion.custom_message">Help Page should return HTTP 200</stringProp>
+            </ResponseAssertion>
+          </hashTree>
+
+          <!-- If FLAG == 0: visit viewExpired then error -->
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF TailFlowFlag == 0 (viewExpired + error)" enabled="true">
+            <stringProp name="IfController.condition">${__groovy(vars.get('TAIL_FLOW_FLAG') == '0')}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+          </IfController>
+          <hashTree>
+            <HTTPSamplerProxy testname="Session Expired Page (viewExpired.jsf)" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+              <stringProp name="HTTPSampler.path">/PlantsByWebSphere/viewExpired.jsf</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert viewExpired 200" enabled="true">
+                <collectionProp name="Asserion.test_strings"/>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+                <stringProp name="Assertion.custom_message">viewExpired should return HTTP 200</stringProp>
+              </ResponseAssertion>
+            </hashTree>
+            <HTTPSamplerProxy testname="Error Page (error.jsp)" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+              <stringProp name="HTTPSampler.path">/PlantsByWebSphere/error.jsp</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Error 200" enabled="true">
+                <collectionProp name="Asserion.test_strings"/>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+                <stringProp name="Assertion.custom_message">Error Page should return HTTP 200</stringProp>
+              </ResponseAssertion>
+            </hashTree>
+          </hashTree>
+
+          <!-- If FLAG == 1: only visit viewExpired -->
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF TailFlowFlag == 1 (viewExpired only)" enabled="true">
+            <stringProp name="IfController.condition">${__groovy(vars.get('TAIL_FLOW_FLAG') == '1')}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+          </IfController>
+          <hashTree>
+            <HTTPSamplerProxy testname="Session Expired Page (viewExpired.jsf) [ALT]" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+              <stringProp name="HTTPSampler.path">/PlantsByWebSphere/viewExpired.jsf</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert viewExpired ALT 200" enabled="true">
+                <collectionProp name="Asserion.test_strings"/>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+                <stringProp name="Assertion.custom_message">viewExpired ALT should return HTTP 200</stringProp>
+              </ResponseAssertion>
+            </hashTree>
+          </hashTree>
+
+          <!-- If FLAG == 2: only visit error.jsp -->
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="IF TailFlowFlag == 2 (error only)" enabled="true">
+            <stringProp name="IfController.condition">${__groovy(vars.get('TAIL_FLOW_FLAG') == '2')}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+          </IfController>
+          <hashTree>
+            <HTTPSamplerProxy testname="Error Page (error.jsp) [ALT]" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+              <stringProp name="HTTPSampler.path">/PlantsByWebSphere/error.jsp</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Error ALT 200" enabled="true">
+                <collectionProp name="Asserion.test_strings"/>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+                <stringProp name="Assertion.custom_message">Error ALT should return HTTP 200</stringProp>
+              </ResponseAssertion>
+            </hashTree>
+          </hashTree>
+
+        </hashTree>
+      </hashTree>
+
+      <!-- ADMIN THREAD GROUP -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Admin Actions Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <!-- Run admin flow multiple times to ensure sufficient admin anchors -->
+          <stringProp name="LoopController.loops">20</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+      </ThreadGroup>
+
+      <hashTree>
+        <HTTPSamplerProxy testname="Admin Home Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+          <stringProp name="HTTPSampler.path">/PlantsByWebSphere/admin.html</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <HTTPSamplerProxy testname="Admin Actions Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+          <stringProp name="HTTPSampler.path">/PlantsByWebSphere/adminactions.html</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <HTTPSamplerProxy testname="Admin Banner Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+          <stringProp name="HTTPSampler.path">/PlantsByWebSphere/adminbanner.html</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <HTTPSamplerProxy testname="Backorder Admin Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+          <stringProp name="HTTPSampler.path">/PlantsByWebSphere/backorderadmin.jsp</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+
+        <!-- 新增：在 Backorder 管理页面之后，模拟处理 backorder 的表单提交 -->
+        <HTTPSamplerProxy testname="Process Backorder Action" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+          <stringProp name="HTTPSampler.path">/PlantsByWebSphere/backorderadmin.jsp</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <!-- 简化参数：假设通过 orderId / action 提交处理请求；后续可按真实 JSP 表单再调整字段名 -->
+              <elementProp name="orderId" elementType="HTTPArgument">
+                <stringProp name="HTTPArgument.name">orderId</stringProp>
+                <stringProp name="HTTPArgument.value">BO-1001</stringProp>
+                <stringProp name="HTTPArgument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="action" elementType="HTTPArgument">
+                <stringProp name="HTTPArgument.name">action</stringProp>
+                <stringProp name="HTTPArgument.value">process</stringProp>
+                <stringProp name="HTTPArgument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert Process Backorder 200" enabled="true">
+            <collectionProp name="Asserion.test_strings"/>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">2</intProp>
+            <stringProp name="Assertion.custom_message">Process Backorder action should return HTTP 200</stringProp>
+          </ResponseAssertion>
+        </hashTree>
+
+        <!-- 提交 Backorder 处理后增加少量思考时间，再进入下一管理页面 -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="URT_After_ProcessBackorder" enabled="true">
+          <stringProp name="ConstantTimer.delay">100</stringProp>
+          <stringProp name="RandomTimer.range">200</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
+
+        <!-- 现有 Supplier Config Page 保持不变，用于配置供应商/库存等管理操作 -->
+        <HTTPSamplerProxy testname="Supplier Config Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
+          <stringProp name="HTTPSampler.path">/PlantsByWebSphere/supplierconfig.jsp</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+      </hashTree>
+
+      <!-- Result Collector: write JTL where scripts/temporal/build_S_temp.py expects it -->
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Save Results to JTL" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <stringProp name="filename">./results/jmeter/plants_results.jtl</stringProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <threadName>true</threadName>
+            <fieldNames>true</fieldNames>
+
+            <!-- Required for S_temp + for TransactionController parent summary lines -->
+            <time>true</time>
+            <code>true</code>
+            <message>true</message>
+
+            <!-- keep others off to reduce noise -->
+            <latency>false</latency>
+            <dataType>false</dataType>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <bytes>false</bytes>
+            <sentBytes>false</sentBytes>
+            <url>false</url>
+            <threadCounts>false</threadCounts>
+            <connectTime>false</connectTime>
+          </value>
+        </objProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

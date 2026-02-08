@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="JPetStore Full Coverage v4" enabled="true">
+      <stringProp name="TestPlan.comments">Temporal-optimized deterministic transactional sampling: one business flow per session with reproducible 4:3:2:1 distribution (Catalog/Order/Account/E2E).</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+
+      <!-- Thread Group -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="JPetStore Users" enabled="true">
+        <!-- 稳定性优先：先把并发降到 2，避免 Tomcat 在压测下直接断开连接导致 NoHttpResponseException -->
+        <stringProp name="ThreadGroup.num_threads">2</stringProp>
+        <!-- 慢爬坡，给应用/连接池预热时间 -->
+        <stringProp name="ThreadGroup.ramp_time">15</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <!-- baseline 验证：先跑少量 session，确认不再出现 Non HTTP response；稳定后再逐步加回 8/10 并发与 16 loops -->
+          <stringProp name="LoopController.loops">4</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+      </ThreadGroup>
+      <hashTree>
+
+        <!-- HTTP Defaults -->
+        <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Defaults" enabled="true">
+          <stringProp name="HTTPSampler.domain">localhost</stringProp>
+          <stringProp name="HTTPSampler.port">8083</stringProp>
+          <stringProp name="HTTPSampler.protocol">http</stringProp>
+          <stringProp name="HTTPSampler.path">/jpetstore</stringProp>
+        </ConfigTestElement>
+        <hashTree/>
+
+        <!-- Cookie & Header -->
+        <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="Cookie Manager" enabled="true">
+          <!-- IMPORTANT: keep cookies across loop iterations so one thread models a continuous user session -->
+          <boolProp name="CookieManager.clearEachIteration">false</boolProp>
+        </CookieManager>
+        <hashTree/>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="Content-Type" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+            </elementProp>
+            <!-- Add a per-request correlation id to help OTEL/log alignment (optional but useful) -->
+            <elementProp name="X-Request-Id" elementType="Header">
+              <stringProp name="Header.name">X-Request-Id</stringProp>
+              <stringProp name="Header.value">${__UUID}</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+
+        <!-- CSV DataSet for multiple accounts (increase evidence diversity; still real business actions) -->
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Account CSV (username/password)" enabled="true">
+          <stringProp name="filename">jpetstore_accounts.csv</stringProp>
+          <stringProp name="fileEncoding">UTF-8</stringProp>
+          <stringProp name="variableNames">JP_USER,JP_PASS</stringProp>
+          <stringProp name="delimiter">,</stringProp>
+          <boolProp name="quotedData">false</boolProp>
+          <boolProp name="recycle">true</boolProp>
+          <boolProp name="stopThread">false</boolProp>
+          <stringProp name="shareMode">shareMode.group</stringProp>
+        </CSVDataSet>
+        <hashTree/>
+
+        <!-- Deterministic Transactional Sampling (NO JTL samples): select exactly one flow per iteration -->
+        <SwitchController guiclass="SwitchControllerGui" testclass="SwitchController" testname="Switch: Deterministic Flow (4:3:2:1)" enabled="true">
+          <!-- 0..3 => Case 0/1/2/3 -->
+          <stringProp name="SwitchController.value">${__groovy((vars.get('JP_COUNTER')==null?0:vars.get('JP_COUNTER').toInteger()) % 10 &lt; 4 ? 0 : (((vars.get('JP_COUNTER')==null?0:vars.get('JP_COUNTER').toInteger()) % 10) &lt; 7 ? 1 : (((vars.get('JP_COUNTER')==null?0:vars.get('JP_COUNTER').toInteger()) % 10) &lt; 9 ? 2 : 3)))}</stringProp>
+        </SwitchController>
+        <hashTree>
+
+          <!-- Case 0 (Catalog) -->
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="FlowA_Catalog" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">true</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy testname="home" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="[internal] Flow Vars" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script"><![CDATA[
+int c = (vars.get('JP_COUNTER') ?: '0') as int
+vars.put('JP_COUNTER', String.valueOf(c + 1))
+
+def kw = ['fish','dog','cat','bird','reptile']
+vars.put('JP_KEYWORDS', kw[c % kw.size()])
+def cat = ['FISH','DOGS','CATS','BIRDS','REPTILES']
+vars.put('JP_CAT', cat[c % cat.size()])
+def prod = ['FI-SW-01','FI-FW-02','K9-BD-01','AV-CB-01','RP-LI-02']
+vars.put('JP_PROD', prod[c % prod.size()])
+def item = ['EST-1','EST-2','EST-4','EST-5','EST-6']
+vars.put('JP_ITEM', item[c % item.size()])
+]]></stringProp>
+              </JSR223PreProcessor>
+              <hashTree/>
+            </hashTree>
+
+            <HTTPSamplerProxy testname="search" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Catalog.action?search=</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="keywords" elementType="HTTPArgument">
+                    <stringProp name="Argument.name">keywords</stringProp>
+                    <stringProp name="Argument.value">${JP_KEYWORDS}</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="viewCategory" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Catalog.action?viewCategory=&amp;categoryId=${JP_CAT}</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="viewProduct" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Catalog.action?viewProduct=&amp;productId=${JP_PROD}</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="viewItem" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Catalog.action?viewItem=&amp;itemId=${JP_ITEM}</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+
+          <!-- Case 1 (Order) -->
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="FlowB_Order" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">true</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy testname="login" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?signon=</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="username" elementType="HTTPArgument"><stringProp name="Argument.name">username</stringProp><stringProp name="Argument.value">${JP_USER}</stringProp></elementProp>
+                  <elementProp name="password" elementType="HTTPArgument"><stringProp name="Argument.name">password</stringProp><stringProp name="Argument.value">${JP_PASS}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="[internal] Flow Vars" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script"><![CDATA[
+int c = (vars.get('JP_COUNTER') ?: '0') as int
+vars.put('JP_COUNTER', String.valueOf(c + 1))
+
+def item = ['EST-1','EST-2','EST-4','EST-5','EST-6']
+vars.put('JP_ITEM', item[c % item.size()])
+]]></stringProp>
+              </JSR223PreProcessor>
+              <hashTree/>
+            </hashTree>
+
+            <HTTPSamplerProxy testname="addItemToCart" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Cart.action?addItemToCart=&amp;workingItemId=${JP_ITEM}</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="viewCart" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Cart.action?viewCart=</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="checkout" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?newOrderForm=</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="newOrder" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?newOrder=</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="confirmOrder" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?newOrder=&amp;confirmed=true</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+
+          <!-- Case 2 (Account) -->
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="FlowC_Account" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">true</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy testname="login(account)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?signon=</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="username" elementType="HTTPArgument"><stringProp name="Argument.name">username</stringProp><stringProp name="Argument.value">${JP_USER}</stringProp></elementProp>
+                  <elementProp name="password" elementType="HTTPArgument"><stringProp name="Argument.name">password</stringProp><stringProp name="Argument.value">${JP_PASS}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="[internal] JP_COUNTER++" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script"><![CDATA[
+int c = (vars.get('JP_COUNTER') ?: '0') as int
+vars.put('JP_COUNTER', String.valueOf(c + 1))
+]]></stringProp>
+              </JSR223PreProcessor>
+              <hashTree/>
+            </hashTree>
+
+            <HTTPSamplerProxy testname="editAccount" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?editAccountForm=</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="viewOrders" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?listOrders=</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="signoff" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?signoff=</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+
+          <!-- Case 3 (E2E) -->
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="FlowX_E2E" enabled="true">
+            <boolProp name="TransactionController.parent">true</boolProp>
+            <boolProp name="TransactionController.includeTimers">true</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy testname="login(e2e)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?signon=</stringProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="username" elementType="HTTPArgument"><stringProp name="Argument.name">username</stringProp><stringProp name="Argument.value">${JP_USER}</stringProp></elementProp>
+                  <elementProp name="password" elementType="HTTPArgument"><stringProp name="Argument.name">password</stringProp><stringProp name="Argument.value">${JP_PASS}</stringProp></elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="[internal] Flow Vars" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script"><![CDATA[
+int c = (vars.get('JP_COUNTER') ?: '0') as int
+vars.put('JP_COUNTER', String.valueOf(c + 1))
+
+def item = ['EST-1','EST-2','EST-4','EST-5','EST-6']
+vars.put('JP_ITEM', item[c % item.size()])
+]]></stringProp>
+              </JSR223PreProcessor>
+              <hashTree/>
+            </hashTree>
+
+            <HTTPSamplerProxy testname="home(e2e)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="addItemToCart(e2e)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Cart.action?addItemToCart=&amp;workingItemId=${JP_ITEM}</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="checkout(e2e)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?newOrderForm=</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="confirmOrder(e2e)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Order.action?newOrder=&amp;confirmed=true</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+
+            <HTTPSamplerProxy testname="signoff(e2e)" enabled="true" testclass="HTTPSamplerProxy" guiclass="HttpTestSampleGui">
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.path">/jpetstore/actions/Account.action?signoff=</stringProp>
+            </HTTPSamplerProxy>
+            <hashTree/>
+          </hashTree>
+
+        </hashTree>
+
+        <!-- Think Time -->
+        <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think Time (500-2000ms)" enabled="true">
+          <stringProp name="ConstantTimer.delay">500</stringProp>
+          <stringProp name="RandomTimer.range">1500</stringProp>
+        </UniformRandomTimer>
+        <hashTree/>
+
+      </hashTree>
+    </hashTree>
+
+  </hashTree>
+</jmeterTestPlan>

@@ -3,7 +3,6 @@
 import os
 import torch
 from transformers import AutoTokenizer, AutoModel
-import openai
 
 class EmbeddingManager:
     def __init__(self, model_type="graphcodebert", openai_api_key=None, device=None):
@@ -13,9 +12,14 @@ class EmbeddingManager:
         self.model_type = model_type.lower()
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
 
+        # Allow overriding HF model name and offline behavior
+        self.hf_model_name = os.environ.get('MM_HF_MODEL', '').strip()
+        self.hf_offline = os.environ.get('MM_HF_OFFLINE', '1').strip() in {'1', 'true', 'True'}
+
         if self.model_type in ["graphcodebert", "codet5"]:
             self._init_hf_model()
         elif self.model_type == "openai":
+            import openai  # 仅在需要时导入
             if not openai_api_key:
                 raise ValueError("OpenAI API key required for openai embeddings")
             openai.api_key = openai_api_key
@@ -24,14 +28,15 @@ class EmbeddingManager:
 
     def _init_hf_model(self):
         if self.model_type == "graphcodebert":
-            model_name = "microsoft/graphcodebert-base"
+            model_name = self.hf_model_name or "microsoft/graphcodebert-base"
         elif self.model_type == "codet5":
-            model_name = "Salesforce/codet5-base"
+            model_name = self.hf_model_name or "Salesforce/codet5-base"
         else:
             raise ValueError("Invalid HF model")
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModel.from_pretrained(model_name).to(self.device)
+        # Prefer offline/local cache by default to avoid network timeouts
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, local_files_only=self.hf_offline)
+        self.model = AutoModel.from_pretrained(model_name, local_files_only=self.hf_offline).to(self.device)
         self.model.eval()
 
     def encode(self, code_snippets):
@@ -57,6 +62,7 @@ class EmbeddingManager:
             return embeddings.cpu()
 
     def _encode_openai(self, code_snippets):
+        import openai
         embeddings = []
         for snippet in code_snippets:
             response = openai.Embedding.create(

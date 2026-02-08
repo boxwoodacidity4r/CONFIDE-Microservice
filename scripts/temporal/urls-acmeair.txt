@@ -1,5 +1,0 @@
-http://localhost:8081/rest/api/flights
-http://localhost:8081/rest/api/bookings/byuser/testuser
-http://localhost:8081/rest/api/login/testuser
-http://localhost:8081/rest/api/customer/byid/testuser
-http://localhost:8081/rest/api/flightsearch/from/SEA/to/SFO/departure/2025-09-21

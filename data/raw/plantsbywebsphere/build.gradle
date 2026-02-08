@@ -89,3 +89,8 @@ libertyRun.dependsOn 'libertyStop'
 task start { dependsOn 'libertyStart' }
 task stop  { dependsOn 'libertyStop' }
 
+task copyDependencies(type: Copy) {
+    from configurations.runtime
+    into "$buildDir/dependency-jars"
+}
+
