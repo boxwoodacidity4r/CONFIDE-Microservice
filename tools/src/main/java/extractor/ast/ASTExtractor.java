@@ -4,18 +4,19 @@ import com.github.javaparser.ast.CompilationUnit;
 import java.io.File;
 
 /**
- * ASTExtractor 接口定义
+ * ASTExtractor interface.
  * 
- * 实现类需要提供从单个 Java 文件中提取 AST（抽象语法树）的能力
+ * Implementations should provide the capability to extract an AST (Abstract Syntax Tree)
+ * from a single Java source file.
  */
 public interface ASTExtractor {
 
     /**
-     * 提取指定 Java 文件的 AST
+     * Extract the AST of the given Java file.
      *
-     * @param file 待解析的 Java 文件
-     * @return CompilationUnit 表示 AST
-     * @throws Exception 如果解析失败抛出异常
+     * @param file Java source file to parse
+     * @return CompilationUnit representing the AST
+     * @throws Exception if parsing fails
      */
     CompilationUnit extractAST(File file) throws Exception;
 }

@@ -30,7 +30,7 @@ for system in SYSTEMS:
     S_struct = np.load(S_STRUCT_PATH)
     N = len(class_names)
 
-    # Sanity check: 顺序一致性和归一化
+    # Sanity check: ordering consistency and normalization
     print(f"[{system}] Sample: {class_names[0]}, S_sem[0][:5]={S_sem[0][:5]}, S_struct[0][:5]={S_struct[0][:5]}")
     assert S_sem.shape == (N, N) and S_struct.shape == (N, N)
     assert S_sem.min() >= 0 and S_sem.max() <= 1, "S_sem not normalized"
@@ -40,7 +40,7 @@ for system in SYSTEMS:
         S = alpha * S_sem + (1 - alpha) * S_struct
         np.fill_diagonal(S, 1.0)
 
-        # 稀疏加权图
+        # Sparsified weighted graph
         G = nx.Graph()
         for i in range(N):
             G.add_node(i, label=class_names[i])
@@ -51,27 +51,27 @@ for system in SYSTEMS:
                     G.add_edge(i, j, weight=float(S[i, j]))
                     edge_count += 1
 
-        # 孤立点检查
+        # Isolated node check
         isolated = list(nx.isolates(G))
         print(f"[{system} alpha={alpha}] Edges with S >= {TAU}: {edge_count}, Isolated nodes: {len(isolated)}")
         if len(isolated) > 0:
             print(f"Warning: {len(isolated)} isolated nodes, consider lowering tau.")
 
-        # Louvain社区发现
+        # Louvain community detection
         partition = community.best_partition(G, weight='weight', random_state=42)
         clusters = {}
         for idx, cid in partition.items():
             clusters.setdefault(f"cluster_{cid}", []).append(class_names[idx])
-        # 保存 cluster->class
+        # Save cluster->classes
         cluster_path = os.path.join(OUT_DIR, f"clusters_phase1_alpha{alpha}.json")
         with open(cluster_path, "w", encoding="utf-8") as f:
             json.dump(clusters, f, indent=2, ensure_ascii=False)
-        # 保存 class->cid
+        # Save class->cluster id
         class2cid = {class_names[idx]: cid for idx, cid in partition.items()}
         with open(os.path.join(OUT_DIR, f"partition_phase1_alpha{alpha}.json"), "w", encoding="utf-8") as f:
             json.dump(class2cid, f, indent=2, ensure_ascii=False)
 
-        # 统计指标
+        # Metrics
         cluster_sizes = [len(v) for v in clusters.values()]
         intra_sims = []
         inter_sims = []
@@ -81,7 +81,7 @@ for system in SYSTEMS:
             if len(idxs) > 1:
                 intra = S[np.ix_(idxs, idxs)]
                 intra_sims.append(np.mean(intra[np.triu_indices_from(intra, k=1)]))
-        # inter-cluster只算上三角
+        # inter-cluster similarity uses upper triangle only
         for i in range(len(cluster_list)):
             for j in range(i+1, len(cluster_list)):
                 idxs1 = [name2idx[n] for n in cluster_list[i]]
@@ -107,7 +107,7 @@ for system in SYSTEMS:
         with open(stats_path, "w", encoding="utf-8") as f:
             json.dump(stats, f, indent=2)
 
-        # 可视化
+        # Visualization
         try:
             plt.figure(figsize=(10, 10))
             pos = nx.spring_layout(G, seed=42)
@@ -122,7 +122,7 @@ for system in SYSTEMS:
         except Exception as e:
             print(f"Visualization failed for {system} alpha={alpha}: {e}")
 
-    # 生成 markdown 说明（同前）
+    # Write a short markdown description
     readme = f'''
 # Phase 1: Coarse Initialization Clustering ({system})
 

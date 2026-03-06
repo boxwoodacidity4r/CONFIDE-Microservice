@@ -48,7 +48,7 @@ def inspect_traces(trace_path: Path, max_lines: int = 200) -> None:
                             key = a.get("key")
                             if key:
                                 attr_key_counter[key] += 1
-                        # 收集少量样本 span 便于查看细节
+                        # Collect a few sample spans for inspection.
                         if len(sample_spans) < 10:
                             sample_spans.append(span)
 
@@ -96,7 +96,7 @@ def inspect_logs(log_path: Path, max_lines: int = 200) -> None:
                     for record in scope_log.get("logRecords", []):
                         if record.get("traceId"):
                             has_trace_id += 1
-                        # 收集少量样本 log record
+                        # Collect a few sample log records.
                         if len(sample_records) < 10:
                             sample_records.append({
                                 "traceId": record.get("traceId"),

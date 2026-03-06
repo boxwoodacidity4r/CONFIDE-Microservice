@@ -19,7 +19,7 @@ def build_all_pairs_features(emb, s_struct, s_sem, s_temp):
             struct_score = max(s_struct[i, j], s_struct[j, i])
             sim_static = s_static[i, j]
             sim_temp = s_temp[i, j]
-            D = abs(sim_static - sim_temp)  # 跨模态冲突特征
+            D = abs(sim_static - sim_temp)  # Cross-modality conflict feature
             feat = np.hstack([emb[i], emb[j], [struct_score, s_sem[i, j], s_temp[i, j], D]])
             all_feats.append(feat)
     return np.array(all_feats, dtype=np.float32)
@@ -45,12 +45,12 @@ def infer_uncertainty(model, X, num_classes=2, batch_size=2048, evidence_smooth=
             batch_x = torch.FloatTensor(X[i : i + batch_size])
             alpha = model(batch_x)
 
-            # 【新增】证据缩放：放大/缩小 (alpha-1)
+            # Evidence scaling: scale (alpha - 1)
             if evidence_scale != 1.0:
                 evidence = (alpha - 1.0) * evidence_scale
                 alpha = evidence + 1.0
 
-            # 证据平滑
+            # Evidence smoothing
             alpha = alpha + evidence_smooth
             S = torch.sum(alpha, dim=1, keepdim=True)
             u = num_classes / S
@@ -116,7 +116,7 @@ def _normalize_u_matrix(U: np.ndarray, mode: str, *, q_low: float = 0.05, q_high
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--X', type=str, default=None, help='拼接好的特征npy，优先使用')
+    parser.add_argument('--X', type=str, default=None, help='Pre-built feature .npy (preferred if provided)')
     parser.add_argument('--emb', type=str, default=None)
     parser.add_argument('--s_struct', type=str, default=None)
     parser.add_argument('--s_sem', type=str, default=None)
@@ -124,15 +124,15 @@ def main():
     parser.add_argument('--model', type=str, required=True)
     parser.add_argument('--class_order', type=str, required=True)
     parser.add_argument('--out', type=str, default=None)
-    parser.add_argument('--scaler', type=str, default=None, help='scaler.pkl 路径')
+    parser.add_argument('--scaler', type=str, default=None, help='Path to scaler.pkl')
 
-    # 【新增】实验保存：run 目录与 tag（与 edl_train.py 对齐）
+    # Run folder and tag (aligned with edl_train.py)
     parser.add_argument('--run_tag', type=str, default=None, help='If set, outputs are saved under data/processed/edl/runs/<run_tag>/infer_outputs/')
     parser.add_argument('--run_dir', type=str, default=None, help='Override run directory. If set, infer outputs are placed under <run_dir>/infer_outputs/')
     parser.add_argument('--system', type=str, default=None, help='Optional system name for naming outputs (e.g., acmeair)')
     parser.add_argument('--note', type=str, default='', help='Optional free-text note saved into infer_config.json')
 
-    # 【新增】不确定性释放相关参数
+    # Uncertainty calibration parameters
     parser.add_argument('--evidence_smooth', type=float, default=0.1, help='Additive smoothing to alpha before computing U')
     parser.add_argument('--evidence_scale', type=float, default=1.0, help='Scale evidence (alpha-1) before computing U')
 
@@ -168,19 +168,19 @@ def main():
         class_order = json.load(f)
     N = len(class_order)
 
-    # 优先使用--X，否则回退到四模态输入
+    # Prefer --X, otherwise fall back to 4-modality inputs
     if args.X is not None:
         X = np.load(args.X)
     else:
         if not (args.emb and args.s_struct and args.s_sem and args.s_temp):
-            raise ValueError('必须提供--X，或同时提供--emb、--s_struct、--s_sem、--s_temp')
+            raise ValueError('Must provide --X, or provide --emb/--s_struct/--s_sem/--s_temp together')
         emb = np.load(args.emb)
         s_struct = np.load(args.s_struct)
         s_sem = np.load(args.s_sem)
         s_temp = np.load(args.s_temp)
         X = build_all_pairs_features(emb, s_struct, s_sem, s_temp)
 
-    # === 加载scaler并标准化 ===
+    # Load scaler and standardize
     scaler_path = args.scaler or args.model.replace('edl_model', 'edl_scaler').replace('.pt', '_scaler.pkl')
     scaler = joblib.load(scaler_path)
     X = scaler.transform(X)
@@ -191,7 +191,7 @@ def main():
 
     u = infer_uncertainty(model_inst, X, evidence_smooth=args.evidence_smooth, evidence_scale=args.evidence_scale)
 
-    # 将 u 还原为 N*N 矩阵（只填上三角）
+    # Restore u into an N*N matrix (upper triangle only)
     U = np.zeros((N, N))
     idx = 0
     for i in range(N):
@@ -241,7 +241,7 @@ def main():
     plt.close()
     print(f"Heatmap saved to {out_path.replace('.npy', '.png')}")
 
-    # === 校准层：输出 u 分布直方图、均值、方差 ===
+    # === Calibration: output u distribution histogram, mean, and variance ===
     def debug_u_matrix(u_matrix, system_name):
         plt.figure(figsize=(6,4))
         plt.hist(u_matrix.flatten(), bins=50, color='skyblue', edgecolor='black')
@@ -252,7 +252,7 @@ def main():
         plt.savefig(out_path.replace('.npy', '_u_hist.png'), dpi=300)
         plt.close()
         print(f"[DEBUG] Mean U: {np.mean(u_matrix):.4f}, Std U: {np.std(u_matrix):.4f}")
-        print(f"u 分布直方图已保存: {out_path.replace('.npy', '_u_hist.png')}")
+        print(f"U histogram saved: {out_path.replace('.npy', '_u_hist.png')}")
 
     debug_u_matrix(U, os.path.basename(out_path).replace('_edl_uncertainty.npy', ''))
 

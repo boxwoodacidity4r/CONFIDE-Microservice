@@ -61,7 +61,14 @@ def _eval_phase4(system: str, pred_path: Path) -> Dict[str, Any]:
     # parse K info (robust regex)
     gt_k = 0
     pred_k = 0
-    m = re.search(r"GT\s*服务数\s*:\s*(\d+)\s*,\s*预测服务数\s*:\s*(\d+)", txt.replace("，", ","))
+    # Expected line pattern (English output): "#GT services: X, #Pred services: Y, K-Diff: Z"
+    # Use a tolerant regex fallback to keep backward compatibility with older localized outputs.
+    m = re.search(r"#GT\s*services\s*:\s*(\d+)\s*,\s*#Pred\s*services\s*:\s*(\d+)", txt)
+    if not m:
+        m = re.search(r"GT\s*services\s*:\s*(\d+)\s*,\s*pred(?:icted)?\s*services\s*:\s*(\d+)", txt, flags=re.IGNORECASE)
+    if not m:
+        # legacy Chinese output (deprecated)
+        m = re.search(r"GT\s*\u670d\u52a1\u6570\s*:\s*(\d+)\s*,\s*\u9884\u6d4b\u670d\u52a1\u6570\s*:\s*(\d+)", txt.replace("\uff0c", ","))
     if m:
         gt_k = int(m.group(1))
         pred_k = int(m.group(2))

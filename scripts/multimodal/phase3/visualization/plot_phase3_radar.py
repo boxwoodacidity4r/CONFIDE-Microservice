@@ -30,6 +30,10 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Paper-consistent palette (match plot_semantic_pdf_dade.py)
+COL_RAW_GRAY = "#999999"   # baseline / raw
+COL_DADE_BLUE = "#1f77b4"  # ours / dade
+
 
 @dataclass
 class Row:
@@ -297,8 +301,8 @@ def main():
 
         # In relative-gain, show baseline reference as dashed gray to avoid "algorithm polygon" confusion
         base_ls = "--" if args.mode == "relative-gain" else "-"
-        plot_radar(ax, labels, b_vals, color="#777777", name="Baseline", linestyle=base_ls)
-        plot_radar(ax, labels, c_vals, color="#1f77b4", name="CAC-Final")
+        plot_radar(ax, labels, b_vals, color=COL_RAW_GRAY, name="Baseline", linestyle=base_ls)
+        plot_radar(ax, labels, c_vals, color=COL_DADE_BLUE, name="CAC-Final")
 
         # Annotate cap + target
         ax.text(

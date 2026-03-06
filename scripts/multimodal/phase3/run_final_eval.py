@@ -79,8 +79,11 @@ def run_one(system: str, tmin: int, tmax: int, cap: float) -> dict:
 
 
 def main():
+    # Note: for reproducibility and easy diffs, output filenames are deterministic (no timestamp).
+    # If you need timestamped outputs, modify the naming logic below.
+
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_dir = ROOT / "results" / "ablation"
+    out_dir = ROOT / "results" / "ablation" / "baseline"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     rows = []
@@ -88,57 +91,53 @@ def main():
         print(f"[FinalEval] Running {system} (target={tmin}-{tmax}, cap={cap})", flush=True)
         rows.append(run_one(system, tmin, tmax, cap))
 
-    # Write CSV
-    csv_path = out_dir / f"phase3_best_all_systems_{ts}.csv"
+    # Write CSV (stable filename)
+    csv_path = out_dir / "phase3_best_all_systems.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(
-            [
-                "system",
-                "mode",
-                "alpha",
-                "dpep_cap",
-                "target_min",
-                "target_max",
-                "baseline_services",
-                "baseline_q",
-                "baseline_ifn",
-                "baseline_ifn_ratio",
-                "cac_services",
-                "cac_q",
-                "cac_ifn",
-                "cac_ifn_ratio",
-                "error",
-            ]
-        )
+        w.writerow([
+            "system",
+            "mode",
+            "alpha",
+            "dpep_cap",
+            "target_min",
+            "target_max",
+            "baseline_services",
+            "baseline_q",
+            "baseline_ifn",
+            "baseline_ifn_ratio",
+            "cac_services",
+            "cac_q",
+            "cac_ifn",
+            "cac_ifn_ratio",
+            "error",
+        ])
         for r in rows:
             b = r.get("baseline") or {}
             c = r.get("cac") or {}
-            w.writerow(
-                [
-                    r.get("system"),
-                    r.get("mode"),
-                    r.get("alpha"),
-                    r.get("dpep_cap"),
-                    r.get("target_min"),
-                    r.get("target_max"),
-                    b.get("Services"),
-                    b.get("Q"),
-                    b.get("IFN"),
-                    b.get("IFN_Ratio"),
-                    c.get("Services"),
-                    c.get("Q"),
-                    c.get("IFN"),
-                    c.get("IFN_Ratio"),
-                    r.get("error"),
-                ]
-            )
+            w.writerow([
+                r.get("system"),
+                r.get("mode"),
+                r.get("alpha"),
+                r.get("dpep_cap"),
+                r.get("target_min"),
+                r.get("target_max"),
+                b.get("Services"),
+                b.get("Q"),
+                b.get("IFN"),
+                b.get("IFN_Ratio"),
+                c.get("Services"),
+                c.get("Q"),
+                c.get("IFN"),
+                c.get("IFN_Ratio"),
+                r.get("error"),
+            ])
 
-    # Write markdown table (paper-ready)
-    md_path = out_dir / f"phase3_best_all_systems_{ts}.md"
+    # Write markdown table (stable filename, but includes generated timestamp inside)
+    md_path = out_dir / "phase3_best_all_systems.md"
     with md_path.open("w", encoding="utf-8") as f:
         f.write("# Phase 3 Best Points (All Systems)\n\n")
-        f.write(f"Generated: {ts}\n\n")
+        f.write(f"Generated: {ts} (deterministic filenames: no timestamp, for reproducibility and easier diffs)\n\n")
         f.write(
             "| System | Baseline Services | Baseline Q | Baseline IFN_Ratio | CAC Services | CAC Q | CAC IFN_Ratio | dpep_cap | target_range |\n"
         )

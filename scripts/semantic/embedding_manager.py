@@ -19,7 +19,7 @@ class EmbeddingManager:
         if self.model_type in ["graphcodebert", "codet5"]:
             self._init_hf_model()
         elif self.model_type == "openai":
-            import openai  # 仅在需要时导入
+            import openai  # import only when needed
             if not openai_api_key:
                 raise ValueError("OpenAI API key required for openai embeddings")
             openai.api_key = openai_api_key
@@ -57,7 +57,7 @@ class EmbeddingManager:
             inputs = self.tokenizer(code_snippets, padding=True, truncation=True, return_tensors="pt")
             inputs = {k: v.to(self.device) for k, v in inputs.items()}
             outputs = self.model(**inputs)
-            # 使用 [CLS] token 或 mean pooling 作为 embedding
+            # Use mean pooling (or [CLS]) as the embedding.
             embeddings = outputs.last_hidden_state.mean(dim=1)
             return embeddings.cpu()
 
@@ -74,14 +74,14 @@ class EmbeddingManager:
 
 
 if __name__ == "__main__":
-    # 测试
+    # Quick test
     code_example = "public void placeOrder() { System.out.println('Order placed'); }"
-    
+
     manager = EmbeddingManager(model_type="graphcodebert")
     emb = manager.encode(code_example)
     print("GraphCodeBERT embedding shape:", emb.shape)
 
-    # OpenAI 测试
+    # OpenAI test
     # manager = EmbeddingManager(model_type="openai", openai_api_key="YOUR_KEY")
     # emb = manager.encode(code_example)
     # print("OpenAI embedding length:", len(emb[0]))

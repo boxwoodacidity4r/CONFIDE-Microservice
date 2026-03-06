@@ -6,8 +6,8 @@ import logging
 import sys
 from collections import Counter, defaultdict
 
-# -------------------- 配置路径 --------------------
-BASE_DIR = Path(__file__).resolve().parents[2]  # 修正为 workspace 根目录
+# -------------------- Path configuration --------------------
+BASE_DIR = Path(__file__).resolve().parents[2]  # workspace root
 TOOLS_DIR = BASE_DIR / "tools"
 RAW_DIR = BASE_DIR / "data/raw"
 AST_DIR = BASE_DIR / "data/processed/ast"
@@ -18,13 +18,13 @@ AST_DIR.mkdir(parents=True, exist_ok=True)
 CG_DIR.mkdir(parents=True, exist_ok=True)
 DEP_DIR.mkdir(parents=True, exist_ok=True)
 
-# Maven 绝对路径
+
 MAVEN_CMD = r"D:\apache-maven-3.9.10\bin\mvn.cmd"
 
-# 四个应用
+
 APPS = ["acmeair", "daytrader7", "jPetStore", "plantsbywebsphere"]
 
-# -------------------- 日志配置 --------------------
+# -------------------- Logging configuration --------------------
 LOG_FILE = BASE_DIR / "extract_features.log"
 logging.basicConfig(
     level=logging.INFO,
@@ -36,14 +36,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger("extract_features")
 
-# -------------------- 自动发现源码根目录 --------------------
+# -------------------- Auto-discover source roots --------------------
 def find_source_roots(app_root: Path):
     src_roots = [p for p in app_root.rglob("src/main/java") if p.is_dir()]
     if not src_roots:
         return [app_root]
     return src_roots
 
-# -------------------- JSON 去重函数 --------------------
+# -------------------- JSON deduplication helper --------------------
 def deduplicate_json(file_path: Path):
     if not file_path.exists():
         return
@@ -53,7 +53,7 @@ def deduplicate_json(file_path: Path):
             data = json.load(f)
 
         if not isinstance(data, list):
-            return  # 只处理列表形式的 JSON（如 semantic）
+            return  # only deduplicate list-style JSON (e.g., semantic)
 
         seen = set()
         unique_items = []
@@ -75,7 +75,7 @@ def deduplicate_json(file_path: Path):
     except Exception as e:
         logger.warning(f"Deduplication skipped for {file_path.name}, error: {e}")
 
-# -------------------- 多模块 AST/CallGraph/Dependency 抽取 --------------------
+# -------------------- Multi-module AST/CallGraph/Dependency extraction --------------------
 def run_ast_extractor(app_name, src_roots, output_path):
     AST_EXPORTER_JAR = TOOLS_DIR / "target" / "tools-fat.jar"
     total_ast = {}
@@ -88,27 +88,28 @@ def run_ast_extractor(app_name, src_roots, output_path):
             'extractor.ast.JavaParserASTExtractor',
             str(src_dir), tmp_json
         ]
-        logger.info(f'[{app_name}] AST提取 {src_dir} ...')
+        logger.info(f'[{app_name}] AST extraction {src_dir} ...')
         try:
             subprocess.run(cmd, check=True)
             with open(tmp_json, 'r', encoding='utf-8') as f:
                 ast = json.load(f)
             for k, v in ast.items() if isinstance(ast, dict) else []:
                 if k in total_ast:
-                    logger.warning(f'警告: 类 {k} 重复，已覆盖')
+                    logger.warning(f'Warning: duplicate class {k}, overwritten')
                 total_ast[k] = v
         except Exception as e:
-            logger.error(f'[{app_name}] AST提取 {src_dir} 失败: {e}')
+            logger.error(f'[{app_name}] AST extraction {src_dir} failed: {e}')
         finally:
             if os.path.exists(tmp_json):
                 os.remove(tmp_json)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(total_ast, f, indent=2, ensure_ascii=False)
-    logger.info(f'[{app_name}] AST已写入 {output_path}，共 {len(total_ast)} 个类')
+    logger.info(f'[{app_name}] AST written to {output_path}, total classes: {len(total_ast)}')
     return len(total_ast)
 
+
 def run_graph_extractor(app_name, extractor_type, src_roots, output_path):
-    # callgraph/dependency 多模块合并
+    # Merge multi-module outputs for callgraph/dependency
     graph_nodes = set()
     graph_edges = set()
     for idx, src_dir in enumerate(src_roots):
@@ -120,7 +121,7 @@ def run_graph_extractor(app_name, extractor_type, src_roots, output_path):
             "-Dexec.mainClass=extractor.Main",
             f"-Dexec.args={extractor_type} {src_dir} {tmp_json}"
         ]
-        logger.info(f'[{app_name}] {extractor_type}提取 {src_dir} ...')
+        logger.info(f'[{app_name}] {extractor_type} extraction {src_dir} ...')
         try:
             subprocess.run(cmd, cwd=str(TOOLS_DIR), shell=True, check=True)
             with open(tmp_json, 'r', encoding='utf-8') as f:
@@ -130,27 +131,29 @@ def run_graph_extractor(app_name, extractor_type, src_roots, output_path):
             graph_nodes.update(nodes)
             graph_edges.update(edges)
         except Exception as e:
-            logger.error(f'[{app_name}] {extractor_type}提取 {src_dir} 失败: {e}')
+            logger.error(f'[{app_name}] {extractor_type} extraction {src_dir} failed: {e}')
         finally:
             if os.path.exists(tmp_json):
                 os.remove(tmp_json)
-    # 合并输出
+    # Merge output
     merged = {
         'nodes': sorted(graph_nodes),
         'edges': [{'source': s, 'target': t} for s, t in graph_edges]
     }
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(merged, f, indent=2, ensure_ascii=False)
-    logger.info(f'[{app_name}] {extractor_type}已写入 {output_path}，节点数: {len(graph_nodes)}，边数: {len(graph_edges)}')
+    logger.info(
+        f'[{app_name}] {extractor_type} written to {output_path}, nodes: {len(graph_nodes)}, edges: {len(graph_edges)}'
+    )
     return len(graph_nodes), len(graph_edges)
 
-# -------------------- 主函数 --------------------
+# -------------------- Main --------------------
 def main():
     stats = {}
     for app in APPS:
         app_root = RAW_DIR / app
         src_roots = find_source_roots(app_root)
-        logger.info(f'[{app}] 发现 {len(src_roots)} 个源码根目录:')
+        logger.info(f'[{app}] Discovered {len(src_roots)} source root(s):')
         for d in src_roots:
             logger.info('  %s', d)
         ast_output = AST_DIR / f"{app}_ast.json"
@@ -167,12 +170,12 @@ def main():
             "dependency_edges": dep_edges,
             "src_roots": [str(p) for p in src_roots],
         }
-    # 输出统计
+    # Write stats
     stats_path = BASE_DIR / "data/processed/structural/structural_stats.json"
     stats_path.parent.mkdir(parents=True, exist_ok=True)
     with open(stats_path, "w", encoding="utf-8") as f:
         json.dump(stats, f, indent=2, ensure_ascii=False)
-    logger.info(f"结构模态统计已写入 {stats_path}")
+    logger.info(f"Structural modality stats written to {stats_path}")
 
 if __name__ == "__main__":
     main()

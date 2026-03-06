@@ -68,7 +68,7 @@ exporters:
 
 service:
   pipelines:
-    # traces pipeline：仅处理 trace 信号，导出到 all_traces.json + Jaeger
+    # traces pipeline: process only trace signals; export to all_traces.json + Jaeger
     traces:
       receivers: [otlp]
       processors:

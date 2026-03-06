@@ -1,19 +1,19 @@
 import torch
 from pathlib import Path
 
-# 指定要测试的文件
+# Target file to test
 EMBEDDING_FILE = Path("data/processed/embedding/acmeair.pt")
 
 def main():
     if not EMBEDDING_FILE.exists():
-        print(f"❌ {EMBEDDING_FILE} not found")
+        print(f"[FAIL] {EMBEDDING_FILE} not found")
         return
 
     data = torch.load(EMBEDDING_FILE)
 
-    print(f"✅ Loaded {len(data)} items from {EMBEDDING_FILE}")
+    print(f"[OK] Loaded {len(data)} items from {EMBEDDING_FILE}")
 
-    # 打印前 3 个方法的情况
+    # Print the first 3 items
     for i, item in enumerate(data[:3]):
         print(f"\n--- Item {i+1} ---")
         print(f"Class: {item['class']}")

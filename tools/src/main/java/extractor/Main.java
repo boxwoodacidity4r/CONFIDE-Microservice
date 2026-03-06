@@ -164,7 +164,7 @@ public class Main {
         String srcPath = args[1];
         String outputPath = args[2];
 
-        // 确保输出目录存在
+        // Ensure the output directory exists.
         File outFile = new File(outputPath);
         outFile.getParentFile().mkdirs();
 
@@ -192,9 +192,9 @@ public class Main {
 
                 mapper.writerWithDefaultPrettyPrinter().writeValue(outFile, astList);
 
-                System.out.println("✅ AST extraction finished. Total files: " + astList.size());
+                System.out.println("[OK] AST extraction finished. Total files: " + astList.size());
                 if (!failedFiles.isEmpty()) {
-                    System.err.println("⚠️ Failed to parse files: " + failedFiles);
+                    System.err.println("[WARN] Failed to parse files: " + failedFiles);
                 }
                 break;
             }
@@ -221,9 +221,9 @@ public class Main {
                 Map<String, Object> json = convertGraphToJson(graph);
                 mapper.writerWithDefaultPrettyPrinter().writeValue(outFile, json);
 
-                System.out.println("✅ CallGraph extraction finished. Nodes: "
+                System.out.println("[OK] CallGraph extraction finished. Nodes: "
                         + graph.vertexSet().size() + " Edges: " + graph.edgeSet().size());
-                System.out.println("依赖JAR数量: " + dependencyJars.size());
+                System.out.println("Dependency JAR count: " + dependencyJars.size());
                 break;
             }
 
@@ -235,9 +235,9 @@ public class Main {
                 Map<String, Object> json = convertGraphToJson(depGraph);
                 mapper.writerWithDefaultPrettyPrinter().writeValue(outFile, json);
 
-                System.out.println("✅ DependencyGraph extraction finished. Nodes: "
+                System.out.println("[OK] DependencyGraph extraction finished. Nodes: "
                         + depGraph.vertexSet().size() + " Edges: " + depGraph.edgeSet().size());
-                System.out.println("依赖JAR数量: " + dependencyJars.size());
+                System.out.println("Dependency JAR count: " + dependencyJars.size());
                 break;
             }
 
@@ -245,8 +245,8 @@ public class Main {
                 List<File> dependencyJars = collectDependencyJars(srcPath);
                 SemanticExtractor extractor = new JavaParserSemanticExtractor(srcPath, dependencyJars);
                 extractor.extract(srcPath, outputPath);
-                System.out.println("✅ Semantic extraction finished. Output: " + outputPath);
-                System.out.println("依赖JAR数量: " + dependencyJars.size());
+                System.out.println("[OK] Semantic extraction finished. Output: " + outputPath);
+                System.out.println("Dependency JAR count: " + dependencyJars.size());
                 break;
             }
 
@@ -257,7 +257,7 @@ public class Main {
         }
     }
 
-    // 公共方法：把 JGraphT 图转成 JSON
+    // Shared helper: convert a JGraphT graph to a JSON-serializable structure.
     private static Map<String, Object> convertGraphToJson(DefaultDirectedGraph<String, DefaultEdge> graph) {
         Map<String, Object> json = new HashMap<>();
         json.put("nodes", graph.vertexSet());

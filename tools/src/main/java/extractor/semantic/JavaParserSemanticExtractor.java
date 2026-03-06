@@ -83,12 +83,12 @@ public class JavaParserSemanticExtractor implements SemanticExtractor {
             String pkg = cu.getPackageDeclaration().map(PackageDeclaration::getNameAsString).orElse("");
             String sourceFile = root.relativize(file).toString();
 
-            // 递归收集所有类型声明（类、接口、枚举，包括内部类）
+            // Recursively collect all type declarations (classes/interfaces/enums), including inner types.
             List<TypeDeclaration<?>> allTypes = new ArrayList<>();
             cu.findAll(TypeDeclaration.class).forEach(allTypes::add);
 
             int methodCountInFile = 0;
-            Set<String> seenMethods = new HashSet<>(); // 用于去重
+            Set<String> seenMethods = new HashSet<>(); // used for deduplication
 
             for (TypeDeclaration<?> type : allTypes) {
                 String className = getFQN(type, pkg, sourceFile);
@@ -111,8 +111,8 @@ public class JavaParserSemanticExtractor implements SemanticExtractor {
                 }
             }
 
-            // 降级策略：如果文件有方法但无法归属 class
-            // 只抽取未归属过的 method
+            // Fallback strategy: if the file contains methods but they cannot be attributed to any class.
+            // Only extract methods that have not been attributed yet.
             List<MethodDeclaration> orphanMethods = cu.findAll(MethodDeclaration.class);
             for (MethodDeclaration method : orphanMethods) {
                 String methodKey = getMethodKey(method);
@@ -134,7 +134,7 @@ public class JavaParserSemanticExtractor implements SemanticExtractor {
 
         mapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputPath), methodsInfo);
 
-        // 输出统计
+        // Print summary statistics
         System.out.println("Semantic Extraction Summary:");
         System.out.println("- Total Java files: " + totalFiles);
         System.out.println("- Parsed successfully: " + parsedFiles);
@@ -144,10 +144,10 @@ public class JavaParserSemanticExtractor implements SemanticExtractor {
             System.out.println("Parse failed files:");
             parseFailed.forEach(System.out::println);
         }
-        System.out.println("✅ Semantic features saved to " + outputPath);
+        System.out.println("[OK] Semantic features saved to " + outputPath);
     }
 
-    // 获取 FQN
+    // Get fully-qualified name (FQN)
     private String getFQN(TypeDeclaration<?> type, String pkg, String sourceFile) {
         Deque<String> names = new ArrayDeque<>();
         TypeDeclaration<?> current = type;
@@ -169,14 +169,14 @@ public class JavaParserSemanticExtractor implements SemanticExtractor {
         return fqn;
     }
 
-    // method 唯一标识（用 Range）
+    // Method unique identifier (based on Range)
     private String getMethodKey(MethodDeclaration method) {
         Optional<Range> range = method.getRange();
         return method.getNameAsString() + ":" +
                 range.map(r -> r.begin.line + "-" + r.end.line).orElse("unknown");
     }
 
-    // 提取 method 语义信息
+    // Extract method semantic information
     private Map<String, Object> extractMethodInfo(MethodDeclaration method, String className, String pkg, String sourceFile) {
         Map<String, Object> methodInfo = new LinkedHashMap<>();
         methodInfo.put("class", className);
@@ -189,7 +189,7 @@ public class JavaParserSemanticExtractor implements SemanticExtractor {
         methodInfo.put("comments", comment);
         methodInfo.put("sourceFile", sourceFile);
         methodInfo.put("package", pkg);
-        // 行号区间
+        // Line number range
         Optional<Range> range = method.getRange();
         methodInfo.put("beginLine", range.map(r -> r.begin.line).orElse(-1));
         methodInfo.put("endLine", range.map(r -> r.end.line).orElse(-1));

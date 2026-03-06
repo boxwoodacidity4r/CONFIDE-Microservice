@@ -1,26 +1,26 @@
-# Python 缓存
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# 虚拟环境
+# Virtual environments
 venv/
 .env/
 .venv/
 *.env
 
-# 数据文件
+# Data files
 *.npy
 *.pt
 *.csv
 *.json
 *.graphml
 
-# 日志文件
+# Logs
 logs/
 *.log
 
-# IDE 文件
+# IDE files
 .idea/
 .vscode/

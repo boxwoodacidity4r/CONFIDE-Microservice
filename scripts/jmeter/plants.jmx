@@ -310,13 +310,13 @@
             </ResponseAssertion>
           </hashTree>
 
-          <!-- 新增：真正的加入购物车 POST 请求，使用表单参数模拟加购动作 -->
+          
           <HTTPSamplerProxy testname="Add To Cart Action" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
             <stringProp name="HTTPSampler.path">/PlantsByWebSphere/cart.jsf</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
-                <!-- 使用固定的示例商品 ID 和数量；后续如有需要可扩展为随机/参数化 -->
+                
                 <elementProp name="itemId" elementType="HTTPArgument">
                   <stringProp name="HTTPArgument.name">itemId</stringProp>
                   <stringProp name="HTTPArgument.value">EST-1</stringProp>
@@ -327,7 +327,7 @@
                   <stringProp name="HTTPArgument.value">1</stringProp>
                   <stringProp name="HTTPArgument.metadata">=</stringProp>
                 </elementProp>
-                <!-- 常见表单按钮参数，真实应用会在 JSP/JSF 表单内带上；如名称不符，可根据页面源码微调 -->
+                <!--  -->
                 <elementProp name="addToCart" elementType="HTTPArgument">
                   <stringProp name="HTTPArgument.name">addToCart</stringProp>
                   <stringProp name="HTTPArgument.value">Add to Cart</stringProp>
@@ -353,7 +353,7 @@
           </UniformRandomTimer>
           <hashTree/>
 
-          <!-- 现有 Cart Page GET 保持不变，用于查看购物车详情 -->
+          <!--  -->
           <HTTPSamplerProxy testname="Cart Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
             <stringProp name="HTTPSampler.path">/PlantsByWebSphere/cart.jsf</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -390,13 +390,13 @@
             </ResponseAssertion>
           </hashTree>
 
-          <!-- 新增：模拟在订单信息页提交订单的真实业务 POST -->
+          
           <HTTPSamplerProxy testname="Submit Order Action" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
             <stringProp name="HTTPSampler.path">/PlantsByWebSphere/orderinfo.jsf</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
-                <!-- 简化的表单参数：使用固定示例值，后续可根据页面表单源码再细化/参数化 -->
+                
                 <elementProp name="creditCard" elementType="HTTPArgument">
                   <stringProp name="HTTPArgument.name">creditCard</stringProp>
                   <stringProp name="HTTPArgument.value">4111111111111111</stringProp>
@@ -425,14 +425,14 @@
             </ResponseAssertion>
           </hashTree>
 
-          <!-- 提交订单后增加少量思考时间，再进入订单完成页 -->
+          
           <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="URT_After_SubmitOrder" enabled="true">
             <stringProp name="ConstantTimer.delay">300</stringProp>
             <stringProp name="RandomTimer.range">500</stringProp>
           </UniformRandomTimer>
           <hashTree/>
 
-          <!-- 现有 Order Done Page 保持不变，用于查看订单完成结果 -->
+          
           <HTTPSamplerProxy testname="Order Done Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
             <stringProp name="HTTPSampler.path">/PlantsByWebSphere/orderdone.jsf</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -618,13 +618,13 @@ vars.put('TAIL_FLOW_FLAG', String.valueOf(flag))
         </HTTPSamplerProxy>
         <hashTree/>
 
-        <!-- 新增：在 Backorder 管理页面之后，模拟处理 backorder 的表单提交 -->
+        
         <HTTPSamplerProxy testname="Process Backorder Action" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
           <stringProp name="HTTPSampler.path">/PlantsByWebSphere/backorderadmin.jsp</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments">
-              <!-- 简化参数：假设通过 orderId / action 提交处理请求；后续可按真实 JSP 表单再调整字段名 -->
+              
               <elementProp name="orderId" elementType="HTTPArgument">
                 <stringProp name="HTTPArgument.name">orderId</stringProp>
                 <stringProp name="HTTPArgument.value">BO-1001</stringProp>
@@ -648,14 +648,14 @@ vars.put('TAIL_FLOW_FLAG', String.valueOf(flag))
           </ResponseAssertion>
         </hashTree>
 
-        <!-- 提交 Backorder 处理后增加少量思考时间，再进入下一管理页面 -->
+        
         <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="URT_After_ProcessBackorder" enabled="true">
           <stringProp name="ConstantTimer.delay">100</stringProp>
           <stringProp name="RandomTimer.range">200</stringProp>
         </UniformRandomTimer>
         <hashTree/>
 
-        <!-- 现有 Supplier Config Page 保持不变，用于配置供应商/库存等管理操作 -->
+        
         <HTTPSamplerProxy testname="Supplier Config Page" guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" enabled="true">
           <stringProp name="HTTPSampler.path">/PlantsByWebSphere/supplierconfig.jsp</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>

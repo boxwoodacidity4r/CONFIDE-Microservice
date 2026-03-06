@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-# 统一 ROOT 路径深度，与 build_class_index.py 保持一致
+# Keep ROOT depth consistent with build_class_index.py
 ROOT = Path(__file__).resolve().parents[3]
 
 SYSTEM_CLASS_INDEX = {
@@ -27,7 +27,7 @@ def load_system_classes(system: str) -> Dict[str, dict]:
 
 def build_class_order_and_index(system: str) -> Tuple[List[str], Dict[str, int]]:
     data = load_system_classes(system)
-    # 调试打印，看看 index 文件有多少条
+    # Debug print: inspect index file size
     print(f"DEBUG [{system}]: Loaded index containing {len(data)} classes.")
     selected = [
         cls_name
@@ -36,7 +36,7 @@ def build_class_order_and_index(system: str) -> Tuple[List[str], Dict[str, int]]
         and meta.get("has_semantic") is True
         and (meta.get("has_callgraph") or meta.get("has_dependency"))
     ]
-    # 如果还是报错，打印出前 3 个 meta 看看结构
+    # If it still fails, print a sample meta to inspect schema
     if not selected and data:
         first_key = list(data.keys())[0]
         print(f"DEBUG [{system}]: Sample class meta: {data[first_key]}")

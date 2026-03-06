@@ -7,7 +7,7 @@
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
         <collectionProp name="Arguments.arguments">
-          <!-- 可在这里调整根路径与端口 -->
+          
           <elementProp name="BASE_PATH" elementType="Argument">
             <stringProp name="Argument.name">BASE_PATH</stringProp>
             <stringProp name="Argument.value">/daytrader</stringProp>
@@ -56,7 +56,7 @@
       </HeaderManager>
       <hashTree/>
 
-      <!-- Thread Group: 调整 threads/loops 以控制生成样本量 -->
+      
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="DayTrader Users" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
@@ -489,7 +489,7 @@ vars.put("UP", String.valueOf((int)(Math.random()*900000) + 100000));
           </hashTree>
         </hashTree>
 
-        <!-- Think Time: 模拟真实用户间隔 -->
+        
         <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Think Time (300-1200ms)" enabled="true">
           <stringProp name="ConstantTimer.delay">300</stringProp>
           <stringProp name="RandomTimer.range">900</stringProp>

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 依赖图提取器，集成 SymbolSolver 支持 JAR 依赖
+ * Dependency graph extractor with SymbolSolver support for external JAR dependencies.
  */
 public class JavaParserDependencyGraphExtractor {
 
@@ -46,7 +46,7 @@ public class JavaParserDependencyGraphExtractor {
         this.parser = new JavaParser(config);
     }
 
-    // 复用 CallGraph 风格的业务类过滤：仅保留项目内部包前缀
+    // Reuse CallGraph-style business class filtering: keep only project-internal package prefixes.
     private boolean isBusinessClass(String cls) {
         if (cls == null) return false;
         String s = cls.trim();
@@ -87,26 +87,26 @@ public class JavaParserDependencyGraphExtractor {
                         if (result.isEmpty()) return;
                         CompilationUnit cu = result.get();
 
-                        // 获取包名
+                        // Package name
                         String packageName = cu.getPackageDeclaration().map(pd -> pd.getNameAsString()).orElse("");
-                        // 找到当前文件中的类名（只取第一个 public class/interface）
+                        // Find the class name in the current file (use the first public class/interface if present)
                         String className = cu.findFirst(ClassOrInterfaceDeclaration.class)
                                 .map(ClassOrInterfaceDeclaration::getNameAsString)
                                 .orElse(p.getFileName().toString());
                         String fullClassName = packageName.isEmpty() ? className : packageName + "." + className;
                         graph.addVertex(fullClassName);
 
-                        // 遍历 import，建立依赖边（过滤基础设施依赖）
+                        // Traverse imports and add dependency edges (filter out infrastructure dependencies)
                         for (ImportDeclaration imp : cu.getImports()) {
                             String dep = imp.getNameAsString();
-                            // 跳过 star import，避免 java.util.* 这种噪声
+                            // Skip star imports to avoid noise such as java.util.*
                             if (imp.isAsterisk()) continue;
                             if (!isBusinessClass(dep)) continue;
 
                             graph.addVertex(dep);
                             graph.addEdge(fullClassName, dep);
 
-                            // 轻量标注：仅日志输出，数据格式不破坏
+                            // Lightweight annotation: logging only; output JSON format remains unchanged.
                             String kind = dependencyKind(dep);
                             if (!"other".equals(kind)) {
                                 System.out.println("[Dependency] " + fullClassName + " -> " + dep + " (" + kind + ")");

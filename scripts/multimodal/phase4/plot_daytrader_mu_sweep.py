@@ -80,20 +80,23 @@ def main() -> None:
     plt.style.use("seaborn-v0_8-whitegrid")
     fig, ax1 = plt.subplots(figsize=(8.8, 4.6), dpi=220)
 
-    ax1.plot(xs, f1, marker="o", linewidth=2.2, color="#1f77b4", label="BCubed F1")
+    col_blue = "#1f77b4"  # match semantic_pdf_dade
+    col_gray = "#999999"  # match semantic_pdf_dade
+
+    ax1.plot(xs, f1, marker="o", linewidth=2.2, color=col_blue, label="BCubed F1")
     ax1.set_xlabel(r"$\mu$ (structural weight)")
-    ax1.set_ylabel("BCubed F1", color="#1f77b4")
-    ax1.tick_params(axis="y", labelcolor="#1f77b4")
+    ax1.set_ylabel("BCubed F1", color=col_blue)
+    ax1.tick_params(axis="y", labelcolor=col_blue)
     ax1.set_ylim(0, max(0.55, max(f1) * 1.15))
 
     ax2 = ax1.twinx()
-    ax2.plot(xs, mj, marker="s", linewidth=2.0, linestyle="--", color="#ff7f0e", label="MoJoSim")
-    ax2.set_ylabel("MoJoSim", color="#ff7f0e")
-    ax2.tick_params(axis="y", labelcolor="#ff7f0e")
+    ax2.plot(xs, mj, marker="s", linewidth=2.0, linestyle="--", color=col_gray, label="MoJoSim")
+    ax2.set_ylabel("MoJoSim", color=col_gray)
+    ax2.tick_params(axis="y", labelcolor=col_gray)
     ax2.set_ylim(0, max(60, max(mj) * 1.15))
 
     # annotate best point
-    ax1.scatter([xs[best_i]], [f1[best_i]], s=90, color="#d62728", zorder=5)
+    ax1.scatter([xs[best_i]], [f1[best_i]], s=90, color=col_blue, zorder=5)
     ax1.annotate(
         f"best F1={f1[best_i]:.3f} at $\mu$={xs[best_i]:.2f}\nK={k[best_i]} (GT_K={gt_k})",
         xy=(xs[best_i], f1[best_i]),

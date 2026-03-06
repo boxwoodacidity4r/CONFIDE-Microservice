@@ -1,12 +1,13 @@
 import numpy as np
 import argparse
+import os
 
-# 通用推理特征生成脚本，支持命令行参数指定系统名
+
 
 def build_inference_pairs(emb, s_struct, s_sem, s_temp):
     n = emb.shape[0]
     s_static = (s_struct + s_sem) / 2
-    feat_dim = emb.shape[1] * 2 + 4  # 增加D特征
+    feat_dim = emb.shape[1] * 2 + 4  
     X = np.zeros((n * (n - 1) // 2, feat_dim), dtype=np.float32)
     idx = 0
     for i in range(n):
@@ -25,12 +26,15 @@ def build_inference_pairs(emb, s_struct, s_sem, s_temp):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('system', type=str, help='系统名，如 acmeair、jpetstore、plants')
+    parser.add_argument('system', type=str, help='System name, e.g., acmeair, jpetstore, plants')
     args = parser.parse_args()
     sys = args.system
     emb = np.load(f'data/processed/fusion/{sys}_S_sem_embedding.npy')
     s_struct = np.load(f'data/processed/fusion/{sys}_S_struct.npy')
-    s_sem = np.load(f'data/processed/fusion/{sys}_S_sem_dade.npy')
+    s_sem_path = f'data/processed/fusion/{sys}_S_sem_dade_base.npy'
+    if not os.path.exists(s_sem_path):
+        s_sem_path = f'data/processed/fusion/{sys}_S_sem.npy'
+    s_sem = np.load(s_sem_path)
     s_temp = np.load(f'data/processed/temporal/{sys}_S_temp.npy')
     X_infer = build_inference_pairs(emb, s_struct, s_sem, s_temp)
     np.save(f'data/processed/edl/{sys}_all_X.npy', X_infer)

@@ -3,7 +3,7 @@ import json
 import argparse
 from typing import Dict, List, TextIO
 
-# 要分流的 service.name 列表（对应四个单体应用）
+# List of service.name values to split (corresponding to the four monolith applications)
 APPS = ["acmeair", "daytrader7", "jpetstore", "plantsbywebsphere"]
 
 # Output filename aliases (service.name -> output stem)
@@ -17,9 +17,7 @@ def _out_stem(service_name: str) -> str:
 
 
 def _get_service_name_from_resource(resource: Dict) -> str:
-    """
-    从 OTEL resource.attributes 中提取 service.name（stringValue）。
-    """
+    """Extract service.name (stringValue) from OTEL resource.attributes."""
     for a in resource.get("attributes", []):
         if a.get("key") == "service.name":
             v = a.get("value", {})
@@ -33,11 +31,12 @@ def split_traces_by_service(
     out_dir: Path,
     services: List[str],
 ) -> None:
-    """
-    从 all_traces.json 中按 service.name 分流成 per-app trace 文件。
-    每行保留一个或多个 resourceSpans，但只包含指定 service 的那部分。
+    """Split all_traces.json into per-app trace files by service.name.
 
-    输出：data/processed/traces/{service}.json
+    Each output line contains one or more resourceSpans, but only the subset
+    belonging to the target service.
+
+    Output: data/processed/traces/{service}.json
 
     Note: some services may be aliased to different output names (e.g.,
     plantsbywebsphere -> plants) via OUT_NAME_ALIAS.
@@ -46,7 +45,7 @@ def split_traces_by_service(
     writers: Dict[str, "TextIO"] = {}
 
     try:
-        # 预先打开所有输出文件
+        # Pre-open all output files
         for svc in services:
             dst = out_dir / f"{_out_stem(svc)}.json"
             writers[svc] = dst.open("w", encoding="utf-8")
@@ -62,7 +61,7 @@ def split_traces_by_service(
                     continue
 
                 resource_spans = obj.get("resourceSpans", [])
-                # 为每个 service 单独收集属于它的 resourceSpans
+                # Collect resourceSpans per service
                 svc_to_rs: Dict[str, List[Dict]] = {svc: [] for svc in services}
 
                 for rs in resource_spans:
@@ -71,7 +70,7 @@ def split_traces_by_service(
                     if svc_name in services:
                         svc_to_rs[svc_name].append(rs)
 
-                # 分别写入对应 service 的文件
+                # Write to the corresponding per-service file
                 for svc in services:
                     if not svc_to_rs[svc]:
                         continue
@@ -114,7 +113,7 @@ def main() -> None:
         else Path(__file__).resolve().parents[2]
     )
 
-    # traces：从 all_traces.json 分流
+    # Traces: split from all_traces.json
     trace_src = root / "data" / "processed" / "traces" / "all_traces.json"
     trace_out_dir = root / "data" / "processed" / "traces"
     if trace_src.is_file():

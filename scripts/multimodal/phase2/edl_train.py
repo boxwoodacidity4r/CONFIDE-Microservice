@@ -50,11 +50,11 @@ def edl_loss(alpha, target, epoch_num, num_classes=2, annealing_step=10):
 
 
 def edl_loss_scaled(alpha, target, epoch_num, num_classes=2, annealing_step=10, kl_weight=1.0, evidence_scale=1.0):
-    """更激进的 EDL loss：
-    - evidence_scale: 放大 evidence（等价于放大 alpha-1），让模型更容易表达不确定性差异
-    - kl_weight: 加大 KL 正则权重，惩罚“过度集中的证据分布”，抑制过度自信
+    """A more aggressive EDL loss:
+    - evidence_scale: scales evidence (equivalent to scaling alpha-1), making uncertainty easier to express
+    - kl_weight: increases KL regularization weight to penalize overly concentrated evidence distributions
     """
-    # 注意：alpha >= 1，evidence = alpha-1
+    # Note: alpha >= 1, evidence = alpha - 1
     if evidence_scale != 1.0:
         evidence = (alpha - 1.0) * evidence_scale
         alpha = evidence + 1.0
@@ -83,19 +83,19 @@ def main():
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--save', type=str, default='edl_model.pt')
 
-    # 【新增】实验保存：run 目录与 tag
+    # Experiment tracking: run directory and tag
     parser.add_argument('--run_tag', type=str, default=None, help='Optional run tag. If set, outputs are saved under data/processed/edl/runs/<run_tag>/')
     parser.add_argument('--run_dir', type=str, default=None, help='Override run directory. If set, --save is relative to this directory unless absolute.')
     parser.add_argument('--note', type=str, default='', help='Optional free-text note saved into train_config.json')
     parser.add_argument('--seed', type=int, default=42, help='Random seed for reproducibility')
     parser.add_argument('--scaler', type=str, default=None, help='Path to scaler.pkl used in training (optional, for provenance only)')
 
-    # 【新增】调参项：证据缩放 + KL 权重 + KL 退火步长
+    # Tuning knobs: evidence scaling + KL weight + KL annealing steps
     parser.add_argument('--evidence_scale', type=float, default=1.0, help='Scale evidence (alpha-1) to reduce overconfidence')
     parser.add_argument('--kl_weight', type=float, default=1.0, help='Weight for KL regularization')
     parser.add_argument('--annealing_step', type=int, default=10, help='KL annealing step (smaller => more aggressive earlier)')
-    # 新增 hard negative 参数
-    parser.add_argument('--hard_neg_ratio', type=float, default=0.0, help='Ratio of hard negative samples in each batch (0~1, 0=不增强)')
+    # Hard negative parameters
+    parser.add_argument('--hard_neg_ratio', type=float, default=0.0, help='Ratio of hard negative samples in each batch (0~1, 0=disabled)')
 
     args = parser.parse_args()
 
@@ -177,9 +177,9 @@ def main():
         total_hardneg_count = 0
         for xb, yb in loader:
             alpha = model(xb)
-            # hard negative 增强逻辑
+            # Hard negative augmentation logic
             if args.hard_neg_ratio > 0.0:
-                # 找出 batch 内 hard negative（label=0）
+                # Find hard negatives within the batch (label=0)
                 hardneg_mask = (yb == 0)
                 hardneg_count = hardneg_mask.sum().item()
                 hardneg_loss = 0.0
@@ -194,7 +194,7 @@ def main():
                         kl_weight=args.kl_weight,
                         evidence_scale=args.evidence_scale,
                     )
-                # 正常 loss
+                # Normal loss
                 normal_loss = edl_loss_scaled(
                     alpha,
                     yb,
@@ -203,7 +203,7 @@ def main():
                     kl_weight=args.kl_weight,
                     evidence_scale=args.evidence_scale,
                 )
-                # 总 loss = normal_loss + hard_neg_ratio * hardneg_loss
+                # Total loss = normal_loss + hard_neg_ratio * hardneg_loss
                 loss = normal_loss + args.hard_neg_ratio * hardneg_loss
                 total_hardneg_loss += hardneg_loss * hardneg_count
                 total_hardneg_count += hardneg_count

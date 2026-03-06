@@ -1,10 +1,30 @@
-networkx
-javalang
-torch
-transformers
-numpy
-pandas
-matplotlib
-seaborn
-scikit-learn
-openai
+# Environment
+python_version == "3.10"
+
+# Packages (pinned)
+networkx==3.4.2
+javalang==0.13.0
+numpy==1.26.4
+pandas==2.3.3
+matplotlib==3.10.8
+seaborn==0.13.2
+scikit-learn==1.7.2
+scipy==1.15.3
+python-louvain==0.16
+
+# ML / embeddings
+torch==2.2.2
+transformers==4.41.2
+tokenizers==0.19.1
+huggingface-hub==0.36.0
+
+# Plotting (some scripts may export figures via plotly + kaleido)
+plotly==6.6.0
+kaleido==1.2.0
+
+# API client (optional; some pipelines may reference it)
+openai==2.16.0
+
+# Test/dev utilities used in this environment
+pytest==9.0.2
+pytest-timeout==2.4.0

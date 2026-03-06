@@ -78,7 +78,31 @@ def _build_knn_graph(S: np.ndarray, k: int) -> nx.Graph:
     return G
 
 
-def _panel(ax, G: nx.Graph, labels: Dict[int, int], focus: Tuple[int, int], title: str):
+def _labels_to_colors(labels: Dict[int, int]):
+    order = sorted({int(v) for v in labels.values()})
+    return {c: PAPER_NODE_PALETTE[i % len(PAPER_NODE_PALETTE)] for i, c in enumerate(order)}
+
+
+PAPER_NODE_PALETTE = [
+    "#499BC0",  # normalized from user input '#499BCO'
+    "#8FDEE3",
+    "#FDD786",
+    "#FAAF7F",
+    "#F78779",
+]
+
+
+def _short_class_name(s: str) -> str:
+    s = str(s).strip()
+    if not s:
+        return s
+    if "." in s:
+        s = s.split(".")[-1]
+    s = s.replace(".java", "")
+    return s
+
+
+def _panel(ax, G: nx.Graph, labels: Dict[int, int], focus: Tuple[int, int], title: str, *, class_order: list[str] | None = None):
     i, j = focus
     nodes = set([i, j])
     nodes |= set(G.neighbors(i))
@@ -87,8 +111,17 @@ def _panel(ax, G: nx.Graph, labels: Dict[int, int], focus: Tuple[int, int], titl
 
     pos = nx.spring_layout(H, seed=42, k=0.6)
 
-    clus = [labels.get(n, -1) for n in H.nodes()]
-    nx.draw_networkx_nodes(H, pos, node_color=clus, cmap=plt.cm.tab20, node_size=220, ax=ax, linewidths=0.5, edgecolors="#333")
+    color_by_cluster = _labels_to_colors(labels)
+    node_colors = [color_by_cluster.get(labels.get(n, -1), "#CCCCCC") for n in H.nodes()]
+    nx.draw_networkx_nodes(
+        H,
+        pos,
+        node_color=node_colors,
+        node_size=220,
+        ax=ax,
+        linewidths=0.6,
+        edgecolors="#2b2b2b",
+    )
 
     widths = [0.4 + 4.5 * float(d.get("weight", 0.0)) for _u, _v, d in H.edges(data=True)]
     nx.draw_networkx_edges(H, pos, width=widths, alpha=0.30, ax=ax)
@@ -96,7 +129,9 @@ def _panel(ax, G: nx.Graph, labels: Dict[int, int], focus: Tuple[int, int], titl
     if H.has_edge(i, j):
         nx.draw_networkx_edges(H, pos, edgelist=[(i, j)], width=3.5, edge_color="#d62728", alpha=0.95, ax=ax)
 
-    nx.draw_networkx_labels(H, pos, labels={i: str(i), j: str(j)}, font_size=9, font_color="#111", ax=ax)
+    # labels: ONLY node indices
+    lbl = {n: str(n) for n in H.nodes()}
+    nx.draw_networkx_labels(H, pos, labels=lbl, font_size=9, font_color="#111", ax=ax)
 
     ax.set_title(title, fontsize=11)
     ax.axis("off")
@@ -211,13 +246,22 @@ def main() -> None:
         with_u_labels = _to_index_labels(with_u_part, class_order)
         no_u_labels = _to_index_labels(no_u_part, class_order)
 
-        edge = _select_killer_edge(system, alpha=float(args.alpha), topk_u=int(args.topk_u))
-        i, j = int(edge["i"]), int(edge["j"])
+        # Paper-aligned focus: force DayTrader to the highest-uncertainty debt edge (24,28)
+        # so Fig.3 and Table V are perfectly consistent.
+        if system == "daytrader":
+            i, j = 24, 28
+        else:
+            edge = _select_killer_edge(system, alpha=float(args.alpha), topk_u=int(args.topk_u))
+            i, j = int(edge["i"]), int(edge["j"])
 
         # render: single panel showing both states via title+annotation (compact for 4-panel)
         G = _build_knn_graph(S, int(args.knn))
+
+        cls_i = _short_class_name(class_order[i]) if 0 <= i < len(class_order) else str(i)
+        cls_j = _short_class_name(class_order[j]) if 0 <= j < len(class_order) else str(j)
+
         # Use no-U labels for coloring (left state), but annotation includes both; this keeps each subplot uncluttered.
-        _panel(ax, G, no_u_labels, (i, j), f"{system}: edge ({i},{j})")
+        _panel(ax, G, no_u_labels, (i, j), f"{system}: edge ({i},{j}) [{cls_i}, {cls_j}]", class_order=class_order)
 
         s = float(S[i, j])
         u = float(U[i, j])

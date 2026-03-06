@@ -7,20 +7,20 @@ from typing import Optional
 import numpy as np
 
 
-# 修正 ROOT 路径逻辑，向上跳三级到达项目根目录
+# Keep ROOT path logic stable: go up 3 levels to project root
 ROOT = Path(__file__).resolve().parents[3]
 
 
 def load_matrix(path: Path) -> Optional[np.ndarray]:
     if not path.exists():
-        print(f"❌ Missing: {path}")
+        print(f"[MISSING] {path}")
         return None
     mat = np.load(path)
     nnz = int(np.count_nonzero(mat))
     diag = np.diag(mat) if mat.ndim == 2 else np.array([])
     diag_mean = float(diag.mean()) if diag.size > 0 else float("nan")
     print(
-        f"✅ {path.name}: shape={mat.shape}, nnz={nnz}, "
+        f"[OK] {path.name}: shape={mat.shape}, nnz={nnz}, "
         f"diag_mean={diag_mean:.4f}"
     )
     return mat
@@ -32,7 +32,7 @@ def check_alignment(struct_mat: np.ndarray, sem_mat: np.ndarray, temp_mat: np.nd
         return
 
     if not (struct_mat.shape == sem_mat.shape == temp_mat.shape):
-        print("❌ Shape mismatch among modalities:")
+        print("[FAIL] Shape mismatch among modalities:")
         print(f"   S_struct: {struct_mat.shape}")
         print(f"   S_sem:    {sem_mat.shape}")
         print(f"   S_temp:   {temp_mat.shape}")
@@ -40,12 +40,12 @@ def check_alignment(struct_mat: np.ndarray, sem_mat: np.ndarray, temp_mat: np.nd
 
     n, m = struct_mat.shape
     if n != m:
-        print(f"❌ Matrices are not square: {struct_mat.shape}")
+        print(f"[FAIL] Matrices are not square: {struct_mat.shape}")
         return
 
     print("[OK] All matrices share the same square shape.")
 
-    # 简易模态冲突率：只看 off-diagonal
+    # Simple cross-modality conflict rate: off-diagonal only
     eye = np.eye(n, dtype=bool)
     struct_nz = (struct_mat != 0) & ~eye
     temp_nz = (temp_mat != 0) & ~eye
@@ -55,7 +55,7 @@ def check_alignment(struct_mat: np.ndarray, sem_mat: np.ndarray, temp_mat: np.nd
         print("[WARN] No off-diagonal edges in either S_struct or S_temp; conflict rate undefined.")
         return
 
-    # 冲突：只在其中一种模态中出现
+    # Conflict: an edge appears in only one modality
     conflict = struct_nz ^ temp_nz
     conflict_count = int(np.count_nonzero(conflict))
     conflict_rate = conflict_count / total_pairs
@@ -73,18 +73,19 @@ def main(system_name: str = "acmeair") -> None:
     print(f"=== Phase 1 Matrix Summary ({system_name}) ===")
 
     s_struct_path = fusion_dir / f"{system_name}_S_struct.npy"
-    s_sem_path = fusion_dir / f"{system_name}_S_sem_dade.npy"
+    s_sem_path = fusion_dir / f"{system_name}_S_sem_dade_base.npy"
 
     s_struct = load_matrix(s_struct_path)
     s_sem = load_matrix(s_sem_path)
 
-    # 时序矩阵：优先使用 hybrid 版，其次使用统一命名的 fusion 版，最后直接查找 temporal 目录下的 S_temp.npy
+    # Temporal matrix candidates:
+    # - prefer hybrid, then fusion naming, then raw temporal S_temp.npy
     s_temp_candidates = [
         temporal_dir / f"{system_name}_S_temp_hybrid.npy",
         temporal_dir / f"{system_name}_S_temp_jtl_session.npy",
         temporal_dir / f"{system_name}_S_temp_basic.npy",
         fusion_dir / f"{system_name}_S_temp.npy",
-        temporal_dir / f"{system_name}_S_temp.npy",  # 新增，确保能检测到实际生成的 S_temp
+        temporal_dir / f"{system_name}_S_temp.npy",  # ensure we can detect a direct S_temp output
     ]
 
     s_temp = None
@@ -95,14 +96,14 @@ def main(system_name: str = "acmeair") -> None:
             break
 
     if s_temp is None:
-        print("❌ No temporal matrix found. Checked:")
+        print("[FAIL] No temporal matrix found. Checked:")
         for p in s_temp_candidates:
             print(f"   - {p}")
         return
     else:
         print(f"[STEMP] shape={s_temp.shape}, nnz={np.count_nonzero(s_temp)}, max={s_temp.max():.4f}, min={s_temp.min():.4f}, diag_mean={np.diag(s_temp).mean():.4f}")
 
-    # 2. 维度/对齐与简易模态冲突率
+    # 2) Shape/alignment + simple conflict-rate check
     print("\n=== Alignment & Conflict Check ===")
     check_alignment(s_struct, s_sem, s_temp)
 

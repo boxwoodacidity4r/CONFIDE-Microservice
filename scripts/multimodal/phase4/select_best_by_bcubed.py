@@ -55,6 +55,28 @@ class EvalResult:
     mu: Optional[float] = None
 
 
+# NEW: one row per sweep point (cap, mu) for sensitivity plots
+@dataclass
+class SweepPoint:
+    system: str
+    u_ablation: str
+    mode: str
+    alpha: float
+    merge_small_clusters: bool
+    min_cluster_size: int
+    target_from_gt: bool
+    mu: Optional[float]
+    cap: float
+    baseline_bcubed_f1: float
+    baseline_mojosim: float
+    baseline_k: int
+    baseline_gt_k: int
+    cac_bcubed_f1: float
+    cac_mojosim: float
+    cac_k: int
+    cac_gt_k: int
+
+
 def _root() -> Path:
     return Path(__file__).resolve().parents[3]
 
@@ -82,24 +104,114 @@ def _run(cmd: List[str], cwd: Path) -> str:
 
 
 def _parse_phase4_output(text: str) -> Dict[str, Any]:
-    # Example lines:
-    #   BCubed F1:  0.4476
-    #   MoJoSim: 47.83%
-    #   GT 服务数: 4, 预测服务数: 2, K-Diff: 2
+    """Parse Phase4 evaluation output robustly.
+
+    The Phase4 script is used both interactively and in batch runs. Its stdout can vary
+    (English/Chinese, with/without percentage signs, or printing a JSON dict). This
+    parser tries multiple strategies and normalizes to:
+      - bcubed_f1 (float)
+      - mojosim (float)
+      - gt_k (int)
+      - pred_k (int)
+
+    It is intentionally best-effort: missing fields are left absent.
+    """
+
     out: Dict[str, Any] = {}
 
-    m = re.search(r"BCubed F1:\s*([0-9.]+)", text)
-    if m:
-        out["bcubed_f1"] = float(m.group(1))
+    # (1) Best-effort: recover a printed JSON metrics object.
+    # We only accept dict-like JSON that contains at least one target key.
+    try:
+        for cand in reversed(re.findall(r"\{[\s\S]*?\}", text)):
+            try:
+                obj = json.loads(cand)
+            except Exception:
+                continue
+            if not isinstance(obj, dict):
+                continue
 
-    m = re.search(r"MoJoSim:\s*([0-9.]+)%", text)
-    if m:
-        out["mojosim"] = float(m.group(1))
+            hit = False
+            # normalize common variants
+            key_map = {
+                "bcubed_f1": "bcubed_f1",
+                "BCubedF1": "bcubed_f1",
+                "mojosim": "mojosim",
+                "MoJoSim": "mojosim",
+                "gt_k": "gt_k",
+                "GT_K": "gt_k",
+                "gtK": "gt_k",
+                "pred_k": "pred_k",
+                "Pred_K": "pred_k",
+                "predK": "pred_k",
+                "k": "pred_k",
+            }
+            for k, v in obj.items():
+                if k in key_map and v is not None:
+                    out[key_map[k]] = v
+                    hit = True
+            if hit:
+                break
+    except Exception:
+        pass
 
-    m = re.search(r"GT 服务数:\s*(\d+),\s*预测服务数:\s*(\d+)", text)
-    if m:
-        out["gt_k"] = int(m.group(1))
-        out["pred_k"] = int(m.group(2))
+    # (2) Regex fallback: BCubed F1
+    if "bcubed_f1" not in out:
+        m = re.search(
+            r"BCubed\s*F\s*1\s*[:=]\s*([0-9]+(?:\.[0-9]+)?)",
+            text,
+            flags=re.IGNORECASE,
+        )
+        if m:
+            out["bcubed_f1"] = float(m.group(1))
+
+    # (3) Regex fallback: MoJoSim
+    if "mojosim" not in out:
+        m = re.search(
+            r"MoJoSim\s*[:=]\s*([0-9]+(?:\.[0-9]+)?)\s*%?",
+            text,
+            flags=re.IGNORECASE,
+        )
+        if m:
+            out["mojosim"] = float(m.group(1))
+
+    # (4) Regex fallback: K values
+    if "gt_k" not in out or "pred_k" not in out:
+        patterns = [
+            # English
+            r"ground\s*truth\s*(?:service\s*)?count\s*[:=]\s*(\d+)\s*[,:]?\s*(?:pred|predict(?:ed)?)\s*(?:service\s*)?count\s*[:=]\s*(\d+)",
+            r"GT\s*K\s*[:=]\s*(\d+)\s*[,:]?\s*(?:Pred|Predict(?:ed)?)\s*K\s*[:=]\s*(\d+)",
+            r"GT[_\s]*K\s*[:=]\s*(\d+)\s*[,:]?\s*Pred[_\s]*K\s*[:=]\s*(\d+)",
+            # Very permissive: "GT: 5 Pred: 6" on the same line
+            r"\bGT\b\s*[:=]\s*(\d+)\s+\bPred\b\s*[:=]\s*(\d+)",
+        ]
+        for pat in patterns:
+            m = re.search(pat, text, flags=re.IGNORECASE)
+            if m:
+                out.setdefault("gt_k", int(m.group(1)))
+                out.setdefault("pred_k", int(m.group(2)))
+                break
+
+    # Coerce numeric types
+    if "bcubed_f1" in out:
+        try:
+            out["bcubed_f1"] = float(out["bcubed_f1"])
+        except Exception:
+            pass
+    if "mojosim" in out:
+        try:
+            out["mojosim"] = float(out["mojosim"])
+        except Exception:
+            pass
+    if "gt_k" in out:
+        try:
+            out["gt_k"] = int(out["gt_k"])
+        except Exception:
+            pass
+    if "pred_k" in out:
+        try:
+            out["pred_k"] = int(out["pred_k"])
+        except Exception:
+            pass
 
     return out
 
@@ -171,6 +283,14 @@ def main() -> None:
         help="If set, sweep mu values (comma-separated, e.g., '0.2,0.3,0.4'). Only affects Phase3 if modality matrices exist.",
     )
 
+    # NEW: persist all sweep points for sensitivity plots
+    ap.add_argument(
+        "--save_sweep_points",
+        action="store_true",
+        default=True,
+        help="Save all (cap,mu) evaluation points to results/ablation/phase4_cap_sweep_all_scores_*.csv.",
+    )
+
     args = ap.parse_args()
 
     root = _root()
@@ -184,7 +304,17 @@ def main() -> None:
     if args.mu_sweep:
         mu_values = [float(x.strip()) for x in str(args.mu_sweep).split(",") if x.strip()]
 
+    # NEW: map Phase4 script's naming to Phase3 CLI
+    # phase3 expects: with_u | no_u | shuffle
+    u_map = {
+        "normal": "with_u",
+        "zero": "no_u",
+        "shuffle": "shuffle",
+    }
+    phase3_u_ablation = u_map.get(str(args.u_ablation).lower().strip(), "with_u")
+
     results: List[EvalResult] = []
+    sweep_points: List[SweepPoint] = []
 
     for system in args.systems:
         gt = root / "data" / "processed" / "groundtruth" / f"{system}_ground_truth.json"
@@ -224,10 +354,11 @@ def main() -> None:
                     "--dpep_cap",
                     f"{cap}",
                     "--u_ablation",
-                    str(args.u_ablation),
+                    str(phase3_u_ablation),
                 ]
                 if mu is not None:
-                    cmd.extend(["--mu", f"{mu}"])
+                    # phase3 uses --mu_override
+                    cmd.extend(["--mu_override", f"{mu}"])
                 if args.target_from_gt:
                     cmd.append("--target_from_gt")
                 if args.merge_small_clusters:
@@ -236,9 +367,41 @@ def main() -> None:
                 _run(cmd, cwd)
 
                 # Evaluate newly written CAC partition
-                cac_m = _evaluate_partition(system, cac_part, class_order=class_order, gt=gt, phase4_py=phase4_py, cwd=cwd)
+                cac_m = _evaluate_partition(
+                    system,
+                    cac_part,
+                    class_order=class_order,
+                    gt=gt,
+                    phase4_py=phase4_py,
+                    cwd=cwd,
+                )
                 cac_bc = float(cac_m.get("bcubed_f1", 0.0))
                 cac_mj = float(cac_m.get("mojosim", 0.0))
+                cac_k = int(cac_m.get("pred_k", 0))
+                cac_gt_k = int(cac_m.get("gt_k", 0))
+
+                # NEW: record every cap/mu point for sensitivity plots
+                sweep_points.append(
+                    SweepPoint(
+                        system=system,
+                        u_ablation=str(args.u_ablation),
+                        mode=str(args.mode),
+                        alpha=float(args.alpha),
+                        merge_small_clusters=bool(args.merge_small_clusters),
+                        min_cluster_size=int(args.min_cluster_size),
+                        target_from_gt=bool(args.target_from_gt),
+                        mu=(float(mu) if mu is not None else None),
+                        cap=float(cap),
+                        baseline_bcubed_f1=float(base_bc),
+                        baseline_mojosim=float(base_mj),
+                        baseline_k=int(base_k),
+                        baseline_gt_k=int(base_gt_k),
+                        cac_bcubed_f1=float(cac_bc),
+                        cac_mojosim=float(cac_mj),
+                        cac_k=int(cac_k),
+                        cac_gt_k=int(cac_gt_k),
+                    )
+                )
 
                 key = (cac_bc, cac_mj)
                 if best is None:
@@ -273,10 +436,10 @@ def main() -> None:
             "--dpep_cap",
             f"{best_cap}",
             "--u_ablation",
-            str(args.u_ablation),
+            str(phase3_u_ablation),
         ]
         if best_mu is not None:
-            cmd.extend(["--mu", f"{best_mu}"])
+            cmd.extend(["--mu_override", f"{best_mu}"])
         if args.target_from_gt:
             cmd.append("--target_from_gt")
         if args.merge_small_clusters:
@@ -344,6 +507,56 @@ def main() -> None:
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir = root / "results" / "ablation"
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # NEW: write all sweep points for cap sensitivity / plotting
+    if args.save_sweep_points:
+        sweep_csv = out_dir / f"phase4_cap_sweep_all_scores_{ts}.csv"
+        with sweep_csv.open("w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f)
+            w.writerow(
+                [
+                    "system",
+                    "u_ablation",
+                    "mode",
+                    "alpha",
+                    "merge_small_clusters",
+                    "min_cluster_size",
+                    "target_from_gt",
+                    "mu",
+                    "cap",
+                    "baseline_bcubed_f1",
+                    "baseline_mojosim",
+                    "baseline_k",
+                    "baseline_gt_k",
+                    "cac_bcubed_f1",
+                    "cac_mojosim",
+                    "cac_k",
+                    "cac_gt_k",
+                ]
+            )
+            for p in sweep_points:
+                w.writerow(
+                    [
+                        p.system,
+                        p.u_ablation,
+                        p.mode,
+                        f"{p.alpha:.3f}",
+                        int(p.merge_small_clusters),
+                        p.min_cluster_size,
+                        int(p.target_from_gt),
+                        "" if p.mu is None else f"{p.mu:.3f}",
+                        f"{p.cap:.3f}",
+                        f"{p.baseline_bcubed_f1:.4f}",
+                        f"{p.baseline_mojosim:.2f}",
+                        p.baseline_k,
+                        p.baseline_gt_k,
+                        f"{p.cac_bcubed_f1:.4f}",
+                        f"{p.cac_mojosim:.2f}",
+                        p.cac_k,
+                        p.cac_gt_k,
+                    ]
+                )
+        print(f"[BestByBCubed] Sweep points CSV saved: {sweep_csv}")
 
     csv_path = out_dir / f"phase4_best_by_bcubed_{ts}.csv"
     md_path = out_dir / f"phase4_best_by_bcubed_{ts}.md"

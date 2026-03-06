@@ -3,13 +3,34 @@ import json
 import argparse
 import numpy as np
 import logging
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
-# 修正路径逻辑，向上跳三级到达项目根目录，再进入 data/processed
+# Resolve paths: go up 3 levels to project root, then into data/processed
 current_dir = os.path.dirname(os.path.abspath(__file__))
 DATA_ROOT = os.path.abspath(os.path.join(current_dir, '../../../data/processed'))
 FUSION_DIR = os.path.join(DATA_ROOT, 'fusion')
+
+
+def _format_rho(rho: float) -> str:
+    # Stable, filename-safe formatting: 0.1 -> 0p10, 0.03 -> 0p03
+    s = f"{float(rho):.2f}"  # keep 2 decimals to match sweep grid
+    return s.replace('.', 'p')
+
+
+def _resolve_out_path(system: str, topk_ratio: float, out_dir: str | None = None) -> str:
+    """Return output path with identity marking.
+
+    - base (no top-k): {system}_S_sem_dade_base.npy
+    - rho  (top-k on): {system}_S_sem_dade_rho_<rho>.npy
+    """
+    fusion_dir = out_dir or FUSION_DIR
+    if float(topk_ratio) <= 0.0:
+        return os.path.join(fusion_dir, f"{system}_S_sem_dade_base.npy")
+    tag = _format_rho(float(topk_ratio))
+    return os.path.join(fusion_dir, f"{system}_S_sem_dade_rho_{tag}.npy")
+
 
 SYSTEM_CONFIG = {
     'acmeair': {},
@@ -136,7 +157,15 @@ def dade_rescale(
     return S_sym
 
 
-def process_system(system: str, target_mean: float = 0.5, top_k: int = 0, topk_ratio: float = 0.0, keep_self: bool = True):
+def process_system(
+    system: str,
+    target_mean: float = 0.5,
+    top_k: int = 0,
+    topk_ratio: float = 0.0,
+    keep_self: bool = True,
+    out_dir: str | None = None,
+    update_pointer: bool = False,
+):
     if system not in SYSTEM_CONFIG:
         raise ValueError(f"Unknown system: {system}")
 
@@ -159,9 +188,16 @@ def process_system(system: str, target_mean: float = 0.5, top_k: int = 0, topk_r
 
     S_dade = dade_rescale(S, target_mean=target_mean, top_k=k, keep_self=keep_self)
 
-    out_path = os.path.join(FUSION_DIR, f"{system}_S_sem_dade.npy")
+    out_path = _resolve_out_path(system, float(topk_ratio), out_dir=out_dir)
     np.save(out_path, S_dade)
     logging.info("[%s] Saved DADE-rescaled semantic matrix to %s (mean=%.4f)", system, out_path, float(S_dade.mean()))
+
+    if update_pointer:
+        # Stable pointer file to indicate the current DADE semantic matrix
+        # consumed by downstream build steps (if they choose to follow it).
+        pointer = Path(FUSION_DIR) / f"{system}_S_sem_dade.ptr.txt"
+        pointer.write_text(str(out_path), encoding="utf-8")
+        logging.info("[%s] Updated pointer -> %s", system, str(pointer))
 
 
 def main():
@@ -171,6 +207,8 @@ def main():
     parser.add_argument('--top-k', type=int, default=0, help='Row-wise keep only top-k semantic links (kNN-style). 0 disables.')
     parser.add_argument('--topk-ratio', type=float, default=0.0, help='Alternative to --top-k: k = round(ratio*(N-1)). Takes precedence if >0.')
     parser.add_argument('--no-keep-self', action='store_true', default=False, help='Do not force keeping diagonal during top-k selection.')
+    parser.add_argument('--out-dir', type=str, default=None, help='Override output directory (default: data/processed/fusion).')
+    parser.add_argument('--update-pointer', action='store_true', default=False, help='Write a pointer file <system>_S_sem_dade.ptr.txt to the generated output.')
     args = parser.parse_args()
 
     process_system(
@@ -179,6 +217,8 @@ def main():
         top_k=args.top_k,
         topk_ratio=args.topk_ratio,
         keep_self=(not args.no_keep_self),
+        out_dir=args.out_dir,
+        update_pointer=bool(args.update_pointer),
     )
 
 

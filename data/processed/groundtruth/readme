@@ -1,21 +1,21 @@
 /*
 Daytrader IBM Reference Ground Truth
-服务ID与服务名对照表：
+Service ID to service name mapping:
 0: Accounts Service
 1: Portfolios Service
 2: Quotes Service
 3: Gateway Service
 4: Web Service
-建议在论文/报告/代码注释中引用本表，避免仅用编号。
+Recommendation: cite this mapping table in the paper/report/code comments to avoid using numeric IDs only.
 */
 
 /*
 AcmeAir Authoritative Ground Truth
-服务ID与服务名对照表：
+Service ID to service name mapping:
 0: Booking Service
 1: Customer Service
 2: Flight Service
 3: Authentication / Session Service
 4: Gateway / Web / Aggregation Service
-建议在论文/报告/代码注释中引用本表，避免仅用编号。
+Recommendation: cite this mapping table in the paper/report/code comments to avoid using numeric IDs only.
 */

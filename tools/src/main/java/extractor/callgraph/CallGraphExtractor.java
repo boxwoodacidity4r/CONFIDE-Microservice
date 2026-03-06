@@ -5,18 +5,19 @@ import org.jgrapht.graph.DefaultEdge;
 import java.io.File;
 
 /**
- * CallGraphExtractor 接口定义
+ * CallGraphExtractor interface.
  *
- * 实现类需要提供从源码目录中构建函数调用图的能力
+ * Implementations should provide the capability to build a function/method call graph
+ * from a source code directory.
  */
 public interface CallGraphExtractor {
 
     /**
-     * 提取指定源码目录的函数调用图
+     * Extract the call graph from the given source root directory.
      *
-     * @param sourceRoot 源码根目录
-     * @return DefaultDirectedGraph<String, DefaultEdge> 表示调用图
-     * @throws Exception 如果解析或构建调用图失败
+     * @param sourceRoot source root directory
+     * @return call graph as a directed graph
+     * @throws Exception if parsing or graph construction fails
      */
     DefaultDirectedGraph<String, DefaultEdge> extractCallGraph(File sourceRoot) throws Exception;
 }

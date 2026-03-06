@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 import os
 
-# 四个应用对应的语义 JSON
+# Semantic JSON per application
 SEMANTIC_JSONS = {
     "acmeair": "data/processed/semantic/acmeair_semantic.json",
     "daytrader": "data/processed/semantic/daytrader_semantic.json",
@@ -28,7 +28,7 @@ def run_embedding_extraction(
     distill_mode: str = "default",
 ):
     input_path = Path(input_json).resolve()
-    output_path = OUTPUT_DIR / f"{app}.pt"  # 改为 .pt
+    output_path = OUTPUT_DIR / f"{app}.pt"  # use .pt
 
     # Use current interpreter (venv) to avoid missing deps
     cmd = [
@@ -52,13 +52,13 @@ def run_embedding_extraction(
     if extra_domain_stopwords:
         cmd.extend(["--extra-domain-stopwords", extra_domain_stopwords])
 
-    print(f"\n🚀 Running embedding extraction for {app} ...")
+    print(f"\n[RUN] Embedding extraction for {app} ...")
     try:
         subprocess.run(cmd, check=True)
-        print(f"✅ {app} embeddings saved -> {output_path}")
+        print(f"[OK] {app} embeddings saved -> {output_path}")
         successful.append(app)
     except subprocess.CalledProcessError as e:
-        print(f"❌ {app} failed with exit code {e.returncode}")
+        print(f"[FAIL] {app} failed with exit code {e.returncode}")
         failed.append(app)
 
 if __name__ == "__main__":

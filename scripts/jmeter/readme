@@ -1,37 +1,37 @@
-# JMeter 压测脚本运行说明（四个单体应用）
+# JMeter Load Test Script Runbook (Four Monolith Applications)
 
-## 0. 每次运行前务必重启对应 Docker 镜像
+## 0. Always restart the corresponding Docker images before each run
 
-1. 停止并重启对应的单体应用容器（AcmeAir / JPetStore / DayTrader / Plants），确保应用处于干净状态。
-2. 等待应用完全启动（首页可以正常访问），再执行 JMeter 脚本。
+1. Stop and restart the corresponding monolith application containers (AcmeAir / JPetStore / DayTrader / Plants) to ensure a clean state.
+2. Wait until the application is fully started (homepage is accessible), then run the JMeter scripts.
 
-# 进入 docker-compose.yml 所在目录
+# Enter the directory that contains docker-compose.yml
 cd D:\multimodal_microservice_extraction\docker
 
-# 停止并移除所有容器
+# Stop and remove all containers
 docker compose down
 
-# 启动所有服务（后台运行）
+# Start all services (run in background)
 docker compose up -d
 
-# 查看启动状态
+# Check status
 docker compose ps
 
-# 查看单个容器日志（例如 JPetStore）
+# View logs for a single container (e.g., JPetStore)
 docker logs jpetstore
 
-## 1. 前置条件
+## 1. Prerequisites
 
-1. 已安装 JMeter 5.6.3，例如：`D:\apache-jmeter-5.6.3`。
-2. 当前工作目录为项目根目录：`D:\multimodal_microservice_extraction`。
-3. 本仓库的 JMeter 测试计划（.jmx）已归档在：`scripts\jmeter\`。
-4. 各 `.jmx` 中的目标 URL 与本地运行端口一致（如 JPetStore 使用 `http://localhost:8083/jpetstore`）。
+1. JMeter 5.6.3 is installed, e.g., `D:\apache-jmeter-5.6.3`.
+2. The current working directory is the project root: `D:\multimodal_microservice_extraction`.
+3. The JMeter test plans (.jmx) in this repository are archived under: `scripts\jmeter\`.
+4. In each `.jmx`, ensure the target URL and local ports match your environment (e.g., JPetStore uses `http://localhost:8083/jpetstore`).
 
-## 2. 在 PowerShell 中运行四个 JMeter 脚本
+## 2. Run the four JMeter scripts in PowerShell
 
-在 **PowerShell** 中依次执行下面命令（注意使用反引号 ` 作为换行续行符）。
+Run the following commands **in PowerShell** in order (note: use backtick ` as the line continuation character).
 
-> 提示：你也可以先 `cd D:\apache-jmeter-5.6.3\bin`，然后用相对路径引用 `.jmx`。
+> Tip: you can `cd D:\apache-jmeter-5.6.3\bin` first and then reference the `.jmx` files via relative paths.
 
 ### 2.1 JPetStore
 
@@ -75,10 +75,10 @@ D:\apache-jmeter-5.6.3\bin\jmeter.bat -n `
 
 ```
 
-## 3. 结果文件约定
+## 3. Output file conventions
 
-- JTL：`results/jmeter/<system>_results.jtl`
-- JMeter 日志：`results/jmeter/<system>_jmeter.log`
-- HTML 报告：`results/jmeter/<system>_html_report/`
+- JTL: `results/jmeter/<system>_results.jtl`
+- JMeter log: `results/jmeter/<system>_jmeter.log`
+- HTML report: `results/jmeter/<system>_html_report/`
 
-其中 `<system> ∈ {acmeair, jpetstore, daytrader, plants}`。
+Where `<system> ∈ {acmeair, jpetstore, daytrader, plants}`.

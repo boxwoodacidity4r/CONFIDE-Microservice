@@ -17,23 +17,23 @@ import java.util.List;
 
 public class JsonExporter {
 
-    // 将 AST 节点递归转换为 JSON
-public static JSONObject nodeToJson(Node node) {
-    JSONObject json = new JSONObject();
-    json.put("nodeType", node.getClass().getSimpleName());
-    json.put("toString", node.toString());
+    // Recursively convert an AST node to JSON.
+    public static JSONObject nodeToJson(Node node) {
+        JSONObject json = new JSONObject();
+        json.put("nodeType", node.getClass().getSimpleName());
+        json.put("toString", node.toString());
 
-    JSONArray children = new JSONArray();
-    List<Node> childNodes = node.getChildNodes(); 
-    for (Node child : childNodes) {
-        children.put(nodeToJson(child));
+        JSONArray children = new JSONArray();
+        List<Node> childNodes = node.getChildNodes();
+        for (Node child : childNodes) {
+            children.put(nodeToJson(child));
+        }
+        json.put("children", children);
+
+        return json;
     }
-    json.put("children", children);
 
-    return json;
-}
-
-    // 将调用图转换为 JSON
+    // Convert a call graph to JSON.
     public static JSONObject callGraphToJson(DefaultDirectedGraph<String, DefaultEdge> graph) {
         JSONObject json = new JSONObject();
         JSONArray nodes = new JSONArray();
@@ -52,7 +52,7 @@ public static JSONObject nodeToJson(Node node) {
         return json;
     }
 
-    // 从文件解析 Java 文件并返回 CompilationUnit
+    // Parse a Java file from disk and return the CompilationUnit.
     public static CompilationUnit parseJavaFile(Path path) throws IOException {
         try (FileInputStream in = new FileInputStream(path.toFile())) {
             JavaParser parser = new JavaParser();

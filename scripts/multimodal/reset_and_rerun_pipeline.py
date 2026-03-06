@@ -172,7 +172,7 @@ def run_phase2_infer(
 
         emb = root / "data" / "processed" / "fusion" / f"{sys}_S_sem_embedding.npy"
         s_struct = root / "data" / "processed" / "fusion" / f"{sys}_S_struct.npy"
-        s_sem = root / "data" / "processed" / "fusion" / f"{sys}_S_sem_dade.npy"
+        s_sem = root / "data" / "processed" / "fusion" / f"{sys}_S_sem_dade_base.npy"
         s_temp = root / "data" / "processed" / "temporal" / f"{sys}_S_temp.npy"
 
         cmd = [

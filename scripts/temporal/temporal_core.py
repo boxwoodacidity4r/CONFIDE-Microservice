@@ -4,8 +4,8 @@ import json
 import numpy as np
 
 
-# 启发式反向映射：URL / 关键字 / 实体 / 集合 -> 类名
-# 注意：这是针对 acmeair 的初始版本，后续可以按需要在独立配置文件中维护
+# Heuristic reverse mapping: URL / keywords / entities / collections -> class names
+# Note: this is an initial version for AcmeAir; it can be maintained in a separate config file if needed.
 URL_TO_CLASS: Dict[str, str] = {
     "/rest/api/login": "com.acmeair.web.LoginREST",
     "/rest/api/login/logout": "com.acmeair.web.LoginREST",
@@ -16,8 +16,8 @@ URL_TO_CLASS: Dict[str, str] = {
     "/rest/api/config/runtime": "com.acmeair.web.AppConfig",
 }
 
-# 为了在存在包含关系的路径时提升精度，这里预先按长度降序排列 URL key，
-# 以实现“最长前缀优先”匹配策略。
+# To improve precision when paths have containment relations, sort URL keys by length
+# in descending order to implement a "longest-prefix-first" matching strategy.
 _sorted_url_keys = sorted(URL_TO_CLASS.keys(), key=len, reverse=True)
 
 KEYWORD_TO_CLASS: Dict[str, str] = {
@@ -36,7 +36,7 @@ ENTITY_TO_CLASS: Dict[str, str] = {
     "session": "com.acmeair.morphia.entities.CustomerSessionImpl",
 }
 
-# 基于 Mongo 集合名的强化映射：一个集合可能对应多个相关类（Service + Impl）
+# Enhanced mapping based on Mongo collection name: one collection may map to multiple related classes (Service + Impl)
 COLLECTION_TO_CLASSES: Dict[str, list[str]] = {
     "customer": [
         "com.acmeair.service.CustomerService",
@@ -57,7 +57,7 @@ COLLECTION_TO_CLASSES: Dict[str, list[str]] = {
 
 
 def _extract_string_attributes(span: Dict) -> Dict[str, str]:
-    """辅助函数：从 span.attributes 中提取 stringValue 字段为扁平 dict."""
+    """Helper: extract stringValue attributes from span.attributes into a flat dict."""
     attrs: Dict[str, str] = {}
     for a in span.get("attributes", []):
         key = a.get("key")
@@ -75,7 +75,7 @@ def _is_target_service(resource_attributes: Dict[str, str], service_name: str) -
 
 
 def _extract_resource_string_attributes(resource: Dict) -> Dict[str, str]:
-    """从 resource.attributes 中提取 stringValue 字段为扁平 dict."""
+    """Extract stringValue fields from resource.attributes into a flat dict."""
     attrs: Dict[str, str] = {}
     for a in resource.get("attributes", []):
         key = a.get("key")
@@ -258,12 +258,12 @@ def extract_classes_from_logs(
     class_to_idx: Dict[str, int],
     service_name: str = "acmeair",
 ) -> Dict[str, Set[int]]:
-    """从 OTLP 日志中提取 traceId -> {class_index}.
+    """Extract traceId -> {class_index} from OTLP logs.
 
-    关键点：
-    - 利用 scope.name 这一 "上帝视角"，直接将 logger FQCN 映射为类；
-    - 若 body 中存在实体词，则通过 ENTITY_TO_CLASS 做补充；
-    - 仅保留 class_to_idx 中存在的类。
+    Key points:
+    - Use scope.name as a high-signal hint to map logger FQCN to a class.
+    - If the log body contains entity keywords, augment the mapping via ENTITY_TO_CLASS.
+    - Keep only classes that exist in class_to_idx.
     """
     trace_class_map: Dict[str, Set[int]] = {}
 
@@ -284,7 +284,7 @@ def extract_classes_from_logs(
                 resource = resource_log.get("resource", {}) or {}
                 r_attrs = _extract_resource_string_attributes(resource)
                 if not _is_target_service(r_attrs, service_name):
-                    # 只保留 acmeair 相关日志
+                    # Keep only logs from the target service
                     continue
 
                 for scope_log in resource_log.get("scopeLogs", []):
@@ -330,23 +330,23 @@ def extract_classes_from_traces(
     debug_topk: int = 10,
     debug_sample_spans: int = 0,
 ) -> Dict[str, Set[int]]:
-    """从 OTEL trace JSON 中提取 traceId -> {class_index} 集合 (基础版).
+    """Extract traceId -> {class_index} set from OTEL trace JSON (basic version).
 
     Improvements (2026-02):
-    - If caller does not provide service_name, we auto-infer it from the filename
+    - If the caller does not provide service_name, auto-infer it from the filename
       (e.g., plantsbywebsphere.json -> plantsbywebsphere).
-    - We apply lightweight noise filtering to reduce cross-cutting framework spans.
+    - Apply lightweight noise filtering to reduce cross-cutting framework spans.
 
     Debug (optional):
     - Prints service.name frequency TopK observed in the trace file
     - Prints resource service_name match / mismatch counts
     - Prints span mapping hit-rate (resolve_class_indices empty vs non-empty)
 
-    说明：
-    - OTLP 文件通常是每行一个 JSON 对象，这里按行解析；
-    - 优先使用 span.attributes 里的 "code.namespace" 作为 FQCN 来源；
-    - 回退尝试其它常见字段（rpc.service 等）；
-    - 仅保留出现在 class_to_idx 中的类。
+    Notes:
+    - OTLP exporter outputs are typically one JSON object per line (NDJSON); we parse line-by-line.
+    - Prefer span.attributes["code.namespace"] as a direct FQCN signal when present.
+    - Fall back to other common fields (e.g., rpc.service).
+    - Keep only classes that exist in class_to_idx.
     """
     trace_map: Dict[str, Set[int]] = {}
 
@@ -508,18 +508,18 @@ def extract_classes_from_traces_hybrid(
     log_json_path: Optional[Path] = None,
     service_name: str = "acmeair",
 ) -> Dict[str, Set[int]]:
-    """基于 OTEL trace (+ 可选 log) 的混合提取：traceId -> {class_index}。
+    """Hybrid extraction based on OTEL traces (+ optional logs): traceId -> {class_index}.
 
-    - 使用启发式反向映射 (URL/集合/关键字/实体) 补充 trace 侧；
-    - 利用日志 scope.name 的 FQCN "上帝视角"，通过 traceId 融合到同一映射中；
-    - 仅保留 service.name == "acmeair" 的 span/log，避免跨服务噪音。
+    - Augment trace-side mapping via heuristic reverse mapping (URL/collection/keywords/entities).
+    - Use the high-signal logger FQCN from log scope.name, and merge via traceId.
+    - Keep only span/log records whose service.name matches the target service to avoid cross-service noise.
     """
-    # 1) 先从日志构建 traceId -> {class_index} (scope.name / body 等)
+    # 1) Build traceId -> {class_index} from logs first (scope.name / body heuristics)
     log_trace_map: Dict[str, Set[int]] = {}
     if log_json_path is not None:
         log_trace_map = extract_classes_from_logs(log_json_path, class_to_idx, service_name=service_name)
 
-    # 2) 解析 trace，按启发式收集类索引，并与日志侧结果融合
+    # 2) Parse traces, collect class indices, and merge with log-side results
     trace_map: Dict[str, Set[int]] = {}
 
     if trace_json_path.exists():
@@ -557,7 +557,7 @@ def extract_classes_from_traces_hybrid(
 
                             trace_map.setdefault(tid, set()).add(idx)
 
-    # 3) 与日志 trace_map 融合
+    # 3) Merge with the log trace_map
     for tid, cls_set in log_trace_map.items():
         if not cls_set:
             continue
@@ -567,7 +567,7 @@ def extract_classes_from_traces_hybrid(
 
 
 def extract_trace_start_times(trace_json_path: Path) -> Dict[str, int]:
-    """从 all_traces.json 中提取 traceId -> 最早 startTimeUnixNano 映射."""
+    """Extract mapping: traceId -> earliest startTimeUnixNano from a trace NDJSON file."""
     trace_time_map: Dict[str, int] = {}
 
     if not trace_json_path.exists():
@@ -599,13 +599,13 @@ def extract_trace_start_times(trace_json_path: Path) -> Dict[str, int]:
 
 
 def calculate_s_temp(trace_map: Dict[str, Set[int]], num_classes: int) -> np.ndarray:
-    """根据 trace/session 中类的共现情况构造 S_temp 相似度矩阵 (Jaccard)。
+    """Build S_temp similarity matrix (Jaccard) from class co-occurrence in traces/sessions.
 
-    输入可以是:
+    Accepted input shapes:
     - traceId -> {class_index}
     - sessionId/threadName -> {class_index}
 
-    输出为 N x N 矩阵，与 class_order 对齐。
+    Output is an N x N matrix aligned with class_order.
     """
     co_occurrence = np.zeros((num_classes, num_classes), dtype=np.float32)
     individual_occurrence = np.zeros(num_classes, dtype=np.float32)

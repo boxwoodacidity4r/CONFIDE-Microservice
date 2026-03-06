@@ -172,7 +172,7 @@ def _default_paths(system: str) -> Dict[str, str]:
     # matrix paths
     paths = {
         # IMPORTANT: do NOT silently fall back here; batch mode should show sem_raw and sem_dade separately.
-        'sem_dade': f"data/processed/fusion/{system}_S_sem_dade.npy",
+        'sem_dade': f"data/processed/fusion/{system}_S_sem_dade_base.npy",
         'sem_raw': f"data/processed/fusion/{system}_S_sem.npy",
         'struct': f"data/processed/fusion/{system}_S_struct.npy",
         'temp': f"data/processed/temporal/{system}_S_temp.npy",
@@ -197,7 +197,10 @@ def diagnose_system(system_name, s_matrix_path, gt_path, class_order_path, merge
 
     intra_avg, inter_avg, ratio, n_intra, n_inter = _intra_inter_stats(S, labels)
     suffix = f" | merge={merge_labels}" if merge_labels else ""
-    print(f"[{system_name}] 簇内均值: {intra_avg:.4f}, 簇间均值: {inter_avg:.4f}, 对比度: {ratio:.2f} | pairs(intra/inter)={n_intra}/{n_inter}{suffix}")
+    print(
+        f"[{system_name}] intra-cluster mean: {intra_avg:.4f}, inter-cluster mean: {inter_avg:.4f}, "
+        f"contrast: {ratio:.2f} | pairs(intra/inter)={n_intra}/{n_inter}{suffix}"
+    )
     return intra_avg, inter_avg, ratio
 
 
@@ -324,7 +327,7 @@ def batch_diagnose(systems: List[str], verify: bool = False, merge_labels: str =
 
         print("\n[VERIFY] Tips:")
         print("- batch now reports sem_raw and sem_dade as separate rows.")
-        print("- build_multimodal_matrices will typically use DADE for fusion when available/up-to-date; this script lets you quantify the gain directly.")
+        print("- build_multimodal_matrices will typically use Semantic Refiner (SR) for semantic fusion when available/up-to-date; this script lets you quantify the gain directly.")
 
     return 0
 

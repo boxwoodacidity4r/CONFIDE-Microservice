@@ -11,13 +11,13 @@
 
       <!-- Thread Group -->
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="JPetStore Users" enabled="true">
-        <!-- 稳定性优先：先把并发降到 2，避免 Tomcat 在压测下直接断开连接导致 NoHttpResponseException -->
+        
         <stringProp name="ThreadGroup.num_threads">2</stringProp>
-        <!-- 慢爬坡，给应用/连接池预热时间 -->
+        
         <stringProp name="ThreadGroup.ramp_time">15</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <!-- baseline 验证：先跑少量 session，确认不再出现 Non HTTP response；稳定后再逐步加回 8/10 并发与 16 loops -->
+          
           <stringProp name="LoopController.loops">4</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>

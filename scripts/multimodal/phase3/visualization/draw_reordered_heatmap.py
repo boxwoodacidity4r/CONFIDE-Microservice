@@ -54,15 +54,15 @@ def _resolve_partition_path(partition_path: str, system: str) -> str:
 
 
 def load_data(u_matrix_path, partition_path, class_order_path, *, system: str | None = None):
-    # 1. 加载 U 矩阵
+    # 1. Load U matrix
     u_matrix = np.load(u_matrix_path)
     print(f"[Info] Loaded U matrix shape: {u_matrix.shape}")
 
-    # 2. 加载类名顺序 (推理时用的顺序)
+    # 2. Load class order (order used during inference)
     with open(class_order_path, "r", encoding="utf-8") as f:
         class_list = json.load(f)
 
-    # 3. 加载聚类结果 (ClassName -> ServiceID)
+    # 3. Load clustering result (ClassName -> ServiceID)
     partition_path = _resolve_partition_path(partition_path, system=system or "")
     with open(partition_path, "r", encoding="utf-8") as f:
         partition = json.load(f)
@@ -71,7 +71,7 @@ def load_data(u_matrix_path, partition_path, class_order_path, *, system: str | 
 
 
 def reorder_matrix(u_matrix, class_list, partition):
-    """核心逻辑：根据 Service ID 对矩阵行列进行重排。"""
+    """Core logic: reorder matrix rows/cols by Service ID."""
 
     meta_data = []
     for idx, class_name in enumerate(class_list):

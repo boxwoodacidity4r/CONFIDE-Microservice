@@ -35,12 +35,12 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
         CombinedTypeSolver typeSolver = new CombinedTypeSolver();
         // JDK
         typeSolver.add(new ReflectionTypeSolver());
-        // 项目源码
+        // Project source code
         typeSolver.add(new JavaParserTypeSolver(new File(sourceRootPath)));
-        // 自动收集常见依赖目录下的所有 jar
+        // Collect all jars from common dependency directories.
         List<File> allJars = new ArrayList<>();
         if (dependencyJars != null) allJars.addAll(dependencyJars);
-        // 自动扫描 lib、libs、target/lib、build/libs 等目录
+        // Auto-scan lib/libs/target/lib/build/libs under the source root.
         String[] jarDirs = {"lib", "libs", "target/lib", "build/libs"};
         for (String dir : jarDirs) {
             Path jarPath = Paths.get(sourceRootPath, dir);
@@ -56,7 +56,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
                 }
             }
         }
-        // 外部依赖 JAR
+        // External dependency JARs
         for (File jar : allJars) {
             try {
                 typeSolver.add(new JarTypeSolver(jar.getAbsolutePath()));
@@ -70,7 +70,8 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
         this.parser.getParserConfiguration().setSymbolResolver(solver);
     }
 
-    // 科研代码，用于微服务提取实验，重点保证正确性和稳定性
+    // Research-oriented extractor used for microservice extraction experiments.
+    // Prioritizes correctness and stability.
     @SuppressWarnings("unused")
     private String formatMethod(ResolvedMethodDeclaration m) {
         String cls = m.declaringType().getQualifiedName();
@@ -86,16 +87,16 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
         return sb.toString();
     }
 
-    // 判断是否业务类（仅用于 caller）
+    // Decide whether a class should be treated as a business class (caller-side filter only).
     private boolean isBusinessClass(String cls) {
         if (cls == null) return false;
         String s = cls.trim();
         String lower = s.toLowerCase();
-        // 应用代码白名单前缀：对这些前缀一律认为是业务类
+        // Application package allow-list prefixes.
         String[] prefixWhitelist = new String[] {
             "org.springframework.samples.jpetstore.",
-            "com.ibm.websphere.samples.",      // plantsbywebsphere 之类
-            "com.ibm.websphere.samples.pbw.",  // 更具体
+            "com.ibm.websphere.samples.",      // plantsbywebsphere, etc.
+            "com.ibm.websphere.samples.pbw.",  // more specific
             "com.ibm.websphere.",
             "com.acmeair.",
             "com.ibm.ws.samples.daytrader.",
@@ -107,7 +108,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
                 return true;
             }
         }
-        // 框架/标准库黑名单前缀（保持原有过滤）
+        // Framework / standard library deny-list prefixes.
         String[] prefixBlacklist = new String[] {
             "java.", "javax.", "jakarta.",
             "org.springframework.", "org.apache.",
@@ -116,7 +117,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
         for (String prefix : prefixBlacklist) {
             if (lower.startsWith(prefix)) return false;
         }
-        // 关键词黑名单
+        // Keyword deny-list.
         String[] keywordBlacklist = new String[] {
             "test", "mock", "jmeter", "benchmark", "example"
         };
@@ -127,9 +128,9 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
     }
 
     /**
-     * 归一化方法/类名：
-     * - 去掉泛型 <...>
-     * - 去掉数组/内部类符号等噪声
+     * Normalize method/class FQN:
+     * - remove generics <...>
+     * - remove array suffixes and other common noise
      */
     private static String normalizeFqn(String s) {
         if (s == null) return "";
@@ -151,7 +152,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
     }
 
     /**
-     * 超级节点阈值：inDegree > totalBusinessClasses * ratio
+     * Super-node threshold: inDegree > totalBusinessClasses * ratio
      */
     private static final double SUPER_NODE_INDEGREE_RATIO = 0.20;
 
@@ -175,9 +176,9 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
     }
 
     /**
-     * 对无法 resolve 的 MethodCallExpr，做一个“保守的语法级”callee 归一化：
-     * - 如果能拿到 scope 的 ResolvedType，则用 scopeType.qualifiedName + "." + methodName
-     * - 否则返回空字符串（不入图），避免 methodName-only 节点爆炸
+     * For MethodCallExpr that cannot be resolved, apply a conservative syntax-level callee normalization:
+     * - if scope resolved type is available: scopeType.qualifiedName + "." + methodName
+     * - otherwise return empty (skip) to avoid methodName-only node explosion
      */
     private String fallbackCallee(MethodCallExpr call) {
         try {
@@ -187,7 +188,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
                     typeDesc = normalizeFqn(typeDesc);
                     if (typeDesc.contains(".")) {
                         String fqn = typeDesc + "." + call.getNameAsString();
-                        // 只保留项目内部 callee，避免基础设施噪声补边
+                        // Keep only project-internal callees to avoid adding infrastructure noise edges.
                         return isProjectInternalCallee(fqn) ? fqn : "";
                     }
                 } catch (Exception ignored) {
@@ -200,11 +201,13 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
 
     @Override
     public org.jgrapht.graph.DefaultDirectedGraph<String, org.jgrapht.graph.DefaultEdge> extractCallGraph(File sourceRoot) throws Exception {
-        // 内部使用加权图做统计/惩罚，最终转换为无权图以兼容现有接口
+        // Internally use a weighted graph for counting/penalization, then convert back to an
+        // unweighted graph to match the existing interface.
+
         DefaultDirectedWeightedGraph<String, DefaultWeightedEdge> wGraph =
                 new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 
-        // 用于后处理：统计 caller->callee 的调用频次
+        // Used for post-processing: count caller->callee call frequencies
         Map<String, Map<String, Integer>> edgeCounts = new HashMap<>();
         Set<String> businessClasses = new HashSet<>();
 
@@ -237,7 +240,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
                                 if (!wGraph.containsVertex(caller)) wGraph.addVertex(caller);
 
                                 method.findAll(MethodCallExpr.class).forEach(call -> {
-                                    // 1) 优先走 SymbolSolver resolve
+                                    // 1) Prefer SymbolSolver resolution
                                     try {
                                         ResolvedMethodDeclaration calleeResolved = call.resolve();
                                         String callee = normalizeFqn(calleeResolved.getQualifiedName());
@@ -248,7 +251,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
                                                 .merge(callee, 1, Integer::sum);
                                         return;
                                     } catch (Exception e) {
-                                        // 2) 语法级 fallback：尽量恢复边，但不引入大量噪声
+                                        // 2) Syntax-level fallback: try to recover the edge without introducing too much noise
                                         String callee = fallbackCallee(call);
                                         if (callee == null || callee.isEmpty()) return;
                                         callee = normalizeFqn(callee);
@@ -257,7 +260,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
                                         edgeCounts.computeIfAbsent(caller, k -> new HashMap<>())
                                                 .merge(callee, 1, Integer::sum);
 
-                                        // 降噪：fallback 已限定为 project-internal，这里打印更有意义
+                                        // Noise reduction: fallback is limited to project-internal, so this log is more meaningful
                                         System.err.println("[CallGraph] Callee resolve failed, fallback=" + callee + " | expr=" + call + " - " + e.getMessage());
                                     }
                                 });
@@ -268,7 +271,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
                     });
         }
 
-        // 先把计数边写入加权图（调用频次作为基础权重）
+        // First, write the counted edges into the weighted graph (call frequency as base weight)
         for (Map.Entry<String, Map<String, Integer>> e1 : edgeCounts.entrySet()) {
             String caller = e1.getKey();
             for (Map.Entry<String, Integer> e2 : e1.getValue().entrySet()) {
@@ -286,7 +289,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
             }
         }
 
-        // 双向调用增强：A->B 且 B->A，则两条边权重 *2
+        // Bidirectional call enhancement: if A->B and B->A, then double the weight of both edges
         for (DefaultWeightedEdge e : new ArrayList<>(wGraph.edgeSet())) {
             String s = wGraph.getEdgeSource(e);
             String t = wGraph.getEdgeTarget(e);
@@ -295,12 +298,12 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
             }
         }
 
-        // 超级节点惩罚：对入度过高（被过多业务类调用）的节点，削弱进入它的边权重
+        // Super-node penalization: weaken the edge weights leading to nodes with excessively high in-degree (called by too many business classes)
         int totalBusiness = businessClasses.size();
         int indegreeThreshold = (int) Math.ceil(totalBusiness * SUPER_NODE_INDEGREE_RATIO);
         if (indegreeThreshold < 1) indegreeThreshold = 1;
 
-        // 统计入度（按“业务类调用者”去重）
+        // Count in-degrees (deduplicated by "business class caller")
         Map<String, Set<String>> indegreeCallers = new HashMap<>();
         for (DefaultWeightedEdge e : wGraph.edgeSet()) {
             String callerMethod = wGraph.getEdgeSource(e);
@@ -322,8 +325,8 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
             System.out.println("[CallGraph] Super-node classes (inDegree callers >= " + indegreeThreshold + "): " + superClasses.size());
         }
 
-        // 对指向超级类的方法节点的边做惩罚（不直接剪枝，避免图断裂过多）
-        final double SUPER_EDGE_PENALTY = 0.2; // 削弱到 20%
+        // Penalize edges pointing to super-class method nodes (do not directly prune to avoid excessive graph fragmentation)
+        final double SUPER_EDGE_PENALTY = 0.2; // Weaken to 20%
         for (DefaultWeightedEdge e : wGraph.edgeSet()) {
             String calleeMethod = wGraph.getEdgeTarget(e);
             String calleeCls = extractDeclaringTypeFromMethodFqn(calleeMethod);
@@ -332,7 +335,7 @@ public class JavaParserCallGraphExtractor implements CallGraphExtractor {
             }
         }
 
-        // 在函数末尾：将 wGraph 转换为 DefaultDirectedGraph
+        // At the end of the function: convert wGraph to DefaultDirectedGraph
         org.jgrapht.graph.DefaultDirectedGraph<String, org.jgrapht.graph.DefaultEdge> graph =
                 new org.jgrapht.graph.DefaultDirectedGraph<>(org.jgrapht.graph.DefaultEdge.class);
         for (String v : wGraph.vertexSet()) {

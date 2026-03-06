@@ -42,7 +42,7 @@ def diagnose(
     u = np.load(u_matrix_path)
     s = np.load(s_matrix_path)
 
-    print(f"\n--- {system} 边界冲突诊断 ---")
+    print(f"\n--- {system} Boundary Conflict Diagnostics ---")
 
     conflict_report = []
     for i, name_i in enumerate(node_names):
@@ -65,7 +65,7 @@ def diagnose(
     risky_pairs.sort(key=lambda x: (-(x["S"] - s_th), x["U"]))
 
     print(
-        f"检测到 {len(risky_pairs)} 对高风险‘伪耦合’类（GT要求分开，但 S>{s_th} 且 U<{u_th}）"
+        f"Detected {len(risky_pairs)} high-risk pseudo-coupled class pairs (GT expects separation, but S>{s_th} and U<{u_th})."
     )
 
     for p in risky_pairs[:topn]:

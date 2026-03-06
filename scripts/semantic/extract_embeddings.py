@@ -15,7 +15,7 @@ def robust_split_camel_case(text):
     text = re.sub(r'[_\-\d]+', ' ', text)
     return text
 
-# -------------------- 主函数 --------------------
+
 def run(
     input_file: Path,
     output_file: Path,
@@ -30,7 +30,7 @@ def run(
     distill_mode: str = "default",
 ):
     if not input_file.exists():
-        print(f"⚠️ {input_file} not found, skip")
+        print(f"[WARN] {input_file} not found, skip")
         return
 
     distill_mode = (distill_mode or "default").strip().lower()
@@ -107,7 +107,7 @@ def run(
         with open(params_path, "w", encoding="utf-8") as f:
             json.dump(params, f, ensure_ascii=False, indent=2)
     except Exception as e:
-        print(f"⚠️ Failed to write params file: {params_path} ({e})")
+        print(f"[WARN] Failed to write params file: {params_path} ({e})")
 
     doc_freq = {}
     total_docs = 0
@@ -136,11 +136,10 @@ def run(
         idf_threshold = float(idf_min_raw) if idf_min_raw else 1.35
 
     results = []
-    seen_texts = set()  # 用于去重（基于拼接后的文本）
-
+    seen_texts = set()  
     def distill_business_logic(item):
         """
-        对方法级的 JSON 数据进行业务语义蒸馏，集成全局IDF过滤和更强的驼峰分词
+        
 
         Modes:
           - default: (cls*3 + method*2) + IDF filtering
@@ -166,11 +165,11 @@ def run(
         distilled_text = (cls_name + " ") * int(cls_w) + (m_name + " ") * int(m_w) + " ".join(filtered_words)
         return distilled_text.strip()
 
-    # 1. 兼容 method_name/method 字段
+    # 1) Compatibility with method_name/method fields
     for item in items:
-        # 兼容 method_name 和 method 字段
+        # Compatibility with both method_name and method keys
         method = item.get("method_name") or item.get("method") or ""
-        # === 业务语义蒸馏预处理 ===
+        # === Business semantic distillation pre-processing ===
         text = distill_business_logic(item)
         if not text or text in seen_texts:
             continue
@@ -182,7 +181,7 @@ def run(
             "embedding": vec
         })
 
-    # 保存前再检查 embedding 是否有重复（双重保险）
+    # Before saving, check for duplicate embeddings (extra safety)
     unique_results = []
     seen_vecs = set()
     for r in results:
@@ -192,9 +191,9 @@ def run(
             unique_results.append(r)
 
     torch.save(unique_results, output_file)
-    print(f"✅ Saved embeddings ({len(unique_results)} unique) -> {output_file}")
+    print(f"[OK] Saved embeddings ({len(unique_results)} unique) -> {output_file}")
 
-    # 2. 生成类级 embedding（聚合所有方法的 embedding，取均值）
+    # 2) Build class-level embeddings (aggregate method embeddings; use mean)
     class2vecs = {}
     for r in unique_results:
         cls = r["class"]
@@ -205,20 +204,20 @@ def run(
     class_embeddings = []
     for idx, (cls, vecs) in enumerate(class2vecs.items()):
         arr = np.stack(vecs, axis=0)
-        # 方案C: Mean + Max结合
+        # Option C: Mean + Max combination
         combined_vec = (arr.mean(axis=0) + arr.max(axis=0)) / 2
         class_embeddings.append({
             "class": cls,
             "embedding": combined_vec.tolist(),
             "embedding_idx": idx
         })
-    # 输出类级 embedding 索引
+    # Output class-level embedding index
     class_emb_path = output_file.parent / (output_file.stem + "_class_embeddings.json")
     with open(class_emb_path, "w", encoding="utf-8") as f:
         json.dump(class_embeddings, f, ensure_ascii=False, indent=2)
-    print(f"✅ Saved class-level embeddings ({len(class_embeddings)}) -> {class_emb_path}")
+    print(f"[OK] Saved class-level embeddings ({len(class_embeddings)}) -> {class_emb_path}")
 
-# -------------------- 命令行入口 --------------------
+# -------------------- CLI entrypoint --------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate embeddings from semantic JSON")
     parser.add_argument("--input", required=True, help="Path to semantic JSON file")

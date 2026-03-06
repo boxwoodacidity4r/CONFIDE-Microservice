@@ -86,12 +86,12 @@ def calculate_f1(gt_dict, pred_dict):
 def calculate_bcubed(gt_dict, pred_dict):
     """BCubed precision/recall/f1.
 
-    定义：对每个元素 i
+    Definition: for each element i
       - P_i = |C_pred(i) ∩ C_gt(i)| / |C_pred(i)|
       - R_i = |C_pred(i) ∩ C_gt(i)| / |C_gt(i)|
-    全局为各元素平均。
+    Global precision/recall are the averages over all elements.
 
-    参考：Amigó et al., "A comparison of extrinsic clustering evaluation metrics..." (BCubed)
+    Reference: Amigó et al., "A comparison of extrinsic clustering evaluation metrics..." (BCubed)
     """
     common = list(set(gt_dict.keys()) & set(pred_dict.keys()))
     if not common:
@@ -294,10 +294,10 @@ def _remap_pred_with_class_order(pred_dict, class_order_list):
 
 def check_dep_format(dep_matrix):
     if not isinstance(dep_matrix, dict):
-        raise ValueError("依赖矩阵应为字典格式！")
+        raise ValueError("Dependency matrix must be a dict.")
     for k, v in dep_matrix.items():
         if not isinstance(v, dict):
-            raise ValueError(f"依赖矩阵 {k} 的值应为字典格式！")
+            raise ValueError(f"Dependency matrix value for '{k}' must be a dict.")
 
 
 def main():
@@ -311,25 +311,25 @@ def main():
         default=None,
         help="Optional class_order.json (list of class names). Required if --pred is index-keyed (e.g., {'0':sid}).",
     )
-    parser.add_argument("--sanity", action="store_true", help="输出Random/Monolith极端基准")
+    parser.add_argument("--sanity", action="store_true", help="Print extreme baselines (Random/Monolith)")
     parser.add_argument(
         "--out_json",
         type=str,
         default=None,
         help="Optional: write metrics as JSON to this path (for reproducible tables; avoids regex parsing).",
     )
-    # 新增：策略A（只评估 GT>=0 的 business class universe）
+    # Strategy A (evaluate only the GT>=0 business-class universe)
     parser.add_argument(
         "--filter_gt_negative",
         action="store_true",
         default=True,
-        help="(默认开启) 过滤掉 GT 中 label<0 的类，并同步过滤 pred/dep，只在 GT>=0 上评估",
+        help="(default: on) Filter out classes with label<0 in GT and filter pred/dep accordingly; evaluate only on GT>=0.",
     )
     parser.add_argument(
         "--no_filter_gt_negative",
         action="store_false",
         dest="filter_gt_negative",
-        help="关闭过滤：把 GT<0 的类也纳入评估（一般不推荐）",
+        help="Disable filtering: include GT<0 classes in evaluation (not recommended).",
     )
     args = parser.parse_args()
 
@@ -342,7 +342,7 @@ def main():
 
     pred_dict = _normalize_mapping(pred_raw)
 
-    # --- 策略A：过滤 GT=-1 等 out-of-scope 类 ---
+    # --- Strategy A: filter out out-of-scope classes (e.g., GT=-1) ---
     if bool(args.filter_gt_negative):
         valid_classes = {c for c, sid in gt_dict.items() if isinstance(sid, (int, float)) and sid >= 0}
         gt_dict = {c: sid for c, sid in gt_dict.items() if c in valid_classes}
@@ -389,15 +389,15 @@ def main():
     }
 
     print("-" * 40)
-    print("视角 A：语义准确性（与专家对齐）")
-    print(f"  Pairwise F1: {f1:.4f} (越高越好)")
-    print(f"  BCubed F1:  {bc_f1:.4f} (越高越好)")
-    print(f"  MoJoSim: {mojosim:.2f}% (越高越好)")
+    print("View A: Semantic correctness (alignment with expert partition)")
+    print(f"  Pairwise F1: {f1:.4f} (higher is better)")
+    print(f"  BCubed F1:  {bc_f1:.4f} (higher is better)")
+    print(f"  MoJoSim: {mojosim:.2f}% (higher is better)")
     print(f"  Pairwise Precision: {p:.4f}, Recall: {r:.4f}")
     print(f"  BCubed Precision:  {bc_p:.4f}, Recall: {bc_r:.4f}")
-    print(f"  GT 服务数: {gt_k}, 预测服务数: {pred_k}, K-Diff: {k_diff}")
-    print(f"  系统规模 (Classes): {n}")
-    print(f"  评估耗时: {elapsed:.2f} 秒")
+    print(f"  GT services: {gt_k}, Predicted services: {pred_k}, K-Diff: {k_diff}")
+    print(f"  System size (classes): {n}")
+    print(f"  Elapsed: {elapsed:.2f} sec")
 
     if args.dep:
         dep_matrix = load_json(args.dep)
@@ -409,7 +409,8 @@ def main():
             for a, nbrs in dep_matrix.items()
         }
 
-        # 如果开启了策略A过滤，则对 dep_matrix 也做同步裁剪，避免把 out-of-scope 依赖计入 IFN/SM/ICP。
+        # If Strategy A filtering is enabled, also prune dep_matrix to the used universe.
+        # This avoids counting out-of-scope dependencies in IFN/SM/ICP.
         if bool(args.filter_gt_negative):
             used = set(pred_dict.keys())
             dep_matrix = {
@@ -428,13 +429,13 @@ def main():
             "icp": float(icp),
         })
 
-        print("视角 B：架构演进质量（工程落地价值）")
-        print(f"  IFN (跨服务调用数): {ifn:.2f} (越低越好)")
-        print(f"  SM (结构模块度): {sm:.4f} (越高越好)")
-        print(f"  ICP (接口传播代价): {icp:.4f} (越低越好)")
-        print(f"  NED (分布均匀度): {ned:.4f}")
+        print("View B: Architectural evolution quality (engineering value)")
+        print(f"  IFN (cross-service calls): {ifn:.2f} (lower is better)")
+        print(f"  SM (structural modularity): {sm:.4f} (higher is better)")
+        print(f"  ICP (interface propagation cost): {icp:.4f} (lower is better)")
+        print(f"  NED (size imbalance): {ned:.4f}")
         if ned > 1.0:
-            print("[警告] NED > 1.0，存在超级服务/上帝类，建议结合不确定性热力图分析。")
+            print("[Warning] NED > 1.0 indicates a potential mega-service/god class; inspect with the uncertainty heatmap.")
 
     if args.sanity:
         print("\n[Sanity Check: Random Baseline]")

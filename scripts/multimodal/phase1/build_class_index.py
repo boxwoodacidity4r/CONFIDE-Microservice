@@ -1,11 +1,9 @@
-# d:/multimodal_microservice_extraction/scripts/multimodal/build_class_index.py
-
 import json
 import argparse
 from pathlib import Path
 from typing import Optional
 
-# 修改 ROOT 路径，回退3层到项目根目录
+
 ROOT = Path(__file__).resolve().parents[3]
 
 SYSTEM_CONFIG = {
@@ -45,9 +43,10 @@ SYSTEM_CONFIG = {
 
 
 def normalize_class_name(raw: str) -> str:
-    """把各种形式的类名字符串统一成我们约定的 Class ID.
+    """Normalize various class-name strings into our canonical Class ID.
 
-    目前先做最简单的清洗：去空格。后续如果你想统一成全限定名，可以在这里集中改规则。
+    Currently this applies a minimal cleanup (strip whitespace). If you later want to
+    enforce fully-qualified names, centralize that rule here.
     """
     if raw is None:
         return ""
@@ -55,25 +54,25 @@ def normalize_class_name(raw: str) -> str:
 
 
 def _extract_class_from_method_sig(sig: str, system: str) -> Optional[str]:
-    """从方法签名中抽取所属类名。
+    """Extract the owning class name from a method signature.
 
-    例如：
+    Examples:
     - "com.acmeair.loader.FlightLoader.getArrivalTime(java.util.Date, int)"
       -> "com.acmeair.loader.FlightLoader"
-    - "String getAirportCode()" -> 无法得到类名，返回 None。
+    - "String getAirportCode()" -> cannot recover a class name; returns None.
     """
     if not sig:
         return None
-    # 兼容冒号和括号
+    
     name = sig.split('(')[0].split(':')[0].strip()
     if " " in name:
         name = name.split(" ")[-1]
     base_pkg = SYSTEM_CONFIG[system].get("base_package", "")
     if base_pkg and name.startswith(base_pkg):
         parts = name.split(".")
-        # 只要层级比 base_pkg 深，我们就尝试去掉最后一段（方法名）
+        
         if len(parts) > len(base_pkg.split(".")):
-            # 只有最后一段首字母是小写时才去掉，否则可能误删类名
+            
             if parts[-1] and parts[-1][0].islower():
                 return ".".join(parts[:-1])
         return name
@@ -81,7 +80,7 @@ def _extract_class_from_method_sig(sig: str, system: str) -> Optional[str]:
 
 
 def load_callgraph_classes(system: str) -> set:
-    """从 acmeair_callgraph.json 中抽取类 ID 集合。"""
+    """Extract class IDs from <system>_callgraph.json."""
     cfg = SYSTEM_CONFIG[system]
     path = ROOT / "data" / "processed" / "callgraph" / cfg["callgraph_file"]
     classes: set = set()
@@ -92,13 +91,13 @@ def load_callgraph_classes(system: str) -> set:
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
 
-    # 1) nodes 里有时也会包含带类名的方法
+    # 1) nodes may contain method signatures that include class names
     for node in data.get("nodes", []):
         cls = _extract_class_from_method_sig(node, system)
         if cls:
             classes.add(cls)
 
-    # 2) edges 里的 source / target
+    # 2) edges: source / target
     for edge in data.get("edges", []):
         src = edge.get("source")
         tgt = edge.get("target")
@@ -115,7 +114,7 @@ def load_callgraph_classes(system: str) -> set:
 
 
 def load_dependency_classes(system: str) -> set:
-    """从 acmeair_dependency.json 中抽取类 ID 集合（粗粒度，仅基于 nodes）。"""
+    """Extract class IDs from <system>_dependency.json (coarse; nodes only)."""
     cfg = SYSTEM_CONFIG[system]
     path = ROOT / "data" / "processed" / "dependency" / cfg["dependency_file"]
     classes: set = set()
@@ -127,12 +126,13 @@ def load_dependency_classes(system: str) -> set:
         data = json.load(f)
 
     for n in data.get("nodes", []):
-        # nodes 里既有类名也有方法/文件名，这里先做一个很宽松的过滤：
-        # 1) 跳过明显是方法签名的（包含空格或括号）
-        # 2) 其余全部当作“类或包名候选”
+        # Nodes may contain class names as well as method/file names. Apply a very
+        # permissive filter:
+        # 1) skip obvious method signatures (contain whitespace or parentheses)
+        # 2) otherwise treat as a "class/package candidate"
         if "(" in n or ")" in n or " " in n:
             continue
-        # 这里也用统一的业务包过滤
+        # Apply the same business base-package filter where possible
         cls = _extract_class_from_method_sig(n, system) if "." in n else None
         if not cls:
             cls = normalize_class_name(n)
@@ -143,7 +143,7 @@ def load_dependency_classes(system: str) -> set:
 
 
 def load_semantic_classes(system: str) -> set:
-    """从 semantic/acmeair_semantic.json 中抽取类 ID 集合。"""
+    """Extract class IDs from semantic/<system>_semantic.json."""
     cfg = SYSTEM_CONFIG[system]
     path = ROOT / "data" / "processed" / "semantic" / cfg["semantic_file"]
     classes: set = set()
@@ -155,7 +155,7 @@ def load_semantic_classes(system: str) -> set:
     with path.open("r", encoding="utf-8") as f:
         data = json.load(f)
 
-    # 兼容性处理
+    # Compatibility handling
     if isinstance(data, list):
         for item in data:
             if isinstance(item, dict):
@@ -176,13 +176,13 @@ def _filter_candidate_classes(system: str, all_classes: set, semantic_classes: s
     for cls in all_classes:
         if not cls:
             continue
-        # 通用判定：必须属于业务根包
+        # Generic rule: must belong to the business base package
         if base_pkg and cls.startswith(base_pkg):
-            # 通用排除：排除明显的解析残留或工具类
+            # Generic exclusion: exclude obvious parser residue or utility classes
             if any(garbage in cls.lower() for garbage in [".em", ".q", ".tx", "util"]):
                 continue
             filtered.add(cls)
-    # 如果过滤后全没了，可能是解析太严，回退到包含语义的类
+    # If filtering removes everything, it may be too strict; fall back to semantic classes
     if not filtered and semantic_classes:
         filtered = semantic_classes
     print(f"[{system}] Filtered {len(all_classes)} down to {len(filtered)} high-quality classes.")
@@ -198,7 +198,7 @@ def build_class_index(system: str):
     trace_classes: set = set()
     jmeter_classes: set = set()
 
-    # 调试信息
+    # Debug info
     print(f"DEBUG [{system}]: Found {len(callgraph_classes)} classes from CallGraph")
     print(f"DEBUG [{system}]: Found {len(dependency_classes)} classes from Dependency")
     print(f"DEBUG [{system}]: Found {len(semantic_classes)} classes from Semantic")
